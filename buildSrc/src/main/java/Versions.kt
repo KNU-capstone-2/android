@@ -30,7 +30,6 @@ object Versions {
     const val PAGING = "3.1.1" // Paging
     const val WORKMANAGER = "2.7.1" // WorkManager
     const val HILT = "2.44" // Hilt
-    const val HILT_COMPOSE_NAVIGATION = "1.1.0-alpha01"
     const val HILT_EXTENSION = "1.0.0" // Hilt Extension (workmanager에 의존성을 주입하기 위함)
     const val ACTIVITY_KTX = "1.6.1" // by viewModel
 }
