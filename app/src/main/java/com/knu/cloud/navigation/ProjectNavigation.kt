@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.knu.cloud.screens.home.HomeScreen
+import com.knu.cloud.screens.instanceCreate.InstanceCreateScreen
 import com.knu.cloud.screens.login.LoginScreen
 import com.knu.cloud.screens.splash.SplashScreen
 
@@ -18,11 +19,11 @@ fun ProjectNavigation(){
         composable(ProjectScreens.SplashScreen.name){
             SplashScreen(navController = navController)
         }
-        composable(ProjectScreens.HomeScreen.name){
-            HomeScreen(navController = navController)
-        }
         composable(ProjectScreens.LoginScreen.name){
             LoginScreen(navController = navController)
+        }
+        composable(ProjectScreens.InstanceCreateScreen.name){
+            InstanceCreateScreen(navController = navController)
         }
     }
 

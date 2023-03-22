@@ -79,7 +79,7 @@ fun Login(navController: NavController) {
         )
         Button(
             onClick = {
-                navController.navigate(ProjectScreens.HomeScreen.name)
+                navController.navigate(ProjectScreens.InstanceCreateScreen.name)
             },
             modifier = Modifier
                 .fillMaxWidth()
