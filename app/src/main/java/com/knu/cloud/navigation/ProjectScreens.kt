@@ -5,8 +5,12 @@ enum class ProjectScreens {
     LoginScreen,
     HomeScreen,
     InstanceScreen,
+    SignUpScreen,
+    // InstanceCreateScreen Set
     InstanceCreateScreen,
-    SignUpScreen;
+    DetailScreen,
+    FlavorScreen,
+    ;
 
     companion object {
         fun fromRoute(route:String?) : ProjectScreens
