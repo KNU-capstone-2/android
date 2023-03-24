@@ -17,7 +17,7 @@ data class Flavor(
     val public: String
 )
 
-var possibleDataSet = mutableListOf(
+var possibleFlavorDataSet = mutableListOf(
     Flavor("m1.nano", 1, 128, 1, 1, 0, "예"),
     Flavor("m1.micro", 1, 192, 1, 1, 0, "예"),
     Flavor("cirros256", 1, 256, 1, 1, 0,"예"),
@@ -31,7 +31,7 @@ var possibleDataSet = mutableListOf(
     Flavor("m1.large", 4, 8, 80, 80, 0, "예"),
     Flavor("m1.xlarge", 8, 16, 160, 160, 0, "예")
 )
-var uploadDataSet = mutableListOf<Flavor>()
+var uploadFlavorDataSet = mutableListOf<Flavor>()
 
 @HiltViewModel
 class InstanceCreateViewModel @Inject constructor(
@@ -43,22 +43,22 @@ class InstanceCreateViewModel @Inject constructor(
     val possibleFlavor: State<List<Flavor>> = _possibleFlavor
 
     init {
-        _uploadFlavor.value = uploadDataSet
-        _possibleFlavor.value = possibleDataSet
+        _uploadFlavor.value = uploadFlavorDataSet
+        _possibleFlavor.value = possibleFlavorDataSet
     }
 
     fun uploadFlavor(flavor: Flavor, position: Int) {
-        uploadDataSet.add(flavor)
-        _uploadFlavor.value = uploadDataSet.toMutableStateList()
-        possibleDataSet.removeAt(position)
-        _possibleFlavor.value = possibleDataSet.toMutableStateList()
+        uploadFlavorDataSet.add(flavor)
+        _uploadFlavor.value = uploadFlavorDataSet.toMutableStateList()
+        possibleFlavorDataSet.removeAt(position)
+        _possibleFlavor.value = possibleFlavorDataSet.toMutableStateList()
     }
 
     fun deleteFlavor(flavor: Flavor, position: Int) {
-        uploadDataSet.removeAt(position)
-        _uploadFlavor.value = uploadDataSet.toMutableStateList()
-        possibleDataSet.add(flavor)
-        _possibleFlavor.value = possibleDataSet.toMutableStateList()
+        uploadFlavorDataSet.removeAt(position)
+        _uploadFlavor.value = uploadFlavorDataSet.toMutableStateList()
+        possibleFlavorDataSet.add(flavor)
+        _possibleFlavor.value = possibleFlavorDataSet.toMutableStateList()
     }
 
 }

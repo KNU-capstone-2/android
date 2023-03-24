@@ -21,6 +21,6 @@ fun InstanceCreateScreen(
             .fillMaxSize(),
         color = Color.White
     ) {
-        DetailScreen(viewModel = viewModel)
+        FlavorScreen(viewModel = viewModel)
     }
 }
