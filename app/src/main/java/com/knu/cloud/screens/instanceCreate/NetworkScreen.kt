@@ -18,7 +18,7 @@ import com.knu.cloud.components.text_input.addFocusCleaner
 
 @ExperimentalComposeUiApi
 @Composable
-fun FlavorScreen (
+fun NetworkScreen (
     viewModel: InstanceCreateViewModel
 ) {
     Surface(
@@ -26,13 +26,13 @@ fun FlavorScreen (
             .fillMaxSize(),
         color = Color.White
     ) {
-        Flavor(viewModel = viewModel)
+        Network(viewModel = viewModel)
     }
 }
 
 @ExperimentalComposeUiApi
 @Composable
-fun Flavor(
+fun Network(
     viewModel: InstanceCreateViewModel,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -40,8 +40,8 @@ fun Flavor(
     var uploadExpanded by remember { mutableStateOf(false) }
     var possibleExpanded by remember { mutableStateOf(true) }
 
-    val uploadList = viewModel.uploadFlavor.value
-    val possibleList = viewModel.possibleFlavor.value
+    val uploadList = viewModel.uploadNetwork.value
+    val possibleList = viewModel.possibleNetwork.value
 
     LazyColumn(
         modifier = Modifier
@@ -50,17 +50,18 @@ fun Flavor(
     ) {
         item {
             Text(
-                text = stringResource(R.string.IC_Flavor_description),
+                text = stringResource(R.string.IC_Network_description),
                 style = MaterialTheme.typography.subtitle2,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(20.dp)
             )
         }
+
         // 할당됨
         item {
             DataGridBar(
                 type = "할당됨",
-                numbers = viewModel.uploadFlavor.value.size,
+                numbers = viewModel.uploadNetwork.value.size,
                 expanded = uploadExpanded
             ) {
                 uploadExpanded = it
@@ -68,14 +69,14 @@ fun Flavor(
         }
         if (uploadExpanded) {
             itemsIndexed(uploadList) { index, item ->
-                if (index == 0) DataGridHeader(screenType = "Flavor")
-                DataGridElementList<Flavor>(
+                if (index == 0) DataGridHeader(screenType = "Network")
+                DataGridElementList<Network>(
                     item = item,
                     index = index,
                     type = "할당됨",
-                    screenType = "Flavor"
+                    screenType = "Network"
                 ) { it, idx ->
-                    viewModel.deleteFlavor(it, idx)
+                    viewModel.deleteNetwork(it, idx)
                 }
             }
         }
@@ -84,7 +85,7 @@ fun Flavor(
         item {
             DataGridBar(
                 type = "사용 가능",
-                numbers = viewModel.possibleFlavor.value.size,
+                numbers = viewModel.possibleNetwork.value.size,
                 expanded = possibleExpanded,
             ) {
                 possibleExpanded = it
@@ -92,14 +93,14 @@ fun Flavor(
         }
         if (possibleExpanded) {
             itemsIndexed(possibleList) { index, item ->
-                if (index == 0) DataGridHeader(screenType = "Flavor")
-                DataGridElementList<Flavor>(
+                if (index == 0) DataGridHeader(screenType = "Network")
+                DataGridElementList<Network>(
                     item = item,
                     index = index,
                     type = "사용 가능",
-                    screenType = "Flavor"
+                    screenType = "Network"
                 ) { it, idx ->
-                    viewModel.uploadFlavor(it, idx)
+                    viewModel.uploadNetwork(it, idx)
                 }
             }
         }
@@ -110,18 +111,3 @@ fun Flavor(
         }
     }
 }
-
-
-
-/*
-        Column(
-            modifier = Modifier
-                .animateContentSize(
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                        stiffness = Spring.StiffnessLow
-                    )
-                )
-        )
-        애니메이션
- */

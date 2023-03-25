@@ -67,7 +67,7 @@ fun Source(
     ) {
         item {
             Text(
-                text = stringResource(R.string.IC_Detail_description),
+                text = stringResource(R.string.IC_Source_description),
                 style = MaterialTheme.typography.subtitle2,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(20.dp)
@@ -79,7 +79,6 @@ fun Source(
             ) {
                 BootingSource() {
                     selectedTitle = it
-                    Timber.tag("CHECK").e(it)
                 }
                 VolumeSwitchButton(bootSourceType = selectedTitle) {
                     volumnSizeExpanded = !it // <- ! 붙여준거 주의
@@ -94,7 +93,7 @@ fun Source(
                     VolumeSize(
                         keyboardController = keyboardController
                     ) {
-                        Timber.tag("CHECK").e(it)
+                        /*  */
                     }
                     VolumeSizeSwitchButton()
                 }
@@ -103,7 +102,7 @@ fun Source(
 
         // 할당됨
         item {
-            SourceDataGrid(
+            DataGridBar(
                 type = "할당됨",
                 numbers = viewModel.uploadSource.value.size,
                 expanded = uploadExpanded
@@ -113,11 +112,12 @@ fun Source(
         }
         if (uploadExpanded) {
             itemsIndexed(uploadList) { index, item ->
-                if (index== 0) SourceHeader()
-                SourceDataGridList(
+                if (index == 0) DataGridHeader(screenType = "Source")
+                DataGridElementList<Source>(
                     item = item,
                     index = index,
-                    type = "할당됨"
+                    type = "할당됨",
+                    screenType = "Source"
                 ) { it, idx ->
                     viewModel.deleteSource(it, idx)
                 }
@@ -126,7 +126,7 @@ fun Source(
 
         // 사용 가능
         item {
-            SourceDataGrid(
+            DataGridBar(
                 type = "사용 가능",
                 numbers = viewModel.possibleSource.value.size,
                 expanded = possibleExpanded,
@@ -136,11 +136,12 @@ fun Source(
         }
         if (possibleExpanded) {
             itemsIndexed(possibleList) { index, item ->
-                if (index== 0) SourceHeader()
-                SourceDataGridList(
+                if (index == 0) DataGridHeader(screenType = "Source")
+                DataGridElementList<Source>(
                     item = item,
                     index = index,
-                    type = "사용 가능"
+                    type = "사용 가능",
+                    screenType = "Source"
                 ) { it, idx ->
                     viewModel.uploadSource(it, idx)
                 }
@@ -388,3 +389,4 @@ fun RowScope.VolumeSizeSwitchButton(
         }
     }
 }
+
