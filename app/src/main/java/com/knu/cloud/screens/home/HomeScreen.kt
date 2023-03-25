@@ -50,5 +50,4 @@ fun HomeScreen(appState: ProjectAppState = rememberProjectAppState()) {
             }
         }
     }
-
 }

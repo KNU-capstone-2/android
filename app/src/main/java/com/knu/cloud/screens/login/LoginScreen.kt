@@ -15,30 +15,31 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.knu.cloud.R
-import com.knu.cloud.navigation.MainDestination
+import com.knu.cloud.components.text_input.ProjectTextInput
+import com.knu.cloud.components.text_input.TextInputType
+import com.knu.cloud.components.text_input.addFocusCleaner
 
 @ExperimentalComposeUiApi
 @Composable
 fun LoginScreen(onLoginClick: () -> Unit) {
     Surface(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         color = Color.White
     ) {
         Login(onLoginClick = onLoginClick)
@@ -59,23 +60,16 @@ fun Login(onLoginClick: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(5.dp, alignment = Alignment.Bottom),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TextInput(
-            InputType.Name,
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    passwordFocusRequester.requestFocus()
-                    keyboardController.hide()
-                }
-            ),
+
+        ProjectTextInput(
+            type = TextInputType.ID,
+            keyboardController = keyboardController,
+            passwordFocusRequester = passwordFocusRequester
         )
-        TextInput(
-            InputType.Password,
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController.hide()
-                }
-            ),
-            focusRequester = passwordFocusRequester,
+        ProjectTextInput(
+            type = TextInputType.PASSWORD,
+            keyboardController = keyboardController,
+            passwordFocusRequester = passwordFocusRequester
         )
         Button(
             onClick = onLoginClick,
@@ -128,7 +122,6 @@ fun Login(onLoginClick: () -> Unit) {
                 )
             }
         }
-
     }
 }
 
