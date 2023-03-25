@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.knu.cloud.R
 import com.knu.cloud.screens.instanceCreate.Flavor
+import com.knu.cloud.screens.instanceCreate.Network
 import com.knu.cloud.screens.instanceCreate.Source
 
 
@@ -325,6 +326,155 @@ fun SourceDataGridList(
                     onClickButton(item, index)
                 },
                 modifier = Modifier.weight(SourceUtils.columnUpDownWeight)
+            ) {
+                Icon(imageVector = if(type == "할당됨") Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
+                    contentDescription = "Updown Icon")
+            }
+        }
+        Divider(
+            color = Color.LightGray.copy(alpha = 0.3f),
+            thickness = 1.dp,
+            modifier = Modifier.padding(5.dp)
+        )
+    }
+}
+
+/*
+    Network
+*/
+object NetworkUtils{
+    const val columnNetworkWeight = .2f
+    const val columnSubNetWeight = .3f
+    const val columnShareWeight = .2f
+    const val columnAdminStateWeight = .2f
+    const val columnStateWeight = .1f
+    const val columnUpDownWeight = .1f
+
+    const val tableHeader = "tableHeader"
+    const val tableList = "tableList"
+}
+@Composable
+fun NetworkDataGrid(
+    type: String,
+    numbers: Int,
+    expanded: Boolean,
+    onExpanded: (Boolean) -> Unit
+) {
+    var expanded2 = expanded
+
+    Row(
+        modifier = Modifier
+            .padding(5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        ExpandedItemButton(
+            expanded = expanded2,
+            onClick = {
+                expanded2 = !expanded2
+                onExpanded(expanded2)
+            }
+        )
+        Text(
+            text = type,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(end = 10.dp)
+        )
+        Surface(
+            modifier = Modifier
+                .padding(0.dp),
+            shape = CircleShape,
+            color = Color.LightGray
+        ) {
+            Text(
+                text = numbers.toString(),
+                style = MaterialTheme.typography.caption,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(5.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun NetworkHeader() {
+    Column(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxWidth(),
+        ) {
+            TableCell(
+                text = stringResource(id = R.string.IC_Network_Header_Name),
+                weight = NetworkUtils.columnNetworkWeight,
+                type = NetworkUtils.tableHeader
+            )
+            TableCell(
+                text = stringResource(id = R.string.IC_Network_Header_AdminState),
+                weight = NetworkUtils.columnSubNetWeight,
+                type = NetworkUtils.tableHeader
+            )
+            TableCell(
+                text = stringResource(id = R.string.IC_Network_Header_Share),
+                weight = NetworkUtils.columnShareWeight,
+                type = NetworkUtils.tableHeader
+            )
+            TableCell(
+                text = stringResource(id = R.string.IC_Network_Header_AdminState),
+                weight = NetworkUtils.columnAdminStateWeight,
+                type = NetworkUtils.tableHeader
+            )
+            TableCell(
+                text = stringResource(id = R.string.IC_Network_Header_State),
+                weight = NetworkUtils.columnStateWeight,
+                type = NetworkUtils.tableHeader
+            )
+            TableCell(text = "", weight = NetworkUtils.columnUpDownWeight, type = NetworkUtils.tableHeader)
+        }
+        Divider(
+            color = Color.Black.copy(alpha = 0.3f),
+            thickness = 1.dp,
+            modifier = Modifier.padding(5.dp)
+        )
+    }
+}
+
+@Composable
+fun NetworkDataGridList(
+    modifier: Modifier = Modifier,
+    item: Network,
+    index: Int,
+    type: String,
+    onClickButton: (Network, Int) -> Unit,
+) {
+    var backGcolor = Color.White
+    if (index % 2 == 0) {
+        backGcolor = Color.LightGray
+    }
+    Column(
+        modifier = modifier.fillMaxSize().padding(start = 15.dp, end = 15.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(backGcolor),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            TableCell(text = item.network, weight = NetworkUtils.columnNetworkWeight, type = NetworkUtils.tableList)
+            TableCell(text = item.subNet, weight = NetworkUtils.columnSubNetWeight, type = NetworkUtils.tableList)
+            TableCell(text = item.share, weight = NetworkUtils.columnShareWeight, type = NetworkUtils.tableList)
+            TableCell(text = item.adminState, weight = NetworkUtils.columnAdminStateWeight, type = NetworkUtils.tableList)
+            TableCell(text = item.state, weight = NetworkUtils.columnStateWeight, type = NetworkUtils.tableList)
+            IconButton(
+                onClick = {
+                    onClickButton(item, index)
+                },
+                modifier = Modifier.weight(NetworkUtils.columnUpDownWeight)
             ) {
                 Icon(imageVector = if(type == "할당됨") Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
                     contentDescription = "Updown Icon")

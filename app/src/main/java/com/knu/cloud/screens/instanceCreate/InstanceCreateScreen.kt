@@ -21,6 +21,6 @@ fun InstanceCreateScreen(
             .fillMaxSize(),
         color = Color.White
     ) {
-        SourceScreen(viewModel = viewModel)
+        NetworkScreen(viewModel = viewModel)
     }
 }
