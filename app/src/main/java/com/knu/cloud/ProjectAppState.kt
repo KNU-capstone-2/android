@@ -1,9 +1,7 @@
 package com.knu.cloud
 
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.*
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -45,10 +43,6 @@ class ProjectAppState(
     val currentRoute: String?
         get() = navController.currentDestination?.route
 
-//    fun upPress() {
-//        navController.navigateUp()
-//    }
-
     fun navigateToBottomBarRoute(route: String) {
         if (route != currentRoute) {
             navController.navigate(route) {
@@ -73,6 +67,8 @@ class ProjectAppState(
     fun navigateToHome(from:NavBackStackEntry){
         navController.navigate(MainDestination.HOME_ROUTE)
     }
+
+
 }
 
 private fun NavBackStackEntry.lifecycleIsResumed() =
