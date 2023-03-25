@@ -6,10 +6,7 @@ import androidx.navigation.compose.composable
 import com.knu.cloud.screens.home.dashboard.ProjectDashBoardScreen
 import com.knu.cloud.screens.home.instance.ProjectInstanceScreen
 import com.knu.cloud.screens.home.setting.ProjectSettingScreen
-import com.knu.cloud.screens.instanceCreate.InstanceCreateDetail
-import com.knu.cloud.screens.instanceCreate.InstanceCreateFlavor
-import com.knu.cloud.screens.instanceCreate.InstanceCreateNetwork
-import com.knu.cloud.screens.instanceCreate.InstanceCreateSource
+import com.knu.cloud.screens.instanceCreate.*
 import com.knu.cloud.screens.login.LoginScreen
 
 fun NavGraphBuilder.homeNavGraph(
@@ -44,17 +41,23 @@ fun NavGraphBuilder.authNavGraph(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 fun NavGraphBuilder.instanceCreateNavGraph() {
+    val instanceCreateViewModel = InstanceCreateViewModel()
     composable(InstanceCreateSections.Details.route){ from ->
-        InstanceCreateDetail()
+        DetailScreen(viewModel = instanceCreateViewModel)
+//        InstanceCreateDetail()
     }
     composable(InstanceCreateSections.Source.route){ from ->
-        InstanceCreateSource()
+        SourceScreen(viewModel = instanceCreateViewModel)
+//        InstanceCreateSource()
     }
     composable(InstanceCreateSections.Flavor.route){ from ->
-        InstanceCreateFlavor()
+        FlavorScreen(viewModel = instanceCreateViewModel)
+//        InstanceCreateFlavor()
     }
     composable(InstanceCreateSections.Network.route){ from ->
-        InstanceCreateNetwork()
+        NetworkScreen(viewModel = instanceCreateViewModel)
+//        InstanceCreateNetwork()
     }
 }

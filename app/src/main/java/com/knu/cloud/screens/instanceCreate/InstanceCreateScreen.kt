@@ -48,7 +48,6 @@ fun InstanceCreateScreen(){
             instanceCreateNavGraph()
         }
     }
-
 }
 
 @Composable
@@ -70,8 +69,5 @@ fun ProjectNavigationRail(
                 onClick = { navigateToRoute(section.route) }
             )
         }
-
-
-
     }
 }
