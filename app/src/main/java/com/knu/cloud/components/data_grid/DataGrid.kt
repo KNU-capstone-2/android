@@ -62,6 +62,7 @@ fun FlavorDataGrid(
     onClickButton: (Flavor, Int) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .padding(5.dp),
@@ -186,22 +187,38 @@ fun FlavorDataGridList(
 }
 
 /* Source */
+val columnNameWeight = .2f
+val columnVCPUSWeight = .2f
+val columnRAMWeight = .2f
+val columnDiskTotalWeight = .2f
+val columnRootDiskWeight = .2f
+val columnEphemeralDiskWeight = .3f
+val columnPublicWeight = .1f
+val columnUpDownWeight = .1f
+
+val tableHeader = "tableHeader"
+val tableList = "tableList"
+
 @Composable
 fun SourceDataGrid(
     type: String,
-    dataSet: List<Flavor>,
     numbers: Int,
-    onClickButton: (Flavor, Int) -> Unit,
+    expanded: Boolean,
+    onExpanded: (Boolean) -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var expanded2 = expanded
+
     Row(
         modifier = Modifier
             .padding(5.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ExpandedItemButton(
-            expanded = expanded,
-            onClick = { expanded = !expanded },
+            expanded = expanded2,
+            onClick = {
+                expanded2 = !expanded2
+                onExpanded(expanded2)
+            }
         )
         Text(
             text = type,
@@ -222,97 +239,109 @@ fun SourceDataGrid(
             )
         }
     }
-    if (expanded) {
-        SourceDataGridList(SourceDatas = dataSet, type = type) { it, idx ->
-            onClickButton(it, idx)
-        }
-    }
 }
 
 @Composable
-fun SourceDataGridList(
-    SourceDatas: List<Flavor>,
-    modifier: Modifier = Modifier,
-    type: String,
-    onClickButton: (Flavor, Int) -> Unit,
-) {
-
-    // Each cell of a column must have the same weight.
-    val columnNameWeight = .2f
-    val columnVCPUSWeight = .2f
-    val columnRAMWeight = .2f
-    val columnDiskTotalWeight = .2f
-    val columnRootDiskWeight = .2f
-    val columnEphemeralDiskWeight = .3f
-    val columnPublicWeight = .1f
-    val columnUpDownWeight = .1f
-
-    val tableHeader = "tableHeader"
-    val tableList = "tableList"
-
-    LazyColumn(
+fun SourceHeader() {
+    Column(
         modifier = Modifier
             .padding(10.dp)
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
     ) {
-        item { // Header
-            Row(
-                modifier = Modifier
-                    .padding(5.dp)
-                    .fillMaxWidth(),
-            ) {
-                TableCell(text = stringResource(id = R.string.IC_Flavor_Header_Name), weight = columnNameWeight, type = tableHeader)
-                TableCell(text = stringResource(id = R.string.IC_Flavor_Header_VCPUS), weight = columnVCPUSWeight, type = tableHeader)
-                TableCell(text = stringResource(id = R.string.IC_Flavor_Header_RAM), weight = columnRAMWeight, type = tableHeader)
-                TableCell(text = stringResource(id = R.string.IC_Flavor_Header_DiskTotal), weight = columnDiskTotalWeight, type = tableHeader)
-                TableCell(text = stringResource(id = R.string.IC_Flavor_Header_RootDisk), weight = columnRootDiskWeight, type = tableHeader)
-                TableCell(text = stringResource(id = R.string.IC_Flavor_Header_EphemeralDisk), weight = columnEphemeralDiskWeight, type = tableHeader)
-                TableCell(text = stringResource(id = R.string.IC_Flavor_Header_Public), weight = columnPublicWeight, type = tableHeader)
-                TableCell(text = "", weight = columnUpDownWeight, type = tableHeader)
-            }
-            Divider(
-                color = Color.Black.copy(alpha = 0.3f),
-                thickness = 1.dp,
-                modifier = Modifier.padding(5.dp)
+        Row(
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxWidth(),
+        ) {
+            TableCell(
+                text = stringResource(id = R.string.IC_Flavor_Header_Name),
+                weight = columnNameWeight,
+                type = tableHeader
             )
+            TableCell(
+                text = stringResource(id = R.string.IC_Flavor_Header_VCPUS),
+                weight = columnVCPUSWeight,
+                type = tableHeader
+            )
+            TableCell(
+                text = stringResource(id = R.string.IC_Flavor_Header_RAM),
+                weight = columnRAMWeight,
+                type = tableHeader
+            )
+            TableCell(
+                text = stringResource(id = R.string.IC_Flavor_Header_DiskTotal),
+                weight = columnDiskTotalWeight,
+                type = tableHeader
+            )
+            TableCell(
+                text = stringResource(id = R.string.IC_Flavor_Header_RootDisk),
+                weight = columnRootDiskWeight,
+                type = tableHeader
+            )
+            TableCell(
+                text = stringResource(id = R.string.IC_Flavor_Header_EphemeralDisk),
+                weight = columnEphemeralDiskWeight,
+                type = tableHeader
+            )
+            TableCell(
+                text = stringResource(id = R.string.IC_Flavor_Header_Public),
+                weight = columnPublicWeight,
+                type = tableHeader
+            )
+            TableCell(text = "", weight = columnUpDownWeight, type = tableHeader)
         }
+        Divider(
+            color = Color.Black.copy(alpha = 0.3f),
+            thickness = 1.dp,
+            modifier = Modifier.padding(5.dp)
+        )
+    }
+}
 
-        // lines Data
-        itemsIndexed(SourceDatas) { index, item ->
-            var backGcolor = Color.White
-            if (index % 2 == 0) {
-                backGcolor = Color.LightGray
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(backGcolor),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+@Composable
+fun SourceDataGridList(
+    modifier: Modifier = Modifier,
+    item: Flavor,
+    index: Int,
+    type: String,
+    onClickButton: (Flavor, Int) -> Unit,
+) {
+    var backGcolor = Color.White
+    if (index % 2 == 0) {
+        backGcolor = Color.LightGray
+    }
+    Column(
+        modifier = modifier.fillMaxSize().padding(15.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(backGcolor),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            TableCell(text = item.name, weight = columnNameWeight, type = tableList)
+            TableCell(text = item.vcpus.toString(), weight = columnVCPUSWeight, type = tableList)
+            TableCell(text = item.ram.toString() + " MB", weight = columnRAMWeight, type = tableList)
+            TableCell(text = item.diskTotal.toString() + " GB", weight = columnDiskTotalWeight, type = tableList)
+            TableCell(text = item.rootDisk.toString() + " GB", weight = columnRootDiskWeight, type = tableList)
+            TableCell(text = item.ephemeralDisk.toString() + " GB", weight = columnEphemeralDiskWeight, type = tableList)
+            TableCell(text = item.public, weight = columnPublicWeight, type = tableList)
+            IconButton(
+                onClick = {
+                    onClickButton(item, index)
+                },
+                modifier = Modifier.weight(columnUpDownWeight)
             ) {
-                TableCell(text = item.name, weight = columnNameWeight, type = tableList)
-                TableCell(text = item.vcpus.toString(), weight = columnVCPUSWeight, type = tableList)
-                TableCell(text = item.ram.toString() + " MB", weight = columnRAMWeight, type = tableList)
-                TableCell(text = item.diskTotal.toString() + " GB", weight = columnDiskTotalWeight, type = tableList)
-                TableCell(text = item.rootDisk.toString() + " GB", weight = columnRootDiskWeight, type = tableList)
-                TableCell(text = item.ephemeralDisk.toString() + " GB", weight = columnEphemeralDiskWeight, type = tableList)
-                TableCell(text = item.public, weight = columnPublicWeight, type = tableList)
-                IconButton(
-                    onClick = {
-                        onClickButton(item, index)
-                    },
-                    modifier = Modifier.weight(columnUpDownWeight)
-                ) {
-                    Icon(imageVector = if(type == "할당됨") Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
-                        contentDescription = "Updown Icon")
-                }
+                Icon(imageVector = if(type == "할당됨") Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
+                    contentDescription = "Updown Icon")
             }
-            Divider(
-                color = Color.LightGray.copy(alpha = 0.3f),
-                thickness = 1.dp,
-                modifier = Modifier.padding(5.dp)
-            )
         }
+        Divider(
+            color = Color.LightGray.copy(alpha = 0.3f),
+            thickness = 1.dp,
+            modifier = Modifier.padding(5.dp)
+        )
     }
 }
