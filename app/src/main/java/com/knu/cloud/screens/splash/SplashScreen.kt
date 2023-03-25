@@ -16,7 +16,7 @@ import kotlinx.coroutines.delay
 fun SplashScreen(navController: NavController) {
     LaunchedEffect(key1 = true) {
         delay(2000L)
-//        navController.navigate(ProjectScreens.HomeScreen.name)
+        navController.navigate(ProjectScreens.LoginScreen.name)
     }
     Column(
         verticalArrangement = Arrangement.Top,
