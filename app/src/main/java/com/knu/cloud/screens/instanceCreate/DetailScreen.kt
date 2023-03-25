@@ -59,8 +59,7 @@ fun Detail(
         Text(
             text = stringResource(R.string.IC_Detail_description),
             style = MaterialTheme.typography.subtitle2,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(bottom = 15.dp)
         )
         Text(
             text = "Project Name",

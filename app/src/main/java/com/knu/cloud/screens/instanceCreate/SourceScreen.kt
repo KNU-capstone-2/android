@@ -69,7 +69,6 @@ fun Source(
             Text(
                 text = stringResource(R.string.IC_Source_description),
                 style = MaterialTheme.typography.subtitle2,
-                textAlign = TextAlign.Center,
                 modifier = Modifier.padding(20.dp)
             )
             Row(
@@ -170,7 +169,7 @@ fun RowScope.VolumeSwitchButton(
 
     Column(
         modifier = Modifier
-            .padding(10.dp)
+            .padding(start =15.dp, end= 15.dp, bottom = 15.dp)
             .weight(.1f)
     ) {
         Text(

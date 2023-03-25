@@ -52,7 +52,6 @@ fun Network(
             Text(
                 text = stringResource(R.string.IC_Network_description),
                 style = MaterialTheme.typography.subtitle2,
-                textAlign = TextAlign.Center,
                 modifier = Modifier.padding(20.dp)
             )
         }
