@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-data class Flavor(
+data class Flavor (
     val name: String,
     val vcpus: Int,
     val ram: Int,
@@ -16,6 +16,16 @@ data class Flavor(
     val ephemeralDisk: Int,
     val public: String
 )
+
+data class Source(
+    val name: String,
+    val update: String,
+    val size: Double,
+    val format: String,
+    val visible: String
+)
+
+var uploadFlavorDataSet = mutableListOf<Flavor>()
 
 var possibleFlavorDataSet = mutableListOf(
     Flavor("m1.nano", 1, 128, 1, 1, 0, "예"),
@@ -31,7 +41,14 @@ var possibleFlavorDataSet = mutableListOf(
     Flavor("m1.large", 4, 8, 80, 80, 0, "예"),
     Flavor("m1.xlarge", 8, 16, 160, 160, 0, "예")
 )
-var uploadFlavorDataSet = mutableListOf<Flavor>()
+
+var uploadSourceDataSet = mutableListOf<Source>()
+
+var possibleSourceDataSet = mutableListOf(
+    Source("cirros-0.5.2-x86_64-disk", "3/13/23 7:31 AM", 15.55, "QCOW2", "공용"),
+    Source("nano-1-x86_64-disk", "3/24/23 11:13 PM", 5.55, "QCOW2", "공용")
+)
+
 
 @HiltViewModel
 class InstanceCreateViewModel @Inject constructor(
@@ -42,9 +59,18 @@ class InstanceCreateViewModel @Inject constructor(
     private val _possibleFlavor = mutableStateOf<List<Flavor>>(emptyList())
     val possibleFlavor: State<List<Flavor>> = _possibleFlavor
 
+    private val _uploadSource = mutableStateOf<List<Source>>(emptyList())
+    val uploadSource: State<List<Source>> = _uploadSource
+    private val _possibleSource = mutableStateOf<List<Source>>(emptyList())
+    val possibleSource: State<List<Source>> = _possibleSource
+
+
     init {
         _uploadFlavor.value = uploadFlavorDataSet
         _possibleFlavor.value = possibleFlavorDataSet
+
+        _uploadSource.value = uploadSourceDataSet
+        _possibleSource.value = possibleSourceDataSet
     }
 
     fun uploadFlavor(flavor: Flavor, position: Int) {
@@ -61,4 +87,17 @@ class InstanceCreateViewModel @Inject constructor(
         _possibleFlavor.value = possibleFlavorDataSet.toMutableStateList()
     }
 
+    fun uploadSource(source: Source, position: Int) {
+        uploadSourceDataSet.add(source)
+        _uploadSource.value = uploadSourceDataSet.toMutableStateList()
+        possibleSourceDataSet.removeAt(position)
+        _possibleSource.value = possibleSourceDataSet.toMutableStateList()
+    }
+
+    fun deleteSource(source: Source, position: Int) {
+        uploadSourceDataSet.removeAt(position)
+        _uploadSource.value = uploadSourceDataSet.toMutableStateList()
+        possibleSourceDataSet.add(source)
+        _possibleSource.value = possibleSourceDataSet.toMutableStateList()
+    }
 }

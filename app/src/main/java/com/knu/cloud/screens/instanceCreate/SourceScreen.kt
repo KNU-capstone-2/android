@@ -57,8 +57,8 @@ fun Source(
     var uploadExpanded by remember { mutableStateOf(false) }
     var possibleExpanded by remember { mutableStateOf(true) }
 
-    val uploadList = viewModel.uploadFlavor.value
-    val possibleList = viewModel.possibleFlavor.value
+    val uploadList = viewModel.uploadSource.value
+    val possibleList = viewModel.possibleSource.value
 
     LazyColumn(
         modifier = Modifier
@@ -105,7 +105,7 @@ fun Source(
         item {
             SourceDataGrid(
                 type = "할당됨",
-                numbers = viewModel.uploadFlavor.value.size,
+                numbers = viewModel.uploadSource.value.size,
                 expanded = uploadExpanded
             ) {
                 uploadExpanded = it
@@ -119,7 +119,7 @@ fun Source(
                     index = index,
                     type = "할당됨"
                 ) { it, idx ->
-                    viewModel.deleteFlavor(it, idx)
+                    viewModel.deleteSource(it, idx)
                 }
             }
         }
@@ -128,7 +128,7 @@ fun Source(
         item {
             SourceDataGrid(
                 type = "사용 가능",
-                numbers = viewModel.possibleFlavor.value.size,
+                numbers = viewModel.possibleSource.value.size,
                 expanded = possibleExpanded,
             ) {
                 possibleExpanded = it
@@ -142,7 +142,7 @@ fun Source(
                     index = index,
                     type = "사용 가능"
                 ) { it, idx ->
-                    viewModel.uploadFlavor(it, idx)
+                    viewModel.uploadSource(it, idx)
                 }
             }
         }

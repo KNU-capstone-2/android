@@ -19,5 +19,10 @@
     <string name="IC_Flavor_Header_RootDisk">Root 디스크</string>
     <string name="IC_Flavor_Header_EphemeralDisk">Ephemeral 디스크</string>
     <string name="IC_Flavor_Header_Public">공용</string>
-
+    <string name="IC_Source_Header_Name">이름</string>
+    <string name="IC_Source_Header_Update">업데이트 완료</string>
+    <string name="IC_Source_Header_Size">크기</string>
+    <string name="IC_Source_Header_Format">포멧</string>
+    <string name="IC_Source_Header_Visible">가시성</string>
+    
 </resources>
