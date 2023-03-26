@@ -1,5 +1,6 @@
 package com.knu.cloud.screens.instanceCreate
 
+import android.content.res.Configuration
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +19,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -169,7 +171,7 @@ fun RowScope.VolumeSwitchButton(
 
     Column(
         modifier = Modifier
-            .padding(start =15.dp, end= 15.dp, bottom = 15.dp)
+            .padding(10.dp)
             .weight(.1f)
     ) {
         Text(
@@ -179,13 +181,13 @@ fun RowScope.VolumeSwitchButton(
             modifier = Modifier.padding(10.dp)
         )
         Row(
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier.padding(start = 5.dp).fillMaxWidth(),
         ) {
             var buttonState by remember { mutableStateOf(false) }
-
             TextButton(
                 modifier = Modifier
-                    .border(BorderStroke(1.dp, Color.Gray), shape= RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp)),
+                    .border(BorderStroke(1.dp, Color.Gray), shape= RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp))
+                    .height(55.dp),
                 shape = RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     backgroundColor = if(buttonState) Color.White else Color.Gray,
@@ -204,7 +206,8 @@ fun RowScope.VolumeSwitchButton(
             }
             TextButton(
                 modifier = Modifier
-                    .border(BorderStroke(1.dp, Color.Gray), shape= RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp)),
+                    .border(BorderStroke(1.dp, Color.Gray), shape= RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp))
+                    .height(55.dp),
                 shape = RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     backgroundColor = if(buttonState) Color.Gray else Color.White,
@@ -321,7 +324,7 @@ fun RowScope.VolumeSize(
             text = "볼륨 크기 (GB)",
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(top = 5.dp, start = 10.dp, end = 10.dp)
         )
         ProjectTextInput(
             type = TextInputType.FIELD,
@@ -345,13 +348,14 @@ fun RowScope.VolumeSizeSwitchButton(
             modifier = Modifier.padding(10.dp)
         )
         Row(
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier.padding(start = 5.dp).fillMaxWidth(),
         ) {
             var buttonState by remember { mutableStateOf(false) }
 
             TextButton(
                 modifier = Modifier
-                    .border(BorderStroke(1.dp, Color.Gray), shape= RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp)),
+                    .border(BorderStroke(1.dp, Color.Gray), shape= RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp))
+                    .height(55.dp),
                 shape = RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     backgroundColor = if(buttonState) Color.White else Color.Gray,
@@ -369,7 +373,8 @@ fun RowScope.VolumeSizeSwitchButton(
             }
             TextButton(
                 modifier = Modifier
-                    .border(BorderStroke(1.dp, Color.Gray), shape= RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp)),
+                    .border(BorderStroke(1.dp, Color.Gray), shape= RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp))
+                    .height(55.dp),
                 shape = RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     backgroundColor = if(buttonState) Color.Gray else Color.White,

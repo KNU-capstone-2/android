@@ -65,7 +65,7 @@ fun Detail(
             text = "Project Name",
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(top = 15.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
         )
         ProjectTextInput(
             type = TextInputType.FIELD,
@@ -75,7 +75,7 @@ fun Detail(
             text = "인스턴스 이름",
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(15.dp)
+            modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
         )
         ProjectTextInput(
             type = TextInputType.FIELD,
@@ -86,7 +86,7 @@ fun Detail(
             text = "설명",
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(15.dp)
+            modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
         )
         ProjectTextInput(
             type = TextInputType.FIELD,
@@ -97,7 +97,7 @@ fun Detail(
             text = "가용 구역",
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(15.dp)
+            modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 10.dp)
         )
 
         DropdownCompute()
@@ -106,7 +106,7 @@ fun Detail(
             text = "개수",
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(15.dp)
+            modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
         )
         ProjectTextInput(
             type = TextInputType.FIELD,
