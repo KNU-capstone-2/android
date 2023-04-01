@@ -1,5 +1,6 @@
 package com.knu.cloud.screens.instanceCreate
 
+import android.app.Activity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,9 +22,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import androidx.lifecycle.ViewModelProvider
+import com.knu.cloud.MainActivity
 import com.knu.cloud.R
+import com.knu.cloud.components.DonutChart
 import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
 import com.knu.cloud.components.text_input.addFocusCleaner
@@ -38,82 +45,114 @@ fun DetailScreen(
             .fillMaxSize(),
         color = Color.White
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ){
+        Text(
+            text = stringResource(R.string.IC_Detail_description),
+            style = MaterialTheme.typography.subtitle2,
+            modifier = Modifier.padding(15.dp)
+        )
         Detail(viewModel = viewModel)
+        }
     }
 }
 
 @ExperimentalComposeUiApi
+@Preview(showBackground = true)
 @Composable
 fun Detail(
-    viewModel: InstanceCreateViewModel,
+    viewModel: InstanceCreateViewModel = InstanceCreateViewModel(),
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Column(
+            modifier = Modifier
+//                    .fillMaxWidth()
+                .width(500.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(20.dp)
+                .addFocusCleaner(keyboardController!!),
+        ) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp)
-            .addFocusCleaner(keyboardController!!),
-    ) {
-        Text(
-            text = stringResource(R.string.IC_Detail_description),
-            style = MaterialTheme.typography.subtitle2,
-            modifier = Modifier.padding(bottom = 15.dp)
-        )
-        Text(
-            text = "Project Name",
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 15.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
-        )
-        ProjectTextInput(
-            type = TextInputType.FIELD,
-            keyboardController = keyboardController,
-        )
-        Text(
-            text = "인스턴스 이름",
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
-        )
-        ProjectTextInput(
-            type = TextInputType.FIELD,
-            keyboardController = keyboardController,
-        )
+            Text(
+                text = "Project Name",
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 15.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
+            )
+            ProjectTextInput(
+                type = TextInputType.FIELD,
+                keyboardController = keyboardController,
+            )
+            Text(
+                text = "인스턴스 이름",
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
+            )
+            ProjectTextInput(
+                type = TextInputType.FIELD,
+                keyboardController = keyboardController,
+            )
 
-        Text(
-            text = "설명",
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
-        )
-        ProjectTextInput(
-            type = TextInputType.FIELD,
-            keyboardController = keyboardController,
-        )
+            Text(
+                text = "설명",
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
+            )
+            ProjectTextInput(
+                type = TextInputType.FIELD,
+                keyboardController = keyboardController,
+            )
 
-        Text(
-            text = "가용 구역",
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 10.dp)
-        )
+            Text(
+                text = "가용 구역",
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 10.dp)
+            )
 
-        DropdownCompute()
+            DropdownCompute()
 
-        Text(
-            text = "개수",
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
-        )
-        ProjectTextInput(
-            type = TextInputType.FIELD,
-            keyboardController = keyboardController,
-        )
+            Text(
+                text = "개수",
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
+            )
+            ProjectTextInput(
+                type = TextInputType.FIELD,
+                keyboardController = keyboardController,
+            )
 
+        }
+        Surface(
+            modifier = Modifier.width(300.dp)
+        ) {
+            val chartColors = listOf(
+                MaterialTheme.colors.primary,
+                MaterialTheme.colors.primaryVariant,
+                MaterialTheme.colors.secondary
+            )
+            val chartValues = listOf(60f, 110f, 20f)
+            DonutChart(
+                modifier = Modifier
+                    .size(width = 300.dp, height = 300.dp)
+                    .padding(20.dp),
+                colors = chartColors,
+                inputValues = chartValues,
+                textColor = MaterialTheme.colors.secondaryVariant
+            )
+        }
     }
+
 }
 
 @Composable
@@ -137,7 +176,9 @@ fun DropdownCompute() {
             .clickable(onClick = { expanded = true }),
     ) {
         Row(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -154,7 +195,7 @@ fun DropdownCompute() {
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .width(with(LocalDensity.current){fieldSize.width.toDp()})
+                .width(with(LocalDensity.current) { fieldSize.width.toDp() })
                 .height(60.dp),
         ) {
             items.forEachIndexed { index, s ->
@@ -169,4 +210,30 @@ fun DropdownCompute() {
             }
         }
     }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun CustomDonutChart() {
+
+    val chartColors = listOf(
+        MaterialTheme.colors.primary,
+        MaterialTheme.colors.primaryVariant,
+        MaterialTheme.colors.secondary
+    )
+
+    val chartValues = listOf(60f, 110f, 20f)
+    DonutChart(
+        modifier = Modifier.padding(20.dp),
+        colors = chartColors,
+        inputValues = chartValues,
+        textColor = MaterialTheme.colors.secondaryVariant
+    )
+}
+
+@Preview
+@Composable
+fun DetailScreenPreview() {
+
 }
