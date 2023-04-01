@@ -10,12 +10,39 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.knu.cloud.R
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.knu.cloud.navigation.HomeSections
 
+@Composable
+fun LoginLogo() {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.BasicComponents_title),
+            modifier = Modifier.padding(bottom = 16.dp),
+            fontFamily = FontFamily(Font(R.font.nanumgothicextrabold)),
+            style = MaterialTheme.typography.h3,
+            color = colorResource(id = R.color.Black_Main)
+        )
+        Text(
+            text = stringResource(R.string.BasicComponents_subTitle),
+            modifier = Modifier.padding(bottom = 16.dp),
+            fontFamily = FontFamily(Font(R.font.nanumgothicbold)),
+            style = MaterialTheme.typography.caption,
+            color = Color.Gray
+        )
+    }
+}
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -36,13 +37,16 @@ fun ProjectTextInput(
     modifier: Modifier = Modifier,
     type: TextInputType,
     text: String = "",
-    valueChange: (String) -> Unit = {},
     hint: String = "",
+    label: String = "",
     trailingImage: Painter? = null,
     maxLines: Int = 1,
     singleLine: Boolean = false,
     keyboardController: SoftwareKeyboardController? = null,
-    passwordFocusRequester: FocusRequester = FocusRequester()
+    passwordFocusRequester: FocusRequester = FocusRequester(),
+    isError: State<Boolean> = remember { mutableStateOf(false) },
+    errorMsg: State<String> = remember { mutableStateOf("") },
+    onValueChangeListener: (String) -> Unit = {},
 ) {
 
     when (type) {
@@ -54,9 +58,11 @@ fun ProjectTextInput(
                 keyboardActions = KeyboardActions(
                     onNext = {
                         passwordFocusRequester.requestFocus()
-                        keyboardController?.hide()
                     }
                 ),
+                isError = isError,
+                errorMsg = errorMsg,
+                onValueChangeListener = onValueChangeListener
             )
         }
         TextInputType.PASSWORD -> {
@@ -70,16 +76,23 @@ fun ProjectTextInput(
                     }
                 ),
                 focusRequester = passwordFocusRequester,
+                isError = isError,
+                errorMsg = errorMsg,
+                onValueChangeListener = onValueChangeListener
             )
         }
         TextInputType.FIELD -> {
             TextInput(
                 inputType = InputType.FIELD,
+                label = label,
                 keyboardActions = KeyboardActions(
-                    onNext = {
+                    onDone = {
                         keyboardController?.hide()
                     }
                 ),
+                isError = isError,
+                errorMsg = errorMsg,
+                onValueChangeListener = onValueChangeListener
             )
         }
     }
@@ -91,21 +104,32 @@ fun TextInput(
     inputType: InputType,
     modifier: Modifier = Modifier,
     leadingIcon: @Composable (() -> Unit)? = null,
+    label: String = "",
     focusRequester: FocusRequester? = null,
-    keyboardActions: KeyboardActions,
-    onAction: KeyboardActions = KeyboardActions.Default
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isError: State<Boolean> = remember { mutableStateOf(false) },
+    errorMsg: State<String> = remember { mutableStateOf("") },
+    onValueChangeListener: (value: String) -> Unit = {},
 ) {
-    var value by remember {
-        mutableStateOf("")
-    }
+    var textValue = rememberSaveable { mutableStateOf("") }
+
     OutlinedTextField(
-        value = value,
-        onValueChange = { value = it },
+        value = textValue.value,
+        onValueChange = {
+            textValue.value = it
+            onValueChangeListener(it)
+        },
         modifier = modifier
             .fillMaxWidth()
             .focusRequester(focusRequester ?: FocusRequester()),
         leadingIcon = leadingIcon,
-        label = { Text(text = inputType.label, color = Color.Black) },
+        label = {
+            if (inputType != InputType.FIELD) {
+                Text(text = inputType.label, color = Color.Black)
+            }else {
+                Text(text = label, color = Color.Black)
+            }
+        },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.Black,
             cursorColor = colorResource(id = R.color.Orange)
@@ -113,7 +137,8 @@ fun TextInput(
         shape = RoundedCornerShape(15.dp),
         keyboardOptions = inputType.keyboardOptions,
         visualTransformation = inputType.visualTransformation,
-        keyboardActions = keyboardActions
+        keyboardActions = keyboardActions,
+        isError = isError.value
     )
 }
 
@@ -124,7 +149,7 @@ sealed class InputType(
     val visualTransformation: VisualTransformation
 ) {
     object Email: InputType(
-        label = "아이디",
+        label = "이메일",
         icon = Icons.Default.Person,
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Next
@@ -141,8 +166,8 @@ sealed class InputType(
         visualTransformation = PasswordVisualTransformation()
     )
     object FIELD: InputType(
-        keyboardOptions= KeyboardOptions(
-            imeAction = ImeAction.Next
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Done
         ),
         visualTransformation = VisualTransformation.None
     )
