@@ -2,11 +2,20 @@
     <string name="app_name">Cloud</string>
 
 
+    <!-- basic Components -->
+    <string name="BasicComponents_title">POCKET</string>
+    <string name="BasicComponents_subTitle">실시간 클라우드 인프라 모니터링 서비스</string>
+
+    <!-- Splash Screen -->
+    <string name="Splash_title">Pocket</string>
+
     <!-- Login Screen -->
     <string name="SignIn_login">로그인</string>
-    <string name="SignIn_find_id">아이디 찾기</string>
+    <string name="SignIn_find_email">이메일 찾기</string>
     <string name="SignIn_find_password">비밀번호 찾기</string>
     <string name="SignIn_signUp">회원가입</string>
+    <string name="SignIn_loginState">로그인 상태 유지</string>
+    <string name="SignIn_policy">이용 약관</string>
 
     <!-- SignUp Screen -->
     <string name="SignUp_title">Cloud 계정 만들기</string>
