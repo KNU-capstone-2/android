@@ -3,10 +3,23 @@
 
 
     <!-- Login Screen -->
-    <string name="login">로그인</string>
-    <string name="find_id">아이디 찾기</string>
-    <string name="find_password">비밀번호 찾기</string>
-    <string name="signUp">회원가입</string>
+    <string name="SignIn_login">로그인</string>
+    <string name="SignIn_find_id">아이디 찾기</string>
+    <string name="SignIn_find_password">비밀번호 찾기</string>
+    <string name="SignIn_signUp">회원가입</string>
+
+    <!-- SignUp Screen -->
+    <string name="SignUp_title">Cloud 계정 만들기</string>
+    <string name="SignUp_subTitle">다음 사항에 동의할 경우 이메일과 비밀번호를 입력해주세요.</string>
+    <string name="SignUp_email">이메일</string>
+    <string name="SignUp_emailInfo">이메일은 @ 문자로 구분되어야 합니다.</string>
+    <string name="SignUp_password">비밀번호</string>
+    <string name="SignUp_passwordCheck">비밀번호 확인</string>
+    <string name="SignUp_passwordInfo">비밀번호는 최소 6, 최대 20으로 이루어져야 합니다.</string>
+    <string name="SignUp_personalInfoCheck">개인정보 수집 및 이용 동의 (필수)</string>
+    <string name="SignUp_expirationDateCheck">개인정보 유효기간 1년 동의 (필수)</string>
+    <string name="SignUp_policyInfo">동의하지 않은 약관이 존재합니다.</string>
+    <string name="SignUp_Button">회원가입</string>
 
     <!-- Instance Create Screen -->
     <string name="IC_Detail_description">인스턴스 초기 호스트 이름, 배포할 가용 구역, 인스턴스 수를 입력하십시오. 동일한 설정으로 여러 인스턴스를 생성하려는 수를 입력하면 됩니다.</string>

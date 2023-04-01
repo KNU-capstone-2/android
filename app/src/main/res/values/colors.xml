@@ -9,4 +9,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="Orange">#FE6244</color>
+    <color name="Black_Main">#2C3333</color>
+    <color name="skyBlue">#5BC0F8</color>
+    <color name="Waring">#FF8787</color>
 </resources>
