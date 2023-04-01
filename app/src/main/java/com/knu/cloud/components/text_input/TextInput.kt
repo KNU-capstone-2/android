@@ -46,10 +46,11 @@ fun ProjectTextInput(
 ) {
 
     when (type) {
-        TextInputType.ID -> {
+        TextInputType.Email -> {
             TextInput(
-                InputType.ID,
+                inputType = InputType.Email,
                 modifier = modifier,
+                leadingIcon = leadingIconType(InputType.Email),
                 keyboardActions = KeyboardActions(
                     onNext = {
                         passwordFocusRequester.requestFocus()
@@ -60,8 +61,9 @@ fun ProjectTextInput(
         }
         TextInputType.PASSWORD -> {
             TextInput(
-                InputType.Password,
+                inputType = InputType.Password,
                 modifier = modifier,
+                leadingIcon = leadingIconType(InputType.Password),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
@@ -72,7 +74,7 @@ fun ProjectTextInput(
         }
         TextInputType.FIELD -> {
             TextInput(
-                InputType.FIELD,
+                inputType = InputType.FIELD,
                 keyboardActions = KeyboardActions(
                     onNext = {
                         keyboardController?.hide()
@@ -88,6 +90,7 @@ fun ProjectTextInput(
 fun TextInput(
     inputType: InputType,
     modifier: Modifier = Modifier,
+    leadingIcon: @Composable (() -> Unit)? = null,
     focusRequester: FocusRequester? = null,
     keyboardActions: KeyboardActions,
     onAction: KeyboardActions = KeyboardActions.Default
@@ -101,14 +104,7 @@ fun TextInput(
         modifier = modifier
             .fillMaxWidth()
             .focusRequester(focusRequester ?: FocusRequester()),
-        leadingIcon = {
-            if(inputType != InputType.FIELD) {
-                Icon(
-                    imageVector = inputType.icon!!,
-                    contentDescription = null
-                )
-            }
-        },
+        leadingIcon = leadingIcon,
         label = { Text(text = inputType.label, color = Color.Black) },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.Black,
@@ -127,7 +123,7 @@ sealed class InputType(
     val keyboardOptions: KeyboardOptions,
     val visualTransformation: VisualTransformation
 ) {
-    object ID: InputType(
+    object Email: InputType(
         label = "아이디",
         icon = Icons.Default.Person,
         keyboardOptions = KeyboardOptions(
@@ -161,3 +157,13 @@ fun Modifier.addFocusCleaner(keyboardController: SoftwareKeyboardController, doO
         })
     }
 }
+
+fun leadingIconType(inputType: InputType) =
+    @Composable {
+        if (inputType != InputType.FIELD) {
+            Icon(
+                imageVector = inputType.icon!!,
+                contentDescription = null
+            )
+        }
+    }
