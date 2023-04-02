@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
 import com.knu.cloud.components.data_grid.*
 import com.knu.cloud.components.text_input.*
@@ -36,7 +37,7 @@ import timber.log.Timber
 @ExperimentalComposeUiApi
 @Composable
 fun SourceScreen(
-    viewModel: InstanceCreateViewModel
+    viewModel: InstanceCreateViewModel = hiltViewModel()
 ) {
     Surface(
         modifier = Modifier

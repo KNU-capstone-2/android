@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.knu.cloud.MainActivity
 import com.knu.cloud.R
@@ -38,7 +39,7 @@ import com.knu.cloud.components.text_input.addFocusCleaner
 @ExperimentalComposeUiApi
 @Composable
 fun DetailScreen(
-    viewModel: InstanceCreateViewModel
+    viewModel: InstanceCreateViewModel = hiltViewModel()
 ) {
     Surface(
         modifier = Modifier
