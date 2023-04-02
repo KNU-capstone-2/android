@@ -68,6 +68,14 @@ class ProjectAppState(
         navController.navigate(MainDestination.HOME_ROUTE)
     }
 
+    fun navigateToSignUp(from:NavBackStackEntry){
+        navController.navigate(MainDestination.SIGNUP_ROUTE)
+    }
+
+    fun navigateToLogin(from:NavBackStackEntry){
+        navController.navigate(MainDestination.LOGIN_ROUTE)
+    }
+
 
 }
 

@@ -29,12 +29,18 @@ import com.knu.cloud.components.text_input.addFocusCleaner
 
 @ExperimentalComposeUiApi
 @Composable
-fun LoginScreen(onLoginClick: () -> Unit) {
+fun LoginScreen(
+    onLoginClick: () -> Unit,
+    onSignUpClick : () -> Unit
+) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
     ) {
-        Login(onLoginClick = onLoginClick)
+        Login(
+            onLoginClick = onLoginClick,
+            onSignUpClick = onSignUpClick
+        )
     }
 }
 
@@ -42,6 +48,7 @@ fun LoginScreen(onLoginClick: () -> Unit) {
 @Composable
 fun Login(
     onLoginClick: () -> Unit,
+    onSignUpClick : () -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     Column(
@@ -54,6 +61,7 @@ fun Login(
         Spacer(modifier = Modifier.weight(1f))
         UserForm(
             onLoginClick = onLoginClick,
+            onSignUpClick = onSignUpClick,
             viewModel = viewModel
         )
     }
@@ -61,7 +69,11 @@ fun Login(
 
 @ExperimentalComposeUiApi
 @Composable
-fun UserForm(onLoginClick: () -> Unit, viewModel: LoginViewModel) {
+fun UserForm(
+    onLoginClick: () -> Unit,
+    onSignUpClick : () -> Unit,
+    viewModel: LoginViewModel
+) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val passwordFocusRequester = FocusRequester()
 
@@ -152,7 +164,7 @@ fun UserForm(onLoginClick: () -> Unit, viewModel: LoginViewModel) {
                 )
             }
             TextButton(
-                onClick = onLoginClick
+                onClick = onSignUpClick
             ) {
                 Text(
                     text = stringResource(id = R.string.SignIn_signUp),
