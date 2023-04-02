@@ -29,6 +29,7 @@ import timber.log.Timber
 @ExperimentalComposeUiApi
 @Composable
 fun SignUpScreen(
+    onSignUpSubmitClick : () -> Unit,
     viewModel: SignUpViewModel = hiltViewModel(),
 ) {
     Surface(
@@ -61,7 +62,10 @@ fun SignUpScreen(
                 color = Color.Gray,
                 modifier = Modifier.padding(start = 15.dp, bottom = 10.dp)
             )
-            SignUp(viewModel = viewModel)
+            SignUp(
+                onSignUpSubmitClick = onSignUpSubmitClick,
+                viewModel = viewModel
+            )
         }
     }
 }
@@ -69,6 +73,7 @@ fun SignUpScreen(
 @ExperimentalComposeUiApi
 @Composable
 fun SignUp(
+    onSignUpSubmitClick : () -> Unit,
     viewModel: SignUpViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -215,9 +220,10 @@ fun SignUp(
         }
 
         Button(
-            onClick = {
+            onClick ={
                 if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
                     Timber.tag("SignUpScreen").d("테스트 성공")
+                    onSignUpSubmitClick()
                 }
             },
             modifier = Modifier

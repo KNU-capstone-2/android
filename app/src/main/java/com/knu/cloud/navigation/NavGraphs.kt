@@ -8,6 +8,7 @@ import com.knu.cloud.screens.home.instance.ProjectInstanceScreen
 import com.knu.cloud.screens.home.setting.ProjectSettingScreen
 import com.knu.cloud.screens.instanceCreate.*
 import com.knu.cloud.screens.auth.login.LoginScreen
+import com.knu.cloud.screens.auth.signup.SignUpScreen
 
 fun NavGraphBuilder.homeNavGraph(
     onInstanceCreateBtnClicked: (NavBackStackEntry) -> Unit,
@@ -30,13 +31,21 @@ fun NavGraphBuilder.homeNavGraph(
 @OptIn(ExperimentalComposeUiApi::class)
 fun NavGraphBuilder.authNavGraph(
     onLoginClicked: (NavBackStackEntry) -> Unit,
+    onSignUpClicked :(NavBackStackEntry) -> Unit,
+    onSignUpSubmitClicked : (NavBackStackEntry) -> Unit
 ) {
     navigation(
         route = MainDestination.AUTH_ROUTE,
         startDestination = MainDestination.LOGIN_ROUTE
     ){
         composable(route = MainDestination.LOGIN_ROUTE){ from ->
-            LoginScreen(onLoginClick = { onLoginClicked(from)})
+            LoginScreen(
+                onLoginClick = { onLoginClicked(from)},
+                onSignUpClick = {onSignUpClicked(from)}
+            )
+        }
+        composable(route = MainDestination.SIGNUP_ROUTE){from ->
+            SignUpScreen(onSignUpSubmitClick = { onSignUpSubmitClicked(from)})
         }
     }
 }

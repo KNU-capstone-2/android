@@ -61,9 +61,11 @@ fun HomeScreen(appState: ProjectAppState = rememberProjectAppState()) {
                 ProjectSplashScreen(navController = appState.navController)
             }
             homeNavGraph(onInstanceCreateBtnClicked = appState::navigateToInstanceCreate)
-            authNavGraph(onLoginClicked =
+            authNavGraph(
+                onLoginClicked = appState::navigateToHome,
+                onSignUpClicked = appState::navigateToSignUp,
+                onSignUpSubmitClicked = appState::navigateToLogin
                 /*TODO: 로그인 request 보내기*/
-                appState::navigateToHome
             )
 
             dialog(
