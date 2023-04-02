@@ -18,7 +18,7 @@ object DataStoreModule {
 
     @Singleton
     @Provides
-    fun providePreferenceDataStore(@ApplicationContext appContext : Context) : DataStore<Preferences>{
+    fun providePreferenceDataStore(@ApplicationContext appContext : Context) : DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
             //  this.applicationContext.fileDir+datastore/name에  File 객체 생성
             produceFile = {appContext.preferencesDataStoreFile("user_preferences")}
