@@ -1,8 +1,7 @@
 package com.knu.cloud.di
 
 import com.knu.cloud.model.auth.Token
-import com.knu.cloud.network.AuthApiService
-import com.knu.cloud.repository.AuthRepository
+import com.knu.cloud.repository.AuthRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,55 +12,31 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
-import okhttp3.OkHttpClient
 import okhttp3.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
-
-    @Singleton
-    @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
-            .baseUrl("BASE_URL")
-            .build()
-    }
-
-    @Singleton
-    @Provides
-    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
-            .connectTimeout(100, TimeUnit.SECONDS)
-            .build()
-    }
+object Interceptor {
 
     @Singleton
     @Provides
     fun provideAuthInterceptor(
         @Named("tokenFlow") tokenFlow: Flow<Token>
-    ):AuthInterceptor{
+    ): AuthInterceptor {
         return AuthInterceptor(tokenFlow)
     }
 
+    // TODO: TokenFlow가 여기 들ㅇ가는게 맞는지?
     @Singleton
     @Provides
-    suspend fun provideTokenFlow(authRepository: AuthRepository): Flow<Token> {
+    suspend fun provideTokenFlow(authRepository: AuthRepositoryImpl): Flow<Token> {
         return authRepository.getTokenFlow()
             .flowOn(Dispatchers.IO)
     }
 
-    fun provideAuthApiService(retrofit: Retrofit): AuthApiService
-        = retrofit.create(AuthApiService::class.java)
 }
 
 // 헤더에 Token 추가하는 Interceptor
@@ -77,3 +52,4 @@ class AuthInterceptor(
         proceed(newRequest)
     }
 }
+
