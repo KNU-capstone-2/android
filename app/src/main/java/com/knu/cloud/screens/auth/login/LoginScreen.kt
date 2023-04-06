@@ -118,7 +118,8 @@ fun Login(
 
         Button(
             onClick = {
-                viewModel.login() // 로그인 유효성 판단
+                //viewModel.login() // 로그인 유효성 판단
+                onLoginClick()
             },
             modifier = Modifier
                 .fillMaxWidth()

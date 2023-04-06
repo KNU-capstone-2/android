@@ -9,6 +9,7 @@ import com.knu.cloud.screens.home.setting.ProjectSettingScreen
 import com.knu.cloud.screens.instanceCreate.*
 import com.knu.cloud.screens.auth.login.LoginScreen
 import com.knu.cloud.screens.auth.signup.SignUpScreen
+import com.knu.cloud.screens.instanceCreate.detail.DetailScreen
 
 fun NavGraphBuilder.homeNavGraph(
     onInstanceCreateBtnClicked: (NavBackStackEntry) -> Unit,
