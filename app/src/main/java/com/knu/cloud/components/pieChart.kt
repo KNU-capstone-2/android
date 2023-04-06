@@ -31,71 +31,35 @@ import kotlin.math.sin
 
 @Composable
 fun PieChartComponent(
-    chartValues: List<Int>
+    title: String,
+    assignedData: Int,
+    remainingData: Int,
 ) {
     val chartColors = listOf(
         colorResource(id = R.color.pie_red),
-        colorResource(id = R.color.pie_blue),
-        colorResource(id = R.color.pie_green),
+        colorResource(id = R.color.pie_remaining),
     )
 
-    val chartValueFloat: List<Float> = chartValues.map { it.toFloat() * 10 }
-
+    val assignedDataFloat: Float = assignedData.toFloat()
+    val remainingDataFloat: Float = remainingData.toFloat()
 
     Column(
-        modifier = Modifier.padding(10.dp),
+        modifier = Modifier.padding(10.dp).fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "워크플로우 TOP 3")
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(text = "월간")
-
         PieChart(
             modifier = Modifier
-                .padding(20.dp)
-                .size(150.dp), // Pie 전체 크기 지정
+                .padding(10.dp)
+                .fillMaxSize(), // Pie 전체 크기 지정
             colors = chartColors,
-            inputValues = chartValueFloat,
+            assignedDataFloat = assignedDataFloat,
+            remainingDataFloat = remainingDataFloat
         )
+        Text(text = title)
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(text = "10 에 대한 사용됨 0")
 
-        Box(
-            modifier = Modifier
-                .padding(5.dp)
-                .border(1.dp, Color.Black)
-                .background(Color.LightGray)
-        ) {
-            Column(
-                modifier = Modifier.padding(15.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row(modifier = Modifier.padding(5.dp)) {
-                    Box(modifier = Modifier
-                        .padding(end = 10.dp)
-                        .size(20.dp)
-                        .clip(CircleShape)
-                        .background(colorResource(id = R.color.pie_red))){}
-                    Text("첫 번째 워크플로우 ID")
-                }
-                Row(modifier = Modifier.padding(5.dp)){
-                    Box(modifier = Modifier
-                        .padding(end = 10.dp)
-                        .size(20.dp)
-                        .clip(CircleShape)
-                        .background(colorResource(id = R.color.pie_blue))){}
-                    Text("두 번째 워크플로우 ID")
-                }
-                Row(modifier = Modifier.padding(5.dp)){
-                    Box(modifier = Modifier
-                        .padding(end = 10.dp)
-                        .size(20.dp)
-                        .clip(CircleShape)
-                        .background(colorResource(id = R.color.pie_green))){}
-                    Text("세 번째 워크플로우 ID")
-                }
-            }
-        }
     }
 }
 
@@ -107,14 +71,12 @@ private const val chartDegrees = 360f
 internal fun PieChart(
     modifier: Modifier = Modifier,
     colors: List<Color>,
-    inputValues: List<Float>,
+    assignedDataFloat: Float,
+    remainingDataFloat: Float,
     textColor: Color = colorResource(id = R.color.pie_text),
     animated: Boolean = true
 ) {
-
-    assert(inputValues.isNotEmpty() && inputValues.size == colors.size) {
-        "Input values count must be equal to colors size"
-    }
+    val inputValues = listOf(assignedDataFloat, remainingDataFloat)
 
     // 시계방향으로 그리기 시작 (위에서 오른쪽으로)
     var startAngle = 270f
@@ -153,7 +115,7 @@ internal fun PieChart(
     val textPaint = remember {
         Paint().apply {
             color = textColor.toArgb()
-            textSize = 30f
+            textSize = 25f
             textAlign = Paint.Align.CENTER
         }
     }

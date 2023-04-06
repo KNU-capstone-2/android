@@ -68,7 +68,8 @@ fun Login(
     Column(
         modifier = Modifier
             .padding(22.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .addFocusCleaner(keyboardController!!),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -185,8 +186,7 @@ fun UserForm(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .addFocusCleaner(keyboardController!!),
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(5.dp, alignment = Alignment.Bottom),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
