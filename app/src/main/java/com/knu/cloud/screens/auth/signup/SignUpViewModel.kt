@@ -12,6 +12,9 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
 
 ): ViewModel() {
+
+    private val userNickName = MutableStateFlow("")
+
     private val userEmail = MutableStateFlow("")
     private val _userEmailError = MutableStateFlow(false)
     val userEmailError
@@ -31,6 +34,11 @@ class SignUpViewModel @Inject constructor(
         get() = _userPasswordErrorState.asStateFlow()
 
     private val userPasswordCheck = MutableStateFlow("")
+
+    fun setUserNickName(nickName: String) {
+        userNickName.value = nickName
+        Timber.tag("SignUp_UserNickName").d(nickName)
+    }
 
     fun setUserEmail(email: String) {
         userEmail.value = email
