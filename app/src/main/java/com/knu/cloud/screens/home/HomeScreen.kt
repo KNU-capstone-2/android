@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,7 +20,6 @@ import com.knu.cloud.ProjectAppState
 import com.knu.cloud.components.FABContent
 import com.knu.cloud.navigation.*
 import com.knu.cloud.rememberProjectAppState
-import com.knu.cloud.screens.home.dashboard.ProjectBottomBar
 import com.knu.cloud.screens.instanceCreate.InstanceCreateScreen
 import com.knu.cloud.screens.splash.ProjectSplashScreen
 
@@ -81,6 +78,29 @@ fun HomeScreen(appState: ProjectAppState = rememberProjectAppState()) {
                     InstanceCreateScreen()
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ProjectBottomBar(
+    sections: Array<HomeSections>,
+//    onTabSelected : (HomeNavItems) -> Unit,
+    currentRoute: String,
+    navigateToRoute: (String) -> Unit
+){
+    BottomNavigation() {
+        val routes = remember { sections.map{it.route} }
+        val currentSection = sections.first{ it.route == currentRoute}
+
+        sections.forEach { section ->
+            val selected = section == currentSection
+            BottomNavigationItem(
+                icon = { Icon(section.icon, contentDescription = null) } ,
+                label = { Text(section.title) },
+                selected = selected,
+                onClick = { navigateToRoute(section.route) }
+            )
         }
     }
 }

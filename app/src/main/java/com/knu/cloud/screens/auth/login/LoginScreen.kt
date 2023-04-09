@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,58 +53,53 @@ fun Login(
     onSignUpClick : () -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val passwordFocusRequester = FocusRequester()
+
+    var loginStateCheck by rememberSaveable { mutableStateOf(false) }
+    val isSignIn = viewModel.loginState.collectAsState()
+    val isSignInError = viewModel.loginError.collectAsState()
+
+    if (isSignIn.value) {
+
+        onLoginClick()
+    }
+
     Column(
-        modifier = Modifier.verticalScroll(rememberScrollState()),
+        modifier = Modifier
+            .padding(22.dp)
+            .verticalScroll(rememberScrollState())
+            .addFocusCleaner(keyboardController!!),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.weight(1f))
         LoginLogo()
         Spacer(modifier = Modifier.weight(1f))
+
+        Row(
+            modifier = Modifier
+                .padding(5.dp)
+                .height(25.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            if (isSignInError.value.isNotEmpty()) {
+                Icon(imageVector = Icons.Default.Warning, contentDescription = "", tint = colorResource(id = R.color.Waring))
+                Text(
+                    text = isSignInError.value,
+                    style = MaterialTheme.typography.caption,
+                    color = colorResource(id = R.color.Waring)
+                )
+            }
+        }
+
         UserForm(
-            onLoginClick = onLoginClick,
-            onSignUpClick = onSignUpClick,
+            keyboardController = keyboardController,
+            passwordFocusRequester = passwordFocusRequester,
             viewModel = viewModel
         )
-    }
-}
-
-@ExperimentalComposeUiApi
-@Composable
-fun UserForm(
-    onLoginClick: () -> Unit,
-    onSignUpClick : () -> Unit,
-    viewModel: LoginViewModel
-) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val passwordFocusRequester = FocusRequester()
-
-    var loginStateCheck by rememberSaveable { mutableStateOf(false) }
-
-    Column(
-        modifier = Modifier
-            .padding(22.dp)
-            .fillMaxWidth()
-            .addFocusCleaner(keyboardController!!),
-        verticalArrangement = Arrangement.spacedBy(5.dp, alignment = Alignment.Bottom),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        ProjectTextInput(
-            type = TextInputType.Email,
-            keyboardController = keyboardController,
-            passwordFocusRequester = passwordFocusRequester
-        ) { email ->
-            viewModel.setUserEmail(email)
-        }
-
-        ProjectTextInput(
-            type = TextInputType.PASSWORD,
-            keyboardController = keyboardController,
-            passwordFocusRequester = passwordFocusRequester
-        ) { password ->
-            viewModel.setUserPassword(password)
-        }
 
         Row(
             modifier = Modifier
@@ -121,7 +118,10 @@ fun UserForm(
         }
 
         Button(
-            onClick = onLoginClick,
+            onClick = {
+                //viewModel.login() // 로그인 유효성 판단
+                onLoginClick()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp),
@@ -173,6 +173,38 @@ fun UserForm(
                     fontWeight = FontWeight.Medium
                 )
             }
+        }
+    }
+}
+
+@ExperimentalComposeUiApi
+@Composable
+fun UserForm(
+    keyboardController: SoftwareKeyboardController?,
+    passwordFocusRequester: FocusRequester,
+    viewModel: LoginViewModel
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(5.dp, alignment = Alignment.Bottom),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        ProjectTextInput(
+            type = TextInputType.Email,
+            keyboardController = keyboardController,
+            passwordFocusRequester = passwordFocusRequester
+        ) { email ->
+            viewModel.setUserEmail(email)
+        }
+
+        ProjectTextInput(
+            type = TextInputType.PASSWORD,
+            keyboardController = keyboardController,
+            passwordFocusRequester = passwordFocusRequester
+        ) { password ->
+            viewModel.setUserPassword(password)
         }
     }
 }

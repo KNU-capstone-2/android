@@ -19,7 +19,6 @@ import okhttp3.Response
 import java.io.IOException
 import javax.inject.Named
 import javax.inject.Singleton
-
 @Module
 @InstallIn(SingletonComponent::class)
 object Interceptor {

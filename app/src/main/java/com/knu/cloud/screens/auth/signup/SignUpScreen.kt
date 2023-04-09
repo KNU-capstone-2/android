@@ -95,6 +95,14 @@ fun SignUp(
     ) {
         ProjectTextInput(
             type = TextInputType.FIELD,
+            label = "닉네임",
+            keyboardController = keyboardController,
+        ) { nickName ->
+            viewModel.setUserNickName(nickName)
+        }
+
+        ProjectTextInput(
+            type = TextInputType.FIELD,
             label = stringResource(R.string.SignUp_email),
             keyboardController = keyboardController,
         ) { email ->
