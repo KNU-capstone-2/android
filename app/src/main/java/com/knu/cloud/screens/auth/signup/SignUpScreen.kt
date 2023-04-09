@@ -221,10 +221,11 @@ fun SignUp(
 
         Button(
             onClick ={
-                if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
-                    Timber.tag("SignUpScreen").d("테스트 성공")
+//                if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
+                    viewModel.signUp()
+                    Timber.tag("test").d("테스트 성공")
                     onSignUpSubmitClick()
-                }
+//                }
             },
             modifier = Modifier
                 .fillMaxWidth()

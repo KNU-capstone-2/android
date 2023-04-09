@@ -2,18 +2,23 @@ package com.knu.cloud.screens.auth.signup
 
 import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.knu.cloud.repository.AuthRepository
+import com.knu.cloud.repository.AuthRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-
+    private val authRepository: AuthRepository
 ): ViewModel() {
     private val userEmail = MutableStateFlow("")
     private val _userEmailError = MutableStateFlow(false)
+
     val userEmailError
         get() = _userEmailError.asStateFlow()
 
@@ -31,6 +36,18 @@ class SignUpViewModel @Inject constructor(
         get() = _userPasswordErrorState.asStateFlow()
 
     private val userPasswordCheck = MutableStateFlow("")
+
+
+    fun signUp(){
+        viewModelScope.launch{
+            authRepository.signUp("test","user","1234")
+        }
+//        authRepository.signUp( "test","user","1234"
+//            email = userEmail.value,
+//            username = "test",
+//            password = userPassword.value
+//        )
+    }
 
     fun setUserEmail(email: String) {
         userEmail.value = email
