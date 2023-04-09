@@ -14,6 +14,7 @@ object Versions {
     const val JUNIT4 = "4.13.2"
     const val ANDROID_JUNIT = "1.1.5"
     const val ESPRESSO_CORE = "3.5.1"
+    const val MOCK_WEB_SERVER = "4.10.0"
 
     /* Library */
     const val TIMBER = "5.0.1" // Timber setting
