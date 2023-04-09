@@ -18,4 +18,11 @@
     <color name="instance_added">#93BFCF</color>
     <color name="instance_current_usage">#19A7CE</color>
 
+    <!-- DashBoard pie_Chart -->
+    <color name="pie_red">#FFACAC</color>
+    <color name="pie_blue">#97DEFF</color>
+    <color name="pie_green">#C7E9B0</color>
+    <color name="pie_remaining">#D8D8D8</color>
+    <color name="pie_text">#2D2727</color>
+
 </resources>

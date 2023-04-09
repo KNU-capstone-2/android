@@ -10,7 +10,6 @@ import com.knu.cloud.components.FABContent
 import com.knu.cloud.navigation.*
 import com.knu.cloud.screens.home.HomeScreen
 import com.knu.cloud.screens.home.dashboard.HomeScreenPrev
-import com.knu.cloud.screens.home.dashboard.ProjectBottomBar
 import com.knu.cloud.screens.splash.ProjectSplashScreen
 import com.knu.cloud.ui.theme.CloudTheme
 
