@@ -28,7 +28,7 @@ object ConfigModule {
     @Singleton
     @Provides
     fun provideOkHttpClient(
-        authInterceptor: AuthInterceptor
+        //authInterceptor: AuthInterceptor
     ): OkHttpClient {
         val logging = HttpLoggingInterceptor().apply {
             this.setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -39,8 +39,7 @@ object ConfigModule {
             .readTimeout(100, TimeUnit.MILLISECONDS)
             .writeTimeout(100, TimeUnit.MILLISECONDS)
             .addInterceptor(logging)
-            .addNetworkInterceptor(authInterceptor)
+            //.addNetworkInterceptor(authInterceptor)
             .build()
     }
-
 }
