@@ -6,7 +6,7 @@ data class AuthResponse<T>(
     @SerializedName("status")
     val status : Int,
     @SerializedName("message")
-    val message : Int,
+    val message : String,
     @SerializedName("data")
-    val data : T
+    val data : T?
 )
