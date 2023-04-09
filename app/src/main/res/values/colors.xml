@@ -12,4 +12,10 @@
     <color name="Black_Main">#2C3333</color>
     <color name="skyBlue">#5BC0F8</color>
     <color name="Waring">#FF8787</color>
+
+    <!-- InstanceCreate Donut_chart -->
+    <color name="instance_remaining">#D8D8D8</color>
+    <color name="instance_added">#93BFCF</color>
+    <color name="instance_current_usage">#19A7CE</color>
+
 </resources>

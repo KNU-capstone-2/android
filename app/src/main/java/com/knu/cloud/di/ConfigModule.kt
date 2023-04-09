@@ -21,7 +21,7 @@ object ConfigModule {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
-            .baseUrl("BASE_URL")
+            .baseUrl("https://example.com/")
             .build()
     }
 

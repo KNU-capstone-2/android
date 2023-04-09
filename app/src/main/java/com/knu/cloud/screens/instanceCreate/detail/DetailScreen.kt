@@ -1,6 +1,5 @@
-package com.knu.cloud.screens.instanceCreate
+package com.knu.cloud.screens.instanceCreate.detail
 
-import android.app.Activity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,19 +21,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.knu.cloud.MainActivity
 import com.knu.cloud.R
 import com.knu.cloud.components.DonutChart
+import com.knu.cloud.components.DonutChartComponent
 import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
 import com.knu.cloud.components.text_input.addFocusCleaner
+import com.knu.cloud.screens.instanceCreate.InstanceCreateViewModel
 
 @ExperimentalComposeUiApi
 @Composable
@@ -74,15 +71,14 @@ fun Detail(
     ){
         Column(
             modifier = Modifier
-//                    .fillMaxWidth()
-                .width(500.dp)
+                .weight(.2f)
                 .verticalScroll(rememberScrollState())
                 .padding(20.dp)
                 .addFocusCleaner(keyboardController!!),
         ) {
 
             Text(
-                text = "Project Name",
+                text = stringResource(id = R.string.IC_Detail_Header_ProjectName),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 15.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
@@ -92,7 +88,7 @@ fun Detail(
                 keyboardController = keyboardController,
             )
             Text(
-                text = "인스턴스 이름",
+                text = stringResource(id = R.string.IC_Detail_Header_InstanceName),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
@@ -103,7 +99,7 @@ fun Detail(
             )
 
             Text(
-                text = "설명",
+                text = stringResource(id = R.string.IC_Detail_Header_Info),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
@@ -114,16 +110,15 @@ fun Detail(
             )
 
             Text(
-                text = "가용 구역",
+                text = stringResource(id = R.string.IC_Detail_Header_Area),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 10.dp)
             )
-
-            DropdownCompute()
+            DropdownCompute() // 가용구역 선택
 
             Text(
-                text = "개수",
+                text = stringResource(id = R.string.IC_Detail_Header_Count),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
@@ -132,34 +127,29 @@ fun Detail(
                 type = TextInputType.FIELD,
                 keyboardController = keyboardController,
             )
+        } // Column End
 
-        }
-        Surface(
-            modifier = Modifier.width(300.dp)
+        Column(
+            modifier = Modifier
+                .weight(.1f)
+                .verticalScroll(rememberScrollState())
+                .padding(20.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val chartColors = listOf(
-                MaterialTheme.colors.primary,
-                MaterialTheme.colors.primaryVariant,
-                MaterialTheme.colors.secondary
+            DonutChartComponent(
+                // 인스턴스 현황
+                // Current Usage, Added, Remaining 순
+                chartValues = listOf(0, 1, 9)
             )
-            val chartValues = listOf(60f, 110f, 20f)
-            DonutChart(
-                modifier = Modifier
-                    .size(width = 300.dp, height = 300.dp)
-                    .padding(20.dp),
-                colors = chartColors,
-                inputValues = chartValues,
-                textColor = MaterialTheme.colors.secondaryVariant
-            )
-        }
+        } // Column End
     }
-
 }
 
 @Composable
 fun DropdownCompute() {
     var expanded by remember { mutableStateOf(false) }
-    val items = listOf("Nova")
+    val items = listOf("Nova") // Nova 하나로 고정
     var selectedIndex by remember { mutableStateOf(0) }
     var fieldSize by remember { mutableStateOf(Size.Zero)}
 
