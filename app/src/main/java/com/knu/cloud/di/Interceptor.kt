@@ -1,6 +1,8 @@
 package com.knu.cloud.di
 
+import com.knu.cloud.model.auth.AuthResponse
 import com.knu.cloud.model.auth.Token
+import com.knu.cloud.repository.AuthRepository
 import com.knu.cloud.repository.AuthRepositoryImpl
 import dagger.Module
 import dagger.Provides
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
+import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 import javax.inject.Named
@@ -24,32 +27,28 @@ object Interceptor {
     @Singleton
     @Provides
     fun provideAuthInterceptor(
-        @Named("tokenFlow") tokenFlow: Flow<Token>
+        sessionManager: SessionManager
     ): AuthInterceptor {
-        return AuthInterceptor(tokenFlow)
+        return AuthInterceptor(sessionManager)
     }
-
-    // TODO: TokenFlow가 여기 들ㅇ가는게 맞는지?
-    @Singleton
-    @Provides
-    suspend fun provideTokenFlow(authRepository: AuthRepositoryImpl): Flow<Token> {
-        return authRepository.getTokenFlow()
-            .flowOn(Dispatchers.IO)
-    }
-
 }
 
 // 헤더에 Token 추가하는 Interceptor
 class AuthInterceptor(
-    private val tokenFlow : Flow<Token>
+    private val sessionManager: SessionManager
 ) : Interceptor {
     @Throws(IOException::class)
-    override fun intercept(chain: Interceptor.Chain): Response = with(chain) {
-        val authToken = runBlocking { tokenFlow.first()  }
-        val newRequest = request().newBuilder()
-            .addHeader("Authorization", "Bearer ${authToken.sessionId}")
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val sessionId = runBlocking { sessionManager.sessionId.value }
+        val newRequest = chain.request().newBuilder()
+            .addHeader("Authorization", "Bearer $sessionId")
             .build()
-        proceed(newRequest)
+        val response = chain.proceed(newRequest)
+        if(response.header("Token") != null){
+            // token이 vaild할 경우 sessionId를 저장해줘야함
+            sessionManager.setSessionId(response.header("Token")!!)
+        }
+        // token이 invalid 하면  이미 response 객체에 오류가 붙어서 올거임-> NetworkCallAdapter가 그 뒤에 처리할거임
+        return response
     }
 }
-
