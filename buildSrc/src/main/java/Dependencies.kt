@@ -29,6 +29,7 @@ object Dependencies {
     const val HILT_EXTENSION_KAPT = "androidx.hilt:hilt-compiler:${Versions.HILT_EXTENSION}"
     const val HILT_COMPOSE_NAVIGATION = "androidx.hilt:hilt-navigation-compose:${Versions.HILT_EXTENSION}"
 
+    // Network
     const val RETROFIT = "com.squareup.retrofit2:retrofit:${Versions.RETROFIT}"
     const val RETROFIT_CONVERTER_MOSHI =
         "com.squareup.retrofit2:converter-moshi:${Versions.RETROFIT}"

@@ -64,7 +64,10 @@ dependencies {
     implementation (Dependencies.COMPOSE_UI)
     implementation (Dependencies.COMPOSE_UI_PREVIEW)
     implementation (Dependencies.COMPOSE_MATERIAL)
+
+    // Test
     testImplementation (Testing.JUNIT4)
+    testImplementation (Testing.MOCK_WEB_SERVER)
     androidTestImplementation (Testing.ANDROID_JUNIT)
     androidTestImplementation (Testing.ESPRESSO_CORE)
     androidTestImplementation (Testing.COMPOSE_TEST)
