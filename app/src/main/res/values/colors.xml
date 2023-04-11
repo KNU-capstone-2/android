@@ -13,6 +13,9 @@
     <color name="skyBlue">#5BC0F8</color>
     <color name="Waring">#FF8787</color>
 
+    <!-- Instance Line_Chart -->
+    <color name="chart_box_color">#04293A</color>
+
     <!-- InstanceCreate Donut_chart -->
     <color name="instance_remaining">#D8D8D8</color>
     <color name="instance_added">#93BFCF</color>
