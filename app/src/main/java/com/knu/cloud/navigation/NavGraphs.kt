@@ -4,7 +4,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.knu.cloud.screens.home.instance.ProjectInstanceScreen
-import com.knu.cloud.screens.home.setting.ProjectSettingScreen
+import com.knu.cloud.screens.home.setting.SettingScreen
 import com.knu.cloud.screens.instanceCreate.*
 import com.knu.cloud.screens.auth.login.LoginScreen
 import com.knu.cloud.screens.auth.signup.SignUpScreen
@@ -25,7 +25,7 @@ fun NavGraphBuilder.homeNavGraph(
             ProjectInstanceScreen(onInstanceCreateClick = { onInstanceCreateBtnClicked(from) })
         }
         composable(HomeSections.Setting.route){ from ->
-            ProjectSettingScreen()
+            SettingScreen()
         }
     }
 }
