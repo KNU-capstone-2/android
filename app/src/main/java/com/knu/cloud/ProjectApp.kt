@@ -32,13 +32,15 @@ fun ProjectApp(appState: ProjectAppState = rememberProjectAppState()) {
         Scaffold(
             scaffoldState = appState.scaffoldState,
             topBar = {
-                ProjectAppBar(
-                    title = "POCKET",
-                    path = "프로젝트 / Compute / 대시보드"
-                )
+                if(appState.isHomeScreen){
+                    ProjectAppBar(
+                        title = "POCKET",
+                        path = "프로젝트 / Compute / 대시보드"
+                    )
+                }
             },
             bottomBar = {
-                if(appState.shouldShowBottomBar){
+                if(appState.isHomeScreen){
                     ProjectBottomBar(
                         sections = appState.bottomBarTabs,
                         currentRoute = appState.currentRoute!!,
@@ -88,17 +90,3 @@ fun ProjectApp(appState: ProjectAppState = rememberProjectAppState()) {
         }
     }
 }
-
-
-//        Surface(
-//            color = MaterialTheme.colors.background,
-//            modifier = Modifier
-//                .fillMaxSize()
-//        ) {
-//            Column(
-//                verticalArrangement = Arrangement.Top,
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                ProjectNavigation()
-//            }
-//        }

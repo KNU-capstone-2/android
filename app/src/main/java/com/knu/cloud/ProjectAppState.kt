@@ -36,7 +36,7 @@ class ProjectAppState(
     private val bottomBarRoutes = bottomBarTabs.map{it.route}
 
     // 이 변수 읽을 때 바텀바가 보여져야하는지 아닌지 recomposition을 수행함
-    val shouldShowBottomBar : Boolean
+    val isHomeScreen : Boolean
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination?.route in bottomBarRoutes
 
     val isInstanceScreen : Boolean
