@@ -1,19 +1,31 @@
 package com.knu.cloud.screens.home.dashboard
 
+import android.widget.Space
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import com.knu.cloud.R
 import com.knu.cloud.components.PieChartComponent
-import com.knu.cloud.screens.instanceCreate.Flavor
+import com.knu.cloud.components.ProjectAppBar
 
 data class DashboardData(
     val title: String,
@@ -25,7 +37,6 @@ data class DashboardData(
 fun DashBoardScreen(
     // viewModel: ViewModel = hiltViewModel()
 ) {
-
     var computeDataSet = mutableListOf(
         DashboardData("인스턴스", 4,6),
         DashboardData("VCPUs",2, 8),
@@ -45,70 +56,84 @@ fun DashBoardScreen(
         DashboardData( "포트",3, 500)
     )
 
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .verticalScroll(rememberScrollState())
-    ) {
-        /* 모달드로우 할당 영역 */
-        Column(
-            modifier = Modifier
-                .weight(.1f)
-                .fillMaxSize()
-                .border(BorderStroke(1.dp, Color.Black))
-        ) {
-            Text(
-                text= "모달드로우 할당 영역",
-                modifier = Modifier.padding(start = 15.dp, top = 350.dp, bottom = 350.dp)
+    Scaffold(
+        topBar = {
+            ProjectAppBar(
+                title = "POCKET",
+                path = "프로젝트 / Compute / 대시보드"
             )
         }
-        // 모달드로우 end point
-
-        Spacer(modifier = Modifier.width(30.dp))
-        Column(
+    ) {
+        Surface(
             modifier = Modifier
-                .weight(.3f)
-                .fillMaxSize()
+                .padding(it)
         ) {
-            Divider(
-                color = Color.LightGray,
-                thickness = 1.dp,
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 1.dp, vertical = 5.dp)
-            )
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                /* 모달드로우 할당 영역 */
+                Column(
+                    modifier = Modifier
+                        .weight(.1f)
+                        .fillMaxSize()
+                        .border(BorderStroke(1.dp, Color.Black))
+                ) {
+                    Text(
+                        text= "모달드로우 할당 영역",
+                        modifier = Modifier.padding(start = 15.dp, top = 350.dp, bottom = 350.dp)
+                    )
+                }
+                // 모달드로우 end point
 
-            Compute(dataSet = computeDataSet)
+                Spacer(modifier = Modifier.width(30.dp))
+                Column(
+                    modifier = Modifier
+                        .weight(.3f)
+                        .fillMaxSize()
+                ) {
+                    Divider(
+                        color = Color.LightGray,
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 1.dp, vertical = 5.dp)
+                    )
 
-            Divider(
-                color = Color.LightGray,
-                thickness = 1.dp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 1.dp, vertical = 5.dp)
-            )
+                    Compute(dataSet = computeDataSet)
 
-            Volume(dataSet = volumeDataSet)
+                    Divider(
+                        color = Color.LightGray,
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 1.dp, vertical = 5.dp)
+                    )
 
-            Divider(
-                color = Color.LightGray,
-                thickness = 1.dp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 1.dp, vertical = 5.dp)
-            )
+                    Volume(dataSet = volumeDataSet)
 
-            Network(dataSet = networkDataSet)
+                    Divider(
+                        color = Color.LightGray,
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 1.dp, vertical = 5.dp)
+                    )
 
-            Divider(
-                color = Color.LightGray,
-                thickness = 1.dp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 1.dp, vertical = 5.dp)
-            )
-            Usage()
+                    Network(dataSet = networkDataSet)
+
+                    Divider(
+                        color = Color.LightGray,
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 1.dp, vertical = 5.dp)
+                    )
+                    Usage()
+                }
+            }
         }
     }
 }
