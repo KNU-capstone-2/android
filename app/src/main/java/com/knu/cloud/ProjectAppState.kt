@@ -1,6 +1,8 @@
 package com.knu.cloud
 
 import android.util.Log
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.*
@@ -14,14 +16,17 @@ import com.knu.cloud.navigation.MainDestination
 
 @Composable
 fun rememberProjectAppState(
-    navController: NavHostController = rememberNavController()
-) = remember(navController){
-    ProjectAppState(navController)
+    navController: NavHostController = rememberNavController(),
+    scaffoldState : ScaffoldState = rememberScaffoldState()
+) = remember(navController, scaffoldState){
+    ProjectAppState(navController,scaffoldState)
 }
 
 @Stable
 class ProjectAppState(
-    val navController: NavHostController) {
+    val navController: NavHostController,
+    val scaffoldState: ScaffoldState
+) {
 
     //----------------------
     // BottomBar state source

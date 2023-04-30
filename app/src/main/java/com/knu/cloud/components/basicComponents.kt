@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -90,6 +91,29 @@ fun BottomNavigationBar(navController: NavController) {
             )
         }
 
+    }
+}
+
+@Composable
+fun ProjectBottomBar(
+    sections: Array<HomeSections>,
+//    onTabSelected : (HomeNavItems) -> Unit,
+    currentRoute: String,
+    navigateToRoute: (String) -> Unit
+){
+    BottomNavigation() {
+        val routes = remember { sections.map{it.route} }
+        val currentSection = sections.first{ it.route == currentRoute}
+
+        sections.forEach { section ->
+            val selected = section == currentSection
+            BottomNavigationItem(
+                icon = { Icon(section.icon, contentDescription = null) } ,
+                label = { Text(section.title) },
+                selected = selected,
+                onClick = { navigateToRoute(section.route) }
+            )
+        }
     }
 }
 
