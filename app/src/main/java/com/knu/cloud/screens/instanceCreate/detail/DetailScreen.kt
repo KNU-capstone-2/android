@@ -22,12 +22,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
 import com.knu.cloud.components.DonutChart
 import com.knu.cloud.components.DonutChartComponent
+import com.knu.cloud.components.LaunchButton
 import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
 import com.knu.cloud.components.text_input.addFocusCleaner
@@ -39,20 +42,27 @@ fun DetailScreen(
     viewModel: InstanceCreateViewModel = hiltViewModel()
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         color = Color.White
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-        ){
-        Text(
-            text = stringResource(R.string.IC_Detail_description),
-            style = MaterialTheme.typography.subtitle2,
-            modifier = Modifier.padding(15.dp)
-        )
-        Detail(viewModel = viewModel)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Text(
+                text = stringResource(R.string.IC_Detail_description),
+                style = MaterialTheme.typography.subtitle2,
+                modifier = Modifier.padding(15.dp)
+            )
+            Detail(viewModel = viewModel)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                LaunchButton(/* do something */)
+            }
         }
     }
 }
@@ -65,10 +75,12 @@ fun Detail(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(600.dp), // Prevent vertical infinity maximum height constraints
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .weight(.2f)
@@ -76,7 +88,6 @@ fun Detail(
                 .padding(20.dp)
                 .addFocusCleaner(keyboardController!!),
         ) {
-
             Text(
                 text = stringResource(id = R.string.IC_Detail_Header_ProjectName),
                 fontWeight = FontWeight.Bold,
