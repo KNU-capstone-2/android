@@ -3,7 +3,7 @@ package com.knu.cloud.navigation
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.*
 import androidx.navigation.compose.composable
-import com.knu.cloud.screens.home.instance.ProjectInstanceScreen
+import com.knu.cloud.screens.home.instance.InstanceScreen
 import com.knu.cloud.screens.home.setting.SettingScreen
 import com.knu.cloud.screens.instanceCreate.*
 import com.knu.cloud.screens.auth.login.LoginScreen
@@ -22,7 +22,7 @@ fun NavGraphBuilder.homeNavGraph(
             DashBoardScreen()
         }
         composable(HomeSections.Instance.route){ from ->
-            ProjectInstanceScreen(onInstanceCreateClick = { onInstanceCreateBtnClicked(from) })
+            InstanceScreen(onInstanceCreateClick = { onInstanceCreateBtnClicked(from) })
         }
         composable(HomeSections.Setting.route){ from ->
             SettingScreen()
