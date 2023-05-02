@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.knu.cloud.components.ProjectAppBar
 import com.knu.cloud.components.summary.InstanceData
 import com.knu.cloud.components.summary.InstanceSummary
 
@@ -32,64 +31,40 @@ fun InstanceScreen (
 ) {
     val context = LocalContext.current
 
-    Scaffold(
-        topBar = {
-            ProjectAppBar(
-                title = "POCKET",
-                path = "프로젝트 / Compute / 인스턴스"
-            )
-        }
+    Surface(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Surface(
+        Row(
             modifier = Modifier
-                .padding(it)
+                .fillMaxSize()
+                .background(Color.White)
         ) {
-            Row(
+            /* 테이블 할당 영역 */
+            Column(
                 modifier = Modifier
+                    .weight(0.7f)
                     .fillMaxSize()
-                    .background(Color.White)
+                    .border(BorderStroke(1.dp, Color.Black))
             ) {
-                /* 모달드로우 할당 영역 */
-                Column(
-                    modifier = Modifier
-                        .weight(.1f)
-                        .fillMaxSize()
-                        .border(BorderStroke(1.dp, Color.Black))
-                ) {
-                    Text(
-                        text = "모달드로우 할당 영역",
-                        modifier = Modifier.padding(start = 15.dp, top = 500.dp, bottom = 500.dp)
-                    )
-                }
-                // 모달드로우 end
+                Text(
+                    text = "테이블 할당 영역",
+                    modifier = Modifier.padding(start = 15.dp, top = 500.dp, bottom = 500.dp)
+                )
+            }
+            // 테이블 end
 
-                /* 테이블 할당 영역 */
-                Column(
-                    modifier = Modifier
-                        .weight(.2f)
-                        .fillMaxSize()
-                        .border(BorderStroke(1.dp, Color.Black))
-                ) {
-                    Text(
-                        text = "테이블 할당 영역",
-                        modifier = Modifier.padding(start = 15.dp, top = 500.dp, bottom = 500.dp)
-                    )
-                }
-                // 테이블 end
-
-                Column(
-                    modifier = Modifier
-                        .weight(.1f)
-                        .fillMaxSize()
-                ) {
-                    InstanceSummary(
-                        context = context,
-                        instance = testData,
-                        StartClicked = { /*TODO*/ },
-                        ReStartClicked = { /*TODO*/ },
-                        StopClicked = { /*TODO*/ },
-                    )
-                }
+            Column(
+                modifier = Modifier
+                    .weight(0.3f)
+                    .fillMaxSize()
+            ) {
+                InstanceSummary(
+                    context = context,
+                    instance = testData,
+                    StartClicked = { /*TODO*/ },
+                    ReStartClicked = { /*TODO*/ },
+                    StopClicked = { /*TODO*/ },
+                )
             }
         }
     }

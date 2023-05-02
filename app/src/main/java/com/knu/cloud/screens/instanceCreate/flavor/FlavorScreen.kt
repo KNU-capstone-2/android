@@ -37,13 +37,6 @@ fun FlavorScreen (
                 .verticalScroll(rememberScrollState())
         ) {
             Flavor(viewModel = viewModel)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                LaunchButton(/* do something */)
-            }
         }
     }
 

@@ -3,6 +3,7 @@ package com.knu.cloud.navigation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -82,8 +83,9 @@ fun NavGraphBuilder.authNavGraph(
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun NavGraphBuilder.instanceCreateNavGraph() {
-    val instanceCreateViewModel = InstanceCreateViewModel()
+fun NavGraphBuilder.instanceCreateNavGraph(
+    instanceCreateViewModel: InstanceCreateViewModel
+) {
     composable(InstanceCreateSections.Details.route){ from ->
         DetailScreen(viewModel = instanceCreateViewModel)
     }

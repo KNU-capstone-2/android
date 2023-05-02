@@ -56,13 +56,6 @@ fun DetailScreen(
                 modifier = Modifier.padding(15.dp)
             )
             Detail(viewModel = viewModel)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                LaunchButton(/* do something */)
-            }
         }
     }
 }
