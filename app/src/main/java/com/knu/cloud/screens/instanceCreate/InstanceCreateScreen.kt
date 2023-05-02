@@ -11,9 +11,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.knu.cloud.findStartDestination
 import com.knu.cloud.navigation.InstanceCreateSections
 import com.knu.cloud.navigation.MainDestination
+import com.knu.cloud.navigation.findStartDestination
 import com.knu.cloud.navigation.instanceCreateNavGraph
 
 

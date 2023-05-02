@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.knu.cloud.R
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.knu.cloud.navigation.HomeSections
+import com.knu.cloud.navigation.ComputeSections
 
 @Composable
 fun LoginLogo() {
@@ -45,64 +45,64 @@ fun LoginLogo() {
     }
 }
 
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-    val items = listOf(
-        HomeSections.DashBoard,
-        HomeSections.Instance,
-        HomeSections.Setting
-    )
-    BottomNavigation(
-        backgroundColor = Color.LightGray,
-        contentColor = Color.Black
-    ) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-        items.forEach { item ->
-            BottomNavigationItem(
-                icon = { Icon(item.icon, contentDescription = item.title) },
-                label = { Text(text = item.title) },
-                selectedContentColor = Color.Black,
-                unselectedContentColor = Color.Black.copy(0.4f),
-                alwaysShowLabel = true,
-                selected = currentRoute == item.route,
-                onClick = {
-                    navController.navigate(item.route){
-                        /*
-                        Pop up to the start destination of the graph to
-                         avoid building up a large stack of destinations
-                         on the back stack as users select items
-                         */
-                        navController.graph.startDestinationRoute?.let{route ->
-                            popUpTo(route){
-                                saveState = true
-                            }
-                        }
-                        /*
-                        Avoid multiple copies of the same destination when reselecting the same item
-                        */
-                        launchSingleTop = true
-                        /*
-                        Restore state when reselecting a previously selected item
-                        */
-                        restoreState = true
-                    }
-                }
-            )
-        }
-
-    }
-}
+//@Composable
+//fun BottomNavigationBar(navController: NavController) {
+//    val items = listOf(
+//        ComputeSections.DashBoard,
+//        ComputeSections.Instance,
+////        ComputeSections.Setting
+//    )
+//    BottomNavigation(
+//        backgroundColor = Color.LightGray,
+//        contentColor = Color.Black
+//    ) {
+//        val navBackStackEntry by navController.currentBackStackEntryAsState()
+//        val currentRoute = navBackStackEntry?.destination?.route
+//        items.forEach { item ->
+//            BottomNavigationItem(
+//                icon = { Icon(item.icon, contentDescription = item.title) },
+//                label = { Text(text = item.title) },
+//                selectedContentColor = Color.Black,
+//                unselectedContentColor = Color.Black.copy(0.4f),
+//                alwaysShowLabel = true,
+//                selected = currentRoute == item.route,
+//                onClick = {
+//                    navController.navigate(item.route){
+//                        /*
+//                        Pop up to the start destination of the graph to
+//                         avoid building up a large stack of destinations
+//                         on the back stack as users select items
+//                         */
+//                        navController.graph.startDestinationRoute?.let{route ->
+//                            popUpTo(route){
+//                                saveState = true
+//                            }
+//                        }
+//                        /*
+//                        Avoid multiple copies of the same destination when reselecting the same item
+//                        */
+//                        launchSingleTop = true
+//                        /*
+//                        Restore state when reselecting a previously selected item
+//                        */
+//                        restoreState = true
+//                    }
+//                }
+//            )
+//        }
+//
+//    }
+//}
 
 @Composable
 fun ProjectBottomBar(
-    sections: Array<HomeSections>,
+    sections: Array<ComputeSections>,
 //    onTabSelected : (HomeNavItems) -> Unit,
     currentRoute: String,
     navigateToRoute: (String) -> Unit
 ){
     BottomNavigation() {
-        val routes = remember { sections.map{it.route} }
+//        val routes = remember { sections.map{it.route} }
         val currentSection = sections.first{ it.route == currentRoute}
 
         sections.forEach { section ->

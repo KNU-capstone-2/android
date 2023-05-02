@@ -64,21 +64,6 @@ fun DashBoardScreen(
                 .background(Color.White)
                 .verticalScroll(rememberScrollState())
         ) {
-            /* 모달드로우 할당 영역 */
-            Column(
-                modifier = Modifier
-                    .weight(.1f)
-                    .fillMaxSize()
-                    .border(BorderStroke(1.dp, Color.Black))
-            ) {
-                Text(
-                    text= "모달드로우 할당 영역",
-                    modifier = Modifier.padding(start = 15.dp, top = 350.dp, bottom = 350.dp)
-                )
-            }
-            // 모달드로우 end point
-
-            Spacer(modifier = Modifier.width(30.dp))
             Column(
                 modifier = Modifier
                     .weight(.3f)

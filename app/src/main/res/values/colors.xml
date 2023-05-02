@@ -8,8 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="TopAppBar_background">#F7F2FA</color>
-    <color name="TopAppBar_path">#656262</color>
     <color name="Orange">#FE6244</color>
     <color name="Black_Main">#2C3333</color>
     <color name="skyBlue">#5BC0F8</color>
@@ -29,5 +27,14 @@
     <color name="pie_green">#C7E9B0</color>
     <color name="pie_remaining">#D8D8D8</color>
     <color name="pie_text">#2D2727</color>
+
+    <!-- TopAppBar -->
+    <color name="TopAppBar_background">#F7F2FA</color>
+    <color name="DrawerItem_selected">#E8DEF8</color>
+    <color name="TopAppBar_path">#656262</color>
+
+    <!-- instance summary -->
+    <color name="instance_Summary_background">#F6F6F6</color>
+    <color name="instance_running_text">#177100</color>
 
 </resources>

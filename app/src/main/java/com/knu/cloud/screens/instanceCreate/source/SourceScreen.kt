@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
+import com.knu.cloud.components.LaunchButton
 import com.knu.cloud.components.data_grid.*
 import com.knu.cloud.components.text_input.*
 import timber.log.Timber
@@ -44,7 +45,20 @@ fun SourceScreen(
             .fillMaxSize(),
         color = Color.White
     ) {
-        Source(viewModel = viewModel)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            Source(viewModel = viewModel)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                LaunchButton(/* do something */)
+            }
+        }
     }
 }
 
@@ -66,6 +80,7 @@ fun Source(
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
+            .height(600.dp) // Prevent vertical infinity maximum height constraints
             .addFocusCleaner(keyboardController!!),
     ) {
         item {
