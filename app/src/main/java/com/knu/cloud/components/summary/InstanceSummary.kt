@@ -25,7 +25,10 @@ data class InstanceData(
     val publicIPv4Address: String,
     val privateIPv4Address: String,
     val instanceState: String,
-    val publicIPv4DNS: String
+    val publicIPv4DNS: String,
+    val hostNameType: String,
+    val privateIpDNSname: String,
+    val instanceType: String,
 )
 
 @Composable
@@ -40,8 +43,9 @@ fun InstanceSummary(
         modifier = Modifier
             .background(color = colorResource(id = R.color.instance_Summary_background))
             .border(width = 1.dp, color = Color.Black)
-            .padding(20.dp),
-        verticalArrangement = Arrangement.Center,
+            .padding(20.dp)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.Start,
     ) {
         Text(

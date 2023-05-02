@@ -21,7 +21,8 @@ import kotlin.math.*
 
 @Composable
 fun LineChartComponent(
-
+    title: String,
+    data: List<Pair<Int, Double>> = emptyList()
 ) {
     Column(
         modifier = Modifier
@@ -41,20 +42,21 @@ fun LineChartComponent(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = "CPU 사용률(%)",
+                    text = title,
                     fontSize = 25.sp,
                     color = Color.White
                 )
                 Spacer(modifier = Modifier.height(50.dp))
-                LineChart() // data 할당 전
+                LineChart(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp),
+                    data = data
+                )
             }
         }
     }
 }
-
-private const val animationDuration = 800
-// 원 모양
-private const val chartDegrees = 360f
 
 @Composable
 internal fun LineChart(
