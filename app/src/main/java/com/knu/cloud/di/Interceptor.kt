@@ -2,6 +2,7 @@ package com.knu.cloud.di
 
 import com.knu.cloud.model.auth.AuthResponse
 import com.knu.cloud.model.auth.Token
+import com.knu.cloud.repository.AuthRepository
 import com.knu.cloud.repository.AuthRepositoryImpl
 import dagger.Module
 import dagger.Provides

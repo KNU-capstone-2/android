@@ -1,14 +1,15 @@
 package com.knu.cloud
 
+import android.util.Log
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.*
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.knu.cloud.navigation.*
-import kotlinx.coroutines.CoroutineScope
-import timber.log.Timber
+import com.knu.cloud.navigation.HomeSections
+import com.knu.cloud.navigation.MainDestination
 
 
 // ProjectApp에서 사용되는 Destination들
@@ -16,37 +17,84 @@ import timber.log.Timber
 @Composable
 fun rememberProjectAppState(
     navController: NavHostController = rememberNavController(),
-    scaffoldState : ScaffoldState = rememberScaffoldState(),
-    navActions : NavActions = remember(navController) {
-        NavActions(navController)
-    }
-) = remember(navController,scaffoldState, navActions){
-    ProjectAppState(navController,scaffoldState,navActions)
+    scaffoldState : ScaffoldState = rememberScaffoldState()
+) = remember(navController, scaffoldState){
+    ProjectAppState(navController,scaffoldState)
 }
 
+@Stable
 class ProjectAppState(
     val navController: NavHostController,
-    val scaffoldState: ScaffoldState,
-    val navActions: NavActions,
-    val isHomeSection : MutableState<Boolean> = mutableStateOf(false)
+    val scaffoldState: ScaffoldState
 ) {
-    fun addDestinationChangedListener(
-    ){
-        Timber.tag("navigation").d("addDestinationChangedListener에 들어옴")
-        val callback = NavController.OnDestinationChangedListener { _, destination, _ ->
-            Timber.tag("navigation").d("OnDestinationChangedListener 체크하기")
-            if(!isHomeSection.value && destination.route in homeSections.map { it.route }) {
-                isHomeSection.value = true
-                Timber.tag("navigation").d("HomeSectionState true로 변경")
-            }
-        }
-        navController.addOnDestinationChangedListener(callback)
-    }
 
-    val currentRoute: String?
-        @Composable get() = navController.currentBackStackEntryAsState().value?.destination?.route
+    //----------------------
+    // BottomBar state source
+    //----------------------
+
+    val bottomBarTabs = HomeSections.values()
+    private val bottomBarRoutes = bottomBarTabs.map{it.route}
+
+    // 이 변수 읽을 때 바텀바가 보여져야하는지 아닌지 recomposition을 수행함
+    val isHomeScreen : Boolean
+        @Composable get() = navController.currentBackStackEntryAsState().value?.destination?.route in bottomBarRoutes
 
     val isInstanceScreen : Boolean
-        @Composable get() = navController.currentBackStackEntryAsState().value?.destination?.route == ComputeSections.Instance.route
+        @Composable get() = navController.currentBackStackEntryAsState().value?.destination?.route == HomeSections.Instance.route
 
+    //----------------------
+    // Navigation state source
+    //----------------------
+    val currentRoute: String?
+        get() = navController.currentDestination?.route
+
+    fun navigateToBottomBarRoute(route: String) {
+        if (route != currentRoute) {
+            navController.navigate(route) {
+                launchSingleTop = true
+                restoreState = true
+                // Pop up backstack to the first destination and save state. This makes going back
+                // to the start destination when pressing back in any other bottom tab.
+                popUpTo(findStartDestination(navController.graph).id) {
+                    saveState = true
+                }
+            }
+        }
+    }
+
+    fun navigateToInstanceCreate(from: NavBackStackEntry) {
+        // In order to discard duplicated navigation events, we check the Lifecycle
+        Log.d("DEBUG", "navigateToInstanceCreate: hi in projectAppState")
+//        if (from.lifecycleIsResumed()) {
+            navController.navigate(MainDestination.INSTANCE_CREATE_ROUTE)
+//        }
+    }
+    fun navigateToHome(from:NavBackStackEntry){
+        navController.navigate(MainDestination.HOME_ROUTE)
+    }
+
+    fun navigateToSignUp(from:NavBackStackEntry){
+        navController.navigate(MainDestination.SIGNUP_ROUTE)
+    }
+
+    fun navigateToLogin(from:NavBackStackEntry){
+        navController.navigate(MainDestination.LOGIN_ROUTE)
+    }
+
+
+}
+
+private fun NavBackStackEntry.lifecycleIsResumed() =
+    this.getLifecycle().currentState == Lifecycle.State.RESUMED
+
+private val NavGraph.startDestination: NavDestination?
+    get() = findNode(startDestinationId)
+
+/**
+ * Copied from similar function in NavigationUI.kt
+ *
+ * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:navigation/navigation-ui/src/main/java/androidx/navigation/ui/NavigationUI.kt
+ */
+ tailrec fun findStartDestination(graph: NavDestination): NavDestination {
+    return if (graph is NavGraph) findStartDestination(graph.startDestination!!) else graph
 }
