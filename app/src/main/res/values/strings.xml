@@ -30,6 +30,14 @@
     <string name="SignUp_policyInfo">동의하지 않은 약관이 존재합니다.</string>
     <string name="SignUp_Button">회원가입</string>
 
+    <!-- Instance Summary -->
+    <string name="IS_name">Instances Name</string>
+    <string name="IS_id">Instance ID</string>
+    <string name="IS_public_IPv4_address">Public IPv4 Address</string>
+    <string name="IS_private_IPv4_address">Private IPv4 Address</string>
+    <string name="IS_state">Instance State</string>
+    <string name="IS_IPv4_DNS">Public IPv4 DNS</string>
+    
     <!-- Instance Screen -->
     <string name="InstanceTableHeader_InstanceName">Instance Name</string>
     <string name="InstanceTableHeader_InstanceID">Instance ID</string>

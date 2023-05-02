@@ -31,4 +31,12 @@
     <color name="pie_remaining">#D8D8D8</color>
     <color name="pie_text">#2D2727</color>
 
+    <!-- TopAppBar -->
+    <color name="TopAppBar_background">#F7F2FA</color>
+    <color name="TopAppBar_path">#656262</color>
+
+    <!-- instance summary -->
+    <color name="instance_Summary_background">#F6F6F6</color>
+    <color name="instance_running_text">#177100</color>
+
 </resources>
