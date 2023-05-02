@@ -8,11 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.knu.cloud.components.ProjectAppBar
 import com.knu.cloud.components.summary.InstanceData
 import com.knu.cloud.components.summary.InstanceSummary
-import kotlin.reflect.jvm.internal.impl.types.TypeCheckerState.SupertypesPolicy.None
 
 
 val testData = InstanceData(
@@ -21,9 +19,11 @@ val testData = InstanceData(
     publicIPv4Address = "52.83.423.531",
     privateIPv4Address = "172.31.5.206",
     instanceState = "Running",
-    publicIPv4DNS = "ec2-52-78-233-109 ap"
+    publicIPv4DNS = "ec2-52-78-233-109 ap",
+    hostNameType = "ip-173-31-92-94.31.ec2",
+    privateIpDNSname = "IPv4(A)",
+    instanceType = "t2.micro"
 )
-
 
 @Composable
 fun InstanceScreen (
@@ -48,7 +48,6 @@ fun InstanceScreen (
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.White)
-                    .verticalScroll(rememberScrollState())
             ) {
                 /* 모달드로우 할당 영역 */
                 Column(
