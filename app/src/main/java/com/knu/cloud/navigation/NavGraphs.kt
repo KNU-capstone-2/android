@@ -1,31 +1,61 @@
 package com.knu.cloud.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Surface
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.*
 import androidx.navigation.compose.composable
-import com.knu.cloud.screens.home.instance.InstanceScreen
-import com.knu.cloud.screens.home.setting.SettingScreen
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.knu.cloud.R
+import com.knu.cloud.components.NavDrawer
 import com.knu.cloud.screens.instanceCreate.*
 import com.knu.cloud.screens.auth.login.LoginScreen
 import com.knu.cloud.screens.auth.signup.SignUpScreen
 import com.knu.cloud.screens.home.dashboard.DashBoardScreen
+import com.knu.cloud.screens.home.image.ImageScreen
+import com.knu.cloud.screens.home.instance.InstanceScreen
+import com.knu.cloud.screens.home.keypairs.KeypairsScreen
+import com.knu.cloud.screens.home.networks.NetworksScreen
+import com.knu.cloud.screens.home.securitygroup.SecurityGroupScreen
+import com.knu.cloud.screens.home.volume.VolumeScreen
 import com.knu.cloud.screens.instanceCreate.detail.DetailScreen
 
+
 fun NavGraphBuilder.homeNavGraph(
+    navController: NavController,
+    navActions: NavActions,
     onInstanceCreateBtnClicked: (NavBackStackEntry) -> Unit,
 ) {
     navigation(
         route = MainDestination.HOME_ROUTE,
-        startDestination = HomeSections.DashBoard.route
+        startDestination = ComputeSections.DashBoard.route
     ){
-        composable(HomeSections.DashBoard.route){ from ->
+        composable(ComputeSections.DashBoard.route){ from ->
             DashBoardScreen()
         }
-        composable(HomeSections.Instance.route){ from ->
+        composable(ComputeSections.Instance.route){ from ->
             InstanceScreen(onInstanceCreateClick = { onInstanceCreateBtnClicked(from) })
         }
-        composable(HomeSections.Setting.route){ from ->
-            SettingScreen()
+        composable(ComputeSections.Image.route){ from ->
+            ImageScreen()
+        }
+        composable(ComputeSections.KeyPairs.route){ from ->
+            KeypairsScreen()
+        }
+        composable(ComputeSections.Volume.route){ from ->
+            VolumeScreen()
+        }
+        composable(NetworkSections.Networks.route){ from ->
+            NetworksScreen()
+        }
+        composable(NetworkSections.SecurityGroup.route){ from ->
+            SecurityGroupScreen()
         }
     }
 }
@@ -56,18 +86,14 @@ fun NavGraphBuilder.instanceCreateNavGraph() {
     val instanceCreateViewModel = InstanceCreateViewModel()
     composable(InstanceCreateSections.Details.route){ from ->
         DetailScreen(viewModel = instanceCreateViewModel)
-//        InstanceCreateDetail()
     }
     composable(InstanceCreateSections.Source.route){ from ->
         SourceScreen(viewModel = instanceCreateViewModel)
-//        InstanceCreateSource()
     }
     composable(InstanceCreateSections.Flavor.route){ from ->
         FlavorScreen(viewModel = instanceCreateViewModel)
-//        InstanceCreateFlavor()
     }
     composable(InstanceCreateSections.Network.route){ from ->
         NetworkScreen(viewModel = instanceCreateViewModel)
-//        InstanceCreateNetwork()
     }
 }
