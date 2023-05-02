@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="TopAppBar_background">#F7F2FA</color>
+    <color name="DrawerItem_selected">#E8DEF8</color>
     <color name="TopAppBar_path">#656262</color>
     <color name="Orange">#FE6244</color>
     <color name="Black_Main">#2C3333</color>

@@ -55,84 +55,73 @@ fun DashBoardScreen(
         DashboardData("네트워크", 3, 7),
         DashboardData( "포트",3, 500)
     )
-
-    Scaffold(
-        topBar = {
-            ProjectAppBar(
-                title = "POCKET",
-                path = "프로젝트 / Compute / 대시보드"
-            )
-        }
+    Surface(
+        modifier = Modifier
     ) {
-        Surface(
+        Row(
             modifier = Modifier
-                .padding(it)
+                .fillMaxSize()
+                .background(Color.White)
+                .verticalScroll(rememberScrollState())
         ) {
-            Row(
+            /* 모달드로우 할당 영역 */
+            Column(
                 modifier = Modifier
+                    .weight(.1f)
                     .fillMaxSize()
-                    .background(Color.White)
-                    .verticalScroll(rememberScrollState())
+                    .border(BorderStroke(1.dp, Color.Black))
             ) {
-                /* 모달드로우 할당 영역 */
-                Column(
+                Text(
+                    text= "모달드로우 할당 영역",
+                    modifier = Modifier.padding(start = 15.dp, top = 350.dp, bottom = 350.dp)
+                )
+            }
+            // 모달드로우 end point
+
+            Spacer(modifier = Modifier.width(30.dp))
+            Column(
+                modifier = Modifier
+                    .weight(.3f)
+                    .fillMaxSize()
+            ) {
+                Divider(
+                    color = Color.LightGray,
+                    thickness = 1.dp,
                     modifier = Modifier
-                        .weight(.1f)
-                        .fillMaxSize()
-                        .border(BorderStroke(1.dp, Color.Black))
-                ) {
-                    Text(
-                        text= "모달드로우 할당 영역",
-                        modifier = Modifier.padding(start = 15.dp, top = 350.dp, bottom = 350.dp)
-                    )
-                }
-                // 모달드로우 end point
+                        .fillMaxWidth()
+                        .padding(horizontal = 1.dp, vertical = 5.dp)
+                )
 
-                Spacer(modifier = Modifier.width(30.dp))
-                Column(
+                Compute(dataSet = computeDataSet)
+
+                Divider(
+                    color = Color.LightGray,
+                    thickness = 1.dp,
                     modifier = Modifier
-                        .weight(.3f)
-                        .fillMaxSize()
-                ) {
-                    Divider(
-                        color = Color.LightGray,
-                        thickness = 1.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 1.dp, vertical = 5.dp)
-                    )
+                        .fillMaxWidth()
+                        .padding(horizontal = 1.dp, vertical = 5.dp)
+                )
 
-                    Compute(dataSet = computeDataSet)
+                Volume(dataSet = volumeDataSet)
 
-                    Divider(
-                        color = Color.LightGray,
-                        thickness = 1.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 1.dp, vertical = 5.dp)
-                    )
+                Divider(
+                    color = Color.LightGray,
+                    thickness = 1.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 1.dp, vertical = 5.dp)
+                )
 
-                    Volume(dataSet = volumeDataSet)
+                Network(dataSet = networkDataSet)
 
-                    Divider(
-                        color = Color.LightGray,
-                        thickness = 1.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 1.dp, vertical = 5.dp)
-                    )
-
-                    Network(dataSet = networkDataSet)
-
-                    Divider(
-                        color = Color.LightGray,
-                        thickness = 1.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 1.dp, vertical = 5.dp)
-                    )
-                    Usage()
-                }
+                Divider(
+                    color = Color.LightGray,
+                    thickness = 1.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 1.dp, vertical = 5.dp)
+                )
+                Usage()
             }
         }
     }
