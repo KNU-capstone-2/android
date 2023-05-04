@@ -26,6 +26,7 @@ import com.knu.cloud.screens.home.networks.NetworksScreen
 import com.knu.cloud.screens.home.securitygroup.SecurityGroupScreen
 import com.knu.cloud.screens.home.volume.VolumeScreen
 import com.knu.cloud.screens.instanceCreate.detail.DetailScreen
+import com.knu.cloud.screens.instanceCreate.keypair.KeypairScreen
 
 
 fun NavGraphBuilder.homeNavGraph(
@@ -97,5 +98,8 @@ fun NavGraphBuilder.instanceCreateNavGraph(
     }
     composable(InstanceCreateSections.Network.route){ from ->
         NetworkScreen(viewModel = instanceCreateViewModel)
+    }
+    composable(InstanceCreateSections.Keypair.route){ from ->
+        KeypairScreen(viewModel = instanceCreateViewModel)
     }
 }

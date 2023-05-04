@@ -7,19 +7,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
-import com.knu.cloud.components.LaunchButton
 import com.knu.cloud.components.data_grid.*
 import com.knu.cloud.components.text_input.addFocusCleaner
+import com.knu.cloud.model.instanceCreate.Network
 
 @ExperimentalComposeUiApi
 @Composable
