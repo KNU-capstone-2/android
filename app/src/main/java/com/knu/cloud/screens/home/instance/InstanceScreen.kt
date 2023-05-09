@@ -31,8 +31,16 @@ fun InstanceScreen (
     var selectedInstance by rememberSaveable {
         mutableStateOf<InstanceData?>(null)
     }
+    val isAllSelected = rememberSaveable { mutableStateOf(false) }
+    val isHeaderClick = rememberSaveable { mutableStateOf(false) }
+    val selectedItemIndex = rememberSaveable { mutableStateOf(-1) }
 
     Timber.tag("vm_test").d("InstanceScreen : checkedInstanceIdList ${checkedInstanceIdList.value}")
+    if(checkedInstanceIdList.value.isEmpty()){
+        /* to initialize table checkBoxes*/
+        isAllSelected.value = false
+        isHeaderClick.value = true
+    }
 
     Column(
     ){
@@ -58,6 +66,9 @@ fun InstanceScreen (
             ) {
                 InstanceTable(
                     dataList = testData.value,
+                    isAllSelected = isAllSelected,
+                    isHeaderClick = isHeaderClick,
+                    selectedItemIndex = selectedItemIndex,
                     onAllChecked = {
                        viewModel.allInstanceCheck(it)
                     },
@@ -102,13 +113,13 @@ fun InstanceScreen (
 @Composable
 fun InstanceTable(
     dataList :List<InstanceData>,
+    isAllSelected : MutableState<Boolean>,
+    isHeaderClick : MutableState<Boolean>,
+    selectedItemIndex : MutableState<Int>,
     onAllChecked : (Boolean) -> Unit,
     onRowChecked : (Boolean, String) -> Unit,
     onRowSelected : (String) -> Unit
 ) {
-    val isAllSelected = rememberSaveable { mutableStateOf(false) }
-    val isHeaderClick = rememberSaveable { mutableStateOf(false) }
-    val selectedItemIndex = rememberSaveable { mutableStateOf(-1) }
     val weightList = listOf(.2f,.25f,.125f,.125f,.2f)
     BasicTable(
         tableHeaderItem = TableHeaderItem(
