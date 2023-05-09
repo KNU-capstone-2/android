@@ -22,8 +22,8 @@ import com.knu.cloud.components.InstanceActionButtons
 import com.knu.cloud.components.LineChartComponent
 import com.knu.cloud.components.ProjectAppBar
 import com.knu.cloud.components.summary.CopyIncludedText
-import com.knu.cloud.components.summary.InstanceData
 import com.knu.cloud.components.summary.StateWithText
+import com.knu.cloud.screens.home.instance.InstanceData
 
 val data = listOf(
     Pair(1, 111.45),
@@ -49,6 +49,8 @@ val testData = InstanceData(
     hostNameType = "ip-173-31-92-94.31.ec2",
     privateIpDNSname = "ip-172-31-92.42.ec2.internal",
     instanceType = "t2.micro",
+    statusCheck = "2/2 check passe",
+    isSelected = false
 )
 
 @Composable
