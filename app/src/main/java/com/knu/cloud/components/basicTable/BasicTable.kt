@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Divider
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Devices
@@ -67,27 +68,28 @@ fun BasicTable(
     modifier: Modifier = Modifier,
     tableHeaderItem: TableHeaderItem,
     tableRowItems : List<TableRowItem>,
+    isAllSelected : MutableState<Boolean>,
+    isHeaderClick : MutableState<Boolean>,
+
+    selectedItemIndex : MutableState<Int>,
     onRowSelected : (String) -> Unit
 ) {
-    var isAllSelected by remember { mutableStateOf(false) }
-    var isHeaderClicked by remember { mutableStateOf(false) }
-    var selectedItem by remember {
-        mutableStateOf<TableRowItem?>(null)
-    }
-    var selectedItemIndex by remember { mutableStateOf(-1) }
+//    var selectedItem by rememberSaveable {
+//        mutableStateOf<TableRowItem?>(null)
+//    }
 
     Column() {
         TableHeader(
             textList = tableHeaderItem.textList,
             weightList = tableHeaderItem.weightList,
-            checked = isAllSelected,
+            checked = isAllSelected.value,
             onAllRowSelected = {
-                isAllSelected = it
-                isHeaderClicked = true
+                isAllSelected.value = it
+                isHeaderClick.value = true
             }
         )
-        if (!isHeaderClicked && tableRowItems.all { it.isSelected.value}){
-            isAllSelected = true
+        if (!isHeaderClick.value && tableRowItems.all { it.isSelected.value}){
+            isAllSelected.value = true
         }
 
         LazyColumn(
@@ -96,25 +98,24 @@ fun BasicTable(
             itemsIndexed(
                 tableRowItems
             ){index, item ->
-                if(isHeaderClicked){
-                    item.isSelected.value = isAllSelected
+                if(isHeaderClick.value){
+                    item.isSelected.value = isAllSelected.value
                 }
                 TableRow(
                     modifier = modifier,
                     tableItem = item,
                     isRowChecked = item.isSelected.value,
                     onRowChecked = {
-                        if (isAllSelected){
-                            isAllSelected = false
+                        if (isAllSelected.value){
+                            isAllSelected.value = false
                         }
-                        isHeaderClicked = false
+                        isHeaderClick.value = false
                         item.isSelected.value = it
                     },
-                    isRowSelected = index == selectedItemIndex,
+                    isRowSelected = index == selectedItemIndex.value,
                     onRowSelected = { tableRowItem ->
-                        selectedItem = tableRowItem
-                        selectedItemIndex = index
-                        /*TODO : Instance Summary 정보 변경 */
+//                        selectedItem = tableRowItem
+                        selectedItemIndex.value = if(selectedItemIndex.value == index) -1 else index
                         onRowSelected(tableRowItem.rowID)
                     }
                 )
@@ -175,6 +176,28 @@ fun TestTableHeader() {
 }
 
 
+@Preview(showBackground = true)
+@Composable
+fun TestTableRow() {
+    val tableRowItem = TableRowItem(
+        cellTypeList =listOf(TableCellType.TEXT,TableCellType.TEXT,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX),
+        textList = listOf("ec2-test","i-of204053ab80b5cc8","Running","t2.micro","2/2 check passe"),
+        colorList = listOf(Color.Black,Color.Black,Color.Green,Color.LightGray,Color.Green),
+        weightList = listOf(.1f,.1f,.1f,.1f,.1f),
+        rowID = "i-of204053ab80b5cc8",
+        isSelected = remember{ mutableStateOf(false) }
+    )
+    Surface(modifier = Modifier.fillMaxWidth()) {
+        TableRow(
+            tableItem = tableRowItem ,
+            isRowChecked = false ,
+            onRowChecked = {},
+            isRowSelected = false,
+            onRowSelected = {}
+        )
+    }
+}
+
 @Preview(showBackground = true, device = Devices.TABLET)
 @Composable
 fun TestInstanceTable() {
@@ -203,6 +226,15 @@ fun TestInstanceTable() {
     BasicTable(
         tableHeaderItem = testHeaderItem,
         tableRowItems = testRowItems,
-        onRowSelected = {}
+        onRowSelected = {},
+        isAllSelected = remember {
+            mutableStateOf(false)
+        },
+        isHeaderClick = remember {
+            mutableStateOf(false)
+        },
+        selectedItemIndex = remember {
+            mutableStateOf(-1)
+        },
     )
 }
