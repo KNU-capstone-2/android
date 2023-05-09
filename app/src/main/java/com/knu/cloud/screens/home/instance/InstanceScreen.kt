@@ -4,6 +4,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,7 +27,7 @@ fun InstanceScreen (
 ) {
     val context = LocalContext.current
     val testData = viewModel.testData.value
-    var selectedInstance by remember {
+    var selectedInstance by rememberSaveable {
         mutableStateOf<InstanceData?>(null)
     }
     Column(
@@ -69,9 +70,7 @@ fun InstanceScreen (
                         StartClicked = { /*TODO*/ },
                         ReStartClicked = { /*TODO*/ },
                         StopClicked = { /*TODO*/ },
-                        onInstanceDetailClicked = {
-                            /*TODO : InstanceDetailScreen으로 Navigation */
-                        }
+                        onInstanceDetailClicked = onInstanceDetailClicked
                     )
                 }
             }
@@ -84,10 +83,14 @@ fun InstanceTable(
     dataList :List<InstanceData>,
     onRowSelected : (String) -> Unit
 ) {
+    val isAllSelected = rememberSaveable { mutableStateOf(false) }
+    val isHeaderClick = rememberSaveable { mutableStateOf(false) }
+    val selectedItemIndex = rememberSaveable { mutableStateOf(-1) }
+    val weightList = listOf(.2f,.25f,.125f,.125f,.2f)
     BasicTable(
         tableHeaderItem = TableHeaderItem(
             textList = listOf("Instance Name", "Instance ID","Instance State", "Instance Type", "Status Check"),
-            weightList = listOf(.1f,.1f,.1f,.1f,.1f)
+            weightList = weightList
         ),
         tableRowItems = dataList.map{ instanceData ->
             TableRowItem(
@@ -99,14 +102,17 @@ fun InstanceTable(
                     TableCellType.COLOR_BOX),
                 textList = listOf( instanceData.instancesName,instanceData.instancesId, instanceData.instanceState,instanceData.instanceType,instanceData.statusCheck),
                 colorList = listOf(Color.Black, Color.Black, Color.Green, Color.LightGray, Color.Green),
-                weightList = listOf(.1f,.1f,.1f,.1f,.1f),
+                weightList = weightList,
                 rowID = instanceData.instancesId,
-                isSelected = remember {
+                isSelected = rememberSaveable {
                     mutableStateOf(instanceData.isSelected)
                 }
             )
         },
-        onRowSelected =onRowSelected
+        onRowSelected = onRowSelected,
+        isAllSelected = isAllSelected,
+        isHeaderClick = isHeaderClick,
+        selectedItemIndex = selectedItemIndex
     )
 }
 
