@@ -1,11 +1,7 @@
 package com.knu.cloud.navigation
 
-import android.util.Log
 import androidx.lifecycle.Lifecycle
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.NavGraph
+import androidx.navigation.*
 
 class NavActions(private val navController: NavController) {
 
@@ -25,7 +21,6 @@ class NavActions(private val navController: NavController) {
 
     fun navigateToInstanceCreate(from: NavBackStackEntry) {
         // In order to discard duplicated navigation events, we check the Lifecycle
-        Log.d("DEBUG", "navigateToInstanceCreate: hi in projectAppState")
 //        if (from.lifecycleIsResumed()) {
         navController.navigate(MainDestination.INSTANCE_CREATE_ROUTE)
 //        }
@@ -44,6 +39,10 @@ class NavActions(private val navController: NavController) {
 
     fun navigateToLogin(from: NavBackStackEntry){
         navController.navigate(MainDestination.LOGIN_ROUTE)
+    }
+
+    fun navigateToInstanceDetail(instanceId : String){
+        navController.navigate("${MainDestination.INSTANCE_DETAIL_ROUTE}/$instanceId")
     }
 }
 
