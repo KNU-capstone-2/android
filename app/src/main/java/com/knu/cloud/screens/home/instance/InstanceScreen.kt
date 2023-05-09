@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.components.summary.InstanceSummary
-
+import timber.log.Timber
 
 
 @Composable
@@ -25,17 +25,26 @@ fun InstanceScreen (
     modifier: Modifier = Modifier,
     viewModel : InstanceViewModel  = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val testData = viewModel.testData.value
+    val context = LocalContext.current                                       //Toast 메세지를 위함
+    val testData = viewModel.testData.collectAsState()
+    val checkedInstanceIdList = viewModel.checkedInstanceData.collectAsState()
     var selectedInstance by rememberSaveable {
         mutableStateOf<InstanceData?>(null)
     }
+
+    Timber.tag("vm_test").d("InstanceScreen : checkedInstanceIdList ${checkedInstanceIdList.value}")
+
     Column(
     ){
         InstancesBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            totalInstanceCnt = testData.value.size,
+            checkedInstanceCnt = checkedInstanceIdList.value.size,
             onLaunchBtnClicked = onInstanceCreateClicked,
             onDeleteBtnClicked = {
-                /*TODO : 선택한 인스턴스들 삭제*/
+                viewModel.deleteCheckedInstances()
             }
         )
         Divider(modifier = Modifier.height(1.dp), color = Color.Black)
@@ -48,9 +57,21 @@ fun InstanceScreen (
                 modifier = Modifier.weight(.7f)
             ) {
                 InstanceTable(
-                    dataList = testData,
+                    dataList = testData.value,
+                    onAllChecked = {
+                       viewModel.allInstanceCheck(it)
+                    },
+                    onRowChecked = { checked,  instanceId ->
+                        Timber.tag("vm_test").d("onRowChecked")
+                        if(checked){
+                            Timber.tag("vm_test").d("instanceCheck call")
+                            viewModel.instanceCheck(instanceId)
+                        }else{
+                            viewModel.instanceUncheck(instanceId)
+                        }
+                    },
                     onRowSelected = { instanceId ->
-                        val selectedData = testData.find { it.instancesId == instanceId }
+                        val selectedData = testData.value.find { it.instancesId == instanceId }
                         selectedInstance = if (selectedInstance == selectedData) null else selectedData
                     }
                 )
@@ -81,6 +102,8 @@ fun InstanceScreen (
 @Composable
 fun InstanceTable(
     dataList :List<InstanceData>,
+    onAllChecked : (Boolean) -> Unit,
+    onRowChecked : (Boolean, String) -> Unit,
     onRowSelected : (String) -> Unit
 ) {
     val isAllSelected = rememberSaveable { mutableStateOf(false) }
@@ -105,10 +128,12 @@ fun InstanceTable(
                 weightList = weightList,
                 rowID = instanceData.instancesId,
                 isSelected = rememberSaveable {
-                    mutableStateOf(instanceData.isSelected)
+                    mutableStateOf(false)
                 }
             )
         },
+        onAllChecked = onAllChecked,
+        onRowChecked = onRowChecked,
         onRowSelected = onRowSelected,
         isAllSelected = isAllSelected,
         isHeaderClick = isHeaderClick,
@@ -121,22 +146,37 @@ fun InstanceTable(
 @Composable
 fun InstancesBar(
     modifier: Modifier = Modifier,
+    totalInstanceCnt : Int,
+    checkedInstanceCnt : Int,
     onLaunchBtnClicked : () -> Unit,
     onDeleteBtnClicked : () -> Unit
 ) {
     Row(modifier = modifier
-        .fillMaxWidth()
+        .fillMaxSize()
     ) {
-        Text("Instances (10/20)",modifier = Modifier.weight(0.2f))
-        Spacer(modifier = modifier.weight(0.4f))
+        Box(modifier = Modifier
+            .weight(0.2f)
+            .fillMaxSize(),
+            contentAlignment = Alignment.CenterStart
+        ){
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text("Instances",
+                    modifier = Modifier.padding(10.dp),
+                   style = MaterialTheme.typography.h6
+                )
+                Text(text = "Total : $totalInstanceCnt  Selected : $checkedInstanceCnt",
+                    modifier = Modifier.padding(10.dp)
+                )
+            }
+        }
         OutlinedButton(
-            modifier = Modifier.weight(0.3f),
+            modifier = Modifier.weight(0.1f),
             onClick = onLaunchBtnClicked
         ) {
             Text(text = "Launch Instance")
         }
         OutlinedButton(
-            modifier = Modifier.weight(0.3f),
+            modifier = Modifier.weight(0.1f),
             onClick = onDeleteBtnClicked
         ) {
             Text(text = "Delete Instances")

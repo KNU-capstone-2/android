@@ -1,11 +1,18 @@
 package com.knu.cloud.screens.home.instance
 
 import android.os.Parcelable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
+import com.knu.cloud.di.ApplicationScopeDefault
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import timber.log.Timber
 import javax.inject.Inject
 
 @Parcelize
@@ -20,7 +27,6 @@ data class InstanceData(
     val privateIpDNSname: String,
     val instanceType: String,
     val statusCheck : String,
-    var isSelected: Boolean
 ): Parcelable
 
 data class TableRowData(
@@ -51,7 +57,6 @@ val testInstanceData = mutableListOf(
         privateIpDNSname = "IPv4(A)",
         instanceType = "t2.micro",
         statusCheck = "2/2 check passe",
-        isSelected = false
     ),
     InstanceData(
         instancesId = "k-fwe31431jtj34442dcc",
@@ -64,7 +69,6 @@ val testInstanceData = mutableListOf(
         privateIpDNSname = "IPv4(A)",
         instanceType = "t2.micro",
         statusCheck = "2/2 check passe",
-        isSelected = false
     ),
     InstanceData(
         instancesId = "i-ac3199341fk33140f3",
@@ -77,18 +81,57 @@ val testInstanceData = mutableListOf(
         privateIpDNSname = "IPv4(A)",
         instanceType = "t2.micro",
         statusCheck = "2/2 check passe",
-        isSelected = false
     )
 )
 
 @HiltViewModel
-class InstanceViewModel @Inject constructor () : ViewModel(){
+class InstanceViewModel @Inject constructor (
+    @ApplicationScopeDefault private val coroutineScope: CoroutineScope
+        ) : ViewModel(){
 
-    private val _testData = mutableStateOf<List<InstanceData>>(emptyList())
-    val testData : State<List<InstanceData>> = _testData
+    private val _testData = MutableStateFlow<List<InstanceData>>(emptyList())
+    val testData get() = _testData.asStateFlow()
+
+    private val _checkedInstanceIdList = MutableStateFlow<List<String>>(emptyList())
+    val checkedInstanceData : StateFlow<List<String>> = _checkedInstanceIdList.asStateFlow()
 
     init {
         _testData.value = testInstanceData
+    }
+    fun instanceCheck(instanceId : String){
+        coroutineScope.launch {
+            _checkedInstanceIdList.emit(_checkedInstanceIdList.value +instanceId)
+            Timber.tag("vm_test").d("_checkedInstanceIdList ${_checkedInstanceIdList.value}")
+        }
+    }
+    fun instanceUncheck(instanceId: String) {
+        coroutineScope.launch {
+            _checkedInstanceIdList.emit(_checkedInstanceIdList.value.filterNot { it == instanceId })
+            Timber.tag("vm_test").d("_checkedInstanceIdList ${_checkedInstanceIdList.value}")
+        }
+    }
+
+    fun allInstanceCheck(allChecked: Boolean) {
+        coroutineScope.launch {
+            if(allChecked){
+                _checkedInstanceIdList.emit(_testData.value.map{it.instancesId})
+            }else{
+                _checkedInstanceIdList.emit(listOf())
+            }
+            Timber.tag("vm_test").d("_checkedInstanceIdList ${_checkedInstanceIdList.value}")
+        }
+    }
+
+    fun deleteCheckedInstances(){
+        /*TODO : Repository의 deleteInstances 함수 호출*/
+        Timber.tag("vm_test").d("deleteCheckedInstances ${_checkedInstanceIdList.value}가 삭제될 예정")
+
+        val filteredData = _testData.value.filterNot { it.instancesId in _checkedInstanceIdList.value }
+
+        coroutineScope.launch {
+            _testData.emit(filteredData)
+            _checkedInstanceIdList.emit(listOf())
+        }
     }
 
 }

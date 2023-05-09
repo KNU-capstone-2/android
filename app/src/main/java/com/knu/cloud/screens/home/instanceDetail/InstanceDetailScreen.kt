@@ -49,8 +49,7 @@ val testData = InstanceData(
     hostNameType = "ip-173-31-92-94.31.ec2",
     privateIpDNSname = "ip-172-31-92.42.ec2.internal",
     instanceType = "t2.micro",
-    statusCheck = "2/2 check passe",
-    isSelected = false
+    statusCheck = "2/2 check passe"
 )
 
 @Composable
