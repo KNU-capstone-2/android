@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import timber.log.Timber
 
 @Composable
 fun TableHeader(
@@ -70,22 +71,20 @@ fun BasicTable(
     tableRowItems : List<TableRowItem>,
     isAllSelected : MutableState<Boolean>,
     isHeaderClick : MutableState<Boolean>,
-
     selectedItemIndex : MutableState<Int>,
+    onAllChecked : (Boolean) -> Unit,
+    onRowChecked : (Boolean, String) -> Unit,
     onRowSelected : (String) -> Unit
 ) {
-//    var selectedItem by rememberSaveable {
-//        mutableStateOf<TableRowItem?>(null)
-//    }
-
     Column() {
         TableHeader(
             textList = tableHeaderItem.textList,
             weightList = tableHeaderItem.weightList,
             checked = isAllSelected.value,
-            onAllRowSelected = {
-                isAllSelected.value = it
+            onAllRowSelected = {selected ->
+                isAllSelected.value = selected
                 isHeaderClick.value = true
+                onAllChecked(selected)
             }
         )
         if (!isHeaderClick.value && tableRowItems.all { it.isSelected.value}){
@@ -105,12 +104,14 @@ fun BasicTable(
                     modifier = modifier,
                     tableItem = item,
                     isRowChecked = item.isSelected.value,
-                    onRowChecked = {
+                    onRowChecked = { checked ->
                         if (isAllSelected.value){
                             isAllSelected.value = false
                         }
                         isHeaderClick.value = false
-                        item.isSelected.value = it
+                        item.isSelected.value = checked
+                        Timber.tag("vm_test").d("BasicTable onRowChecked")
+                        onRowChecked(checked, item.rowID)
                     },
                     isRowSelected = index == selectedItemIndex.value,
                     onRowSelected = { tableRowItem ->
@@ -226,6 +227,8 @@ fun TestInstanceTable() {
     BasicTable(
         tableHeaderItem = testHeaderItem,
         tableRowItems = testRowItems,
+        onAllChecked = {},
+        onRowChecked = {a,b ->},
         onRowSelected = {},
         isAllSelected = remember {
             mutableStateOf(false)
