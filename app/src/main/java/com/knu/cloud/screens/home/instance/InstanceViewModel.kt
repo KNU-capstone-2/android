@@ -1,11 +1,14 @@
 package com.knu.cloud.screens.home.instance
 
+import android.os.Parcelable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
+@Parcelize
 data class InstanceData(
     val instancesId: String,
     val instancesName: String,
@@ -18,7 +21,7 @@ data class InstanceData(
     val instanceType: String,
     val statusCheck : String,
     var isSelected: Boolean
-)
+): Parcelable
 
 data class TableRowData(
     val dataList : List<String>,
