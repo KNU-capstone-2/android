@@ -48,7 +48,7 @@ fun NavGraphBuilder.homeNavGraph(
             )
         ){ navBackStackEntry ->
             val instanceId = navBackStackEntry.arguments?.getString("instanceId")!!
-            InstanceDetailScreen()
+            InstanceDetailScreen(instanceId = instanceId)
         }
 
         composable(ComputeSections.Image.route){ from ->
