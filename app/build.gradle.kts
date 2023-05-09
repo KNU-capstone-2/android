@@ -92,6 +92,7 @@ dependencies {
     implementation (Dependencies.LIFECYCLE_RUNTIME_KTX)
     implementation (Dependencies.LIFECYCLE_SAVEDSTATE)
     implementation (Dependencies.LIFECYCLE_VIEWMODEL_COMPOSE)
+    implementation (Dependencies.LIFECYCLE_RUNTIME_COMPOSE)
 
     // Coroutine
     implementation (Dependencies.COROUTINE_CORE)
@@ -137,6 +138,12 @@ dependencies {
 
     // WorkManager
     implementation (Dependencies.WORKMANAGER)
+
+    // Lottie
+    implementation (Dependencies.LOTTIE)
+
+    //
+    implementation ("androidx.compose.runtime:runtime-livedata:1.3.2")
 
     // Hilt
     implementation (Dependencies.DAGGER_HILT)
