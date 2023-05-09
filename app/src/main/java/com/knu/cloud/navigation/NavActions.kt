@@ -31,11 +31,7 @@ class NavActions(private val navController: NavController) {
 //        }
     }
     fun navigateToHome(from: NavBackStackEntry){
-        navController.navigate(MainDestination.HOME_ROUTE) {
-            popUpTo(MainDestination.SPlASH_ROUTE) {
-                inclusive = true
-            }
-        }
+        navController.navigate(MainDestination.HOME_ROUTE)
     }
 
     fun navigateToSignUp(from: NavBackStackEntry){

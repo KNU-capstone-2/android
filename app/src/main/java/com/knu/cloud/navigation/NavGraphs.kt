@@ -3,7 +3,6 @@ package com.knu.cloud.navigation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -26,7 +25,6 @@ import com.knu.cloud.screens.home.networks.NetworksScreen
 import com.knu.cloud.screens.home.securitygroup.SecurityGroupScreen
 import com.knu.cloud.screens.home.volume.VolumeScreen
 import com.knu.cloud.screens.instanceCreate.detail.DetailScreen
-import com.knu.cloud.screens.instanceCreate.keypair.KeypairScreen
 
 
 fun NavGraphBuilder.homeNavGraph(
@@ -84,9 +82,8 @@ fun NavGraphBuilder.authNavGraph(
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun NavGraphBuilder.instanceCreateNavGraph(
-    instanceCreateViewModel: InstanceCreateViewModel
-) {
+fun NavGraphBuilder.instanceCreateNavGraph() {
+    val instanceCreateViewModel = InstanceCreateViewModel()
     composable(InstanceCreateSections.Details.route){ from ->
         DetailScreen(viewModel = instanceCreateViewModel)
     }
@@ -98,8 +95,5 @@ fun NavGraphBuilder.instanceCreateNavGraph(
     }
     composable(InstanceCreateSections.Network.route){ from ->
         NetworkScreen(viewModel = instanceCreateViewModel)
-    }
-    composable(InstanceCreateSections.Keypair.route){ from ->
-        KeypairScreen(viewModel = instanceCreateViewModel)
     }
 }

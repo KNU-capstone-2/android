@@ -15,10 +15,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.knu.cloud.R
-import com.knu.cloud.model.instanceCreate.Flavor
-import com.knu.cloud.model.instanceCreate.Keypair
-import com.knu.cloud.model.instanceCreate.Network
-import com.knu.cloud.model.instanceCreate.Source
+import com.knu.cloud.screens.instanceCreate.Flavor
+import com.knu.cloud.screens.instanceCreate.Network
+import com.knu.cloud.screens.instanceCreate.Source
 
 object FlavorUtils{
     const val columnNameWeight = .2f
@@ -52,15 +51,6 @@ object NetworkUtils{
     const val columnShareWeight = .2f
     const val columnAdminStateWeight = .2f
     const val columnStateWeight = .1f
-    const val columnUpDownWeight = .1f
-
-    const val tableHeader = "tableHeader"
-    const val tableList = "tableList"
-}
-
-object KeypairUtils{
-    const val columnNameWeight = .3f
-    const val columnTypeWeight = .6f
     const val columnUpDownWeight = .1f
 
     const val tableHeader = "tableHeader"
@@ -241,58 +231,6 @@ fun NetworkDataTableCell(item: Network, index: Int, type: String, onClickButton:
         modifier = Modifier.padding(5.dp)
     )
 }
-
-@Composable
-fun KeypairHeaderTableCell() {
-    Row(
-        modifier = Modifier
-            .padding(5.dp)
-            .fillMaxWidth(),
-    ) {
-        TableCell(text = "이름", weight = KeypairUtils.columnNameWeight, type = KeypairUtils.tableHeader)
-        TableCell(text = "유형", weight = KeypairUtils.columnTypeWeight, type = KeypairUtils.tableHeader)
-        TableCell(text = "", weight = KeypairUtils.columnUpDownWeight, type = KeypairUtils.tableHeader)
-    }
-    Divider(
-        color = Color.Black.copy(alpha = 0.3f),
-        thickness = 1.dp,
-        modifier = Modifier.padding(5.dp)
-    )
-}
-
-@Composable
-fun KeypairDataTableCell(item: Keypair, index: Int, type: String, onClickButton: (Keypair, Int) -> Unit) {
-    var backGcolor = Color.White
-    if (index % 2 == 0) {
-        backGcolor = Color.LightGray
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(backGcolor),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        TableCell(text = item.name, weight = NetworkUtils.columnNetworkWeight, type = NetworkUtils.tableList)
-        TableCell(text = item.type, weight = NetworkUtils.columnSubNetWeight, type = NetworkUtils.tableList)
-        IconButton(
-            onClick = {
-                onClickButton(item, index)
-            },
-            modifier = Modifier.weight(NetworkUtils.columnUpDownWeight)
-        ) {
-            Icon(imageVector = if(type == "할당됨") Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
-                contentDescription = "Updown Icon")
-        }
-    }
-    Divider(
-        color = Color.LightGray.copy(alpha = 0.3f),
-        thickness = 1.dp,
-        modifier = Modifier.padding(5.dp)
-    )
-}
-
 
 @Composable
 fun RowScope.TableCell(

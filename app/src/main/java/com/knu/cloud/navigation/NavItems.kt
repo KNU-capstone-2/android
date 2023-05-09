@@ -66,18 +66,10 @@ enum class InstanceCreateSections(
     Details("Details", Icons.Default.Info, "instance_create/details"),
     Source("Source", Icons.Outlined.Star, "instance_create/source"),
     Flavor("Flavor", Icons.Outlined.Share, "instance_create/flavor"),
-    Network("Network", Icons.Outlined.LocationOn, "instance_create/network"),
-    Keypair("Keypair", Icons.Outlined.AccountBox, "instance_create/keypair");
-
+    Network("Network", Icons.Outlined.LocationOn, "instance_create/network");
     companion object{
         fun sectionValues() : Array<Section>{
-            return  arrayOf(
-                InstanceCreateSections.Details,
-                InstanceCreateSections.Source,
-                InstanceCreateSections.Flavor,
-                InstanceCreateSections.Network,
-                InstanceCreateSections.Keypair
-            )
+            return  arrayOf(InstanceCreateSections.Details, InstanceCreateSections.Source,InstanceCreateSections.Flavor, InstanceCreateSections.Network)
         }
     }
 }

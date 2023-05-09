@@ -30,7 +30,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.knu.cloud.R
-import timber.log.Timber
 
 @ExperimentalComposeUiApi
 @Composable
@@ -178,7 +177,6 @@ sealed class InputType(
 fun Modifier.addFocusCleaner(keyboardController: SoftwareKeyboardController, doOnClear: () -> Unit = {}): Modifier {
     return this.pointerInput(Unit) {
         detectTapGestures(onTap = {
-            Timber.tag("addFocus").e("Touch")
             doOnClear()
             keyboardController.hide()
         })

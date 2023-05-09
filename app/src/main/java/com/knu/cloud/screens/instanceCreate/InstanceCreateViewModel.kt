@@ -4,14 +4,34 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
-import com.knu.cloud.model.instanceCreate.Flavor
-import com.knu.cloud.model.instanceCreate.Keypair
-import com.knu.cloud.model.instanceCreate.Network
-import com.knu.cloud.model.instanceCreate.Source
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import timber.log.Timber
 import javax.inject.Inject
+
+data class Flavor (
+    val name: String,
+    val vcpus: Int,
+    val ram: Int,
+    val diskTotal: Int,
+    val rootDisk: Int,
+    val ephemeralDisk: Int,
+    val public: String
+)
+
+data class Source(
+    val name: String,
+    val update: String,
+    val size: Double,
+    val format: String,
+    val visible: String
+)
+
+data class Network(
+    val network: String,
+    val subNet: String,
+    val share: String,
+    val adminState: String,
+    val state: String
+)
 
 var uploadFlavorDataSet = mutableListOf<Flavor>()
 var possibleFlavorDataSet = mutableListOf(
@@ -41,12 +61,6 @@ var possibleNetworkDataSet = mutableListOf(
     Network("private", "ipv6-private-subnet private-subnet","아니오", "Up", "Active")
 )
 
-var uploadKeypairDataSet = mutableListOf<Keypair>()
-var possibleKeypairDataSet = mutableListOf(
-    Keypair("test-pocket", "ssh"),
-    Keypair("test-1", "ssh")
-)
-
 @HiltViewModel
 class InstanceCreateViewModel @Inject constructor(
 
@@ -66,14 +80,6 @@ class InstanceCreateViewModel @Inject constructor(
     private val _possibleNetwork = mutableStateOf<List<Network>>(emptyList())
     val possibleNetwork: State<List<Network>> = _possibleNetwork
 
-    private val _uploadKeypair = mutableStateOf<List<Keypair>>(emptyList())
-    val uploadKeypair: State<List<Keypair>> = _uploadKeypair
-    private val _possibleKeypair = mutableStateOf<List<Keypair>>(emptyList())
-    val possibleKeypair: State<List<Keypair>> = _possibleKeypair
-
-    private val keyName = MutableStateFlow("")
-    private val keyType = MutableStateFlow("")
-
     init {
         _uploadFlavor.value = uploadFlavorDataSet
         _possibleFlavor.value = possibleFlavorDataSet
@@ -83,9 +89,6 @@ class InstanceCreateViewModel @Inject constructor(
 
         _uploadNetwork.value = uploadNetworkDataSet
         _possibleNetwork.value = possibleNetworkDataSet
-
-        _uploadKeypair.value = uploadKeypairDataSet
-        _possibleKeypair.value = possibleKeypairDataSet
     }
 
     fun uploadFlavor(flavor: Flavor, position: Int) {
@@ -129,30 +132,4 @@ class InstanceCreateViewModel @Inject constructor(
         possibleNetworkDataSet.add(network)
         _possibleNetwork.value = possibleNetworkDataSet.toMutableStateList()
     }
-
-    fun uploadKeypair(keypair: Keypair, position: Int) {
-        uploadKeypairDataSet.add(keypair)
-        _uploadKeypair.value = uploadKeypairDataSet.toMutableStateList()
-        possibleKeypairDataSet.removeAt(position)
-        _possibleKeypair.value = possibleKeypairDataSet.toMutableStateList()
-    }
-
-    fun deleteKeypair(keypair: Keypair, position: Int) {
-        uploadKeypairDataSet.removeAt(position)
-        _uploadKeypair.value = uploadKeypairDataSet.toMutableStateList()
-        possibleKeypairDataSet.add(keypair)
-        _possibleKeypair.value = possibleKeypairDataSet.toMutableStateList()
-    }
-
-    /* KeyPairScreen */
-    fun setKeyName(name: String) {
-        keyName.value = name
-        Timber.tag("viewModel_KeypairScreen").e(keyName.value)
-    }
-
-    fun setKeyType(type: String) {
-        keyType.value = type
-        Timber.tag("viewModel_KeypairScreen").e(keyType.value)
-    }
-
 }

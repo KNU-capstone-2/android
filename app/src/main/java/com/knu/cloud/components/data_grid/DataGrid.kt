@@ -11,10 +11,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.knu.cloud.model.instanceCreate.Flavor
-import com.knu.cloud.model.instanceCreate.Keypair
-import com.knu.cloud.model.instanceCreate.Network
-import com.knu.cloud.model.instanceCreate.Source
+import com.knu.cloud.screens.instanceCreate.Flavor
+import com.knu.cloud.screens.instanceCreate.Network
+import com.knu.cloud.screens.instanceCreate.Source
 import com.knu.cloud.utils.*
 
 @Composable
@@ -72,7 +71,6 @@ fun DataGridHeader(
             "Flavor" -> FlavorHeaderTableCell()
             "Source" -> SourceHeaderTableCell()
             "Network" -> NetworkHeaderTableCell()
-            "Keypair" -> KeypairHeaderTableCell()
         }
     }
 }
@@ -111,14 +109,6 @@ fun <T> DataGridElementList(
             "Network" ->
                 NetworkDataTableCell(
                     item = item as Network, // Network로 캐스팅
-                    index = index,
-                    type = type
-                ) { it, idx ->
-                    onClickButton(it as T, idx) // 제너릭 타입으로 캐스팅
-                }
-            "Keypair" ->
-                KeypairDataTableCell(
-                    item = item as Keypair, // Network로 캐스팅
                     index = index,
                     type = type
                 ) { it, idx ->
