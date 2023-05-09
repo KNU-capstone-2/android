@@ -1,6 +1,5 @@
 package com.knu.cloud.screens.instanceCreate
 
-import android.content.res.Configuration
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,7 +18,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -30,10 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
-import com.knu.cloud.components.LaunchButton
 import com.knu.cloud.components.data_grid.*
 import com.knu.cloud.components.text_input.*
-import timber.log.Timber
+import com.knu.cloud.model.instanceCreate.Source
 
 @ExperimentalComposeUiApi
 @Composable
@@ -51,13 +48,6 @@ fun SourceScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             Source(viewModel = viewModel)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                LaunchButton(/* do something */)
-            }
         }
     }
 }
