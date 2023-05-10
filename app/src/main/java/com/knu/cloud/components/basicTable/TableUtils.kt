@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 
@@ -79,12 +80,12 @@ fun ColorBoxCell(
     color: Color,
 ) {
     Box(
-        modifier = Modifier,
-        contentAlignment = Alignment.Center
+        modifier = Modifier.clip(shape = RoundedCornerShape(15.dp)),
+        contentAlignment = Alignment.CenterStart
     ){
         Box(modifier = Modifier
             .background(color.copy(alpha = 0.2f))
-            .clip(shape = RoundedCornerShape(15.dp))
+            .padding(5.dp)
         ){
             Text(
                 text = text,
@@ -111,4 +112,13 @@ fun RowScope.TableCellLayout(
     ){
         content()
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TestColorBoxCell() {
+    ColorBoxCell(
+        text = "Running",
+        color = Color.Green
+    )
 }

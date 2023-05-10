@@ -1,26 +1,16 @@
 package com.knu.cloud.navigation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Surface
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.*
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.knu.cloud.R
-import com.knu.cloud.components.NavDrawer
 import com.knu.cloud.screens.instanceCreate.*
 import com.knu.cloud.screens.auth.login.LoginScreen
 import com.knu.cloud.screens.auth.signup.SignUpScreen
 import com.knu.cloud.screens.home.dashboard.DashBoardScreen
 import com.knu.cloud.screens.home.image.ImageScreen
 import com.knu.cloud.screens.home.instance.InstanceScreen
+import com.knu.cloud.screens.home.instanceDetail.InstanceDetailScreen
 import com.knu.cloud.screens.home.keypairs.KeypairsScreen
 import com.knu.cloud.screens.home.networks.NetworksScreen
 import com.knu.cloud.screens.home.securitygroup.SecurityGroupScreen
@@ -33,6 +23,7 @@ fun NavGraphBuilder.homeNavGraph(
     navController: NavController,
     navActions: NavActions,
     onInstanceCreateBtnClicked: (NavBackStackEntry) -> Unit,
+    onInstanceDetailBtnClicked : (String) -> Unit
 ) {
     navigation(
         route = MainDestination.HOME_ROUTE,
@@ -42,8 +33,24 @@ fun NavGraphBuilder.homeNavGraph(
             DashBoardScreen()
         }
         composable(ComputeSections.Instance.route){ from ->
-            InstanceScreen(onInstanceCreateClick = { onInstanceCreateBtnClicked(from) })
+            InstanceScreen(
+                onInstanceCreateClicked = { onInstanceCreateBtnClicked(from) },
+                onInstanceDetailClicked = onInstanceDetailBtnClicked
+            )
         }
+
+        composable(
+            route = "${MainDestination.INSTANCE_DETAIL_ROUTE}/{instanceId}",
+            arguments = listOf(
+                navArgument("instanceId"){
+                    type = NavType.StringType
+                }
+            )
+        ){ navBackStackEntry ->
+            val instanceId = navBackStackEntry.arguments?.getString("instanceId")!!
+            InstanceDetailScreen(instanceId = instanceId)
+        }
+
         composable(ComputeSections.Image.route){ from ->
             ImageScreen()
         }
