@@ -4,9 +4,11 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -18,29 +20,40 @@ import com.knu.cloud.components.LaunchButton
 import com.knu.cloud.navigation.InstanceCreateSections
 import com.knu.cloud.navigation.findStartDestination
 import com.knu.cloud.navigation.instanceCreateNavGraph
+import com.knu.cloud.screens.home.instance.InstanceViewModel
 import timber.log.Timber
 
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
-fun InstanceCreateScreen(){
+fun InstanceCreateScreen(
+    instanceCreateViewModel : InstanceCreateViewModel = hiltViewModel()
+){
     val context = LocalContext.current
 
-    val instanceCreateViewModel = InstanceCreateViewModel()
+//    val instanceCreateViewModel = remember {
+//        InstanceCreateViewModel()
+//    }
     val instanceCreateNavController :NavHostController = rememberNavController()
     val navBackStackEntry by instanceCreateNavController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: InstanceCreateSections.Details.route
 
-    val openResourceDialog by instanceCreateViewModel.openResourceDialog.collectAsStateWithLifecycle()
+    val isDialogOpen = instanceCreateViewModel.isDialogOpen.value
+//    val openResourceDialog by instanceCreateViewModel.openResourceDialog.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = openResourceDialog) {
-        instanceCreateViewModel.updateOpenResourceDialog(openResourceDialog)
-    }
+//    LaunchedEffect(key1 = openResourceDialog) {
+//        instanceCreateViewModel.updateOpenResourceDialog(openResourceDialog)
+//    }
 
-    if (openResourceDialog.showProgressDialog) {
-        Timber.tag("openResource").e("${openResourceDialog.showProgressDialog}")
-        instanceCreateViewModel.startCoroutine(context)
+//    if (openResourceDialog.showProgressDialog) {
+//        Timber.tag("openResource").e("${openResourceDialog.showProgressDialog}")
+//        instanceCreateViewModel.startCoroutine(context)
+//        CreateLoadingDialog()
+//    }
+    Timber.tag("dialog").d("isDialogOpen : ${isDialogOpen}")
+    if(isDialogOpen){
         CreateLoadingDialog()
+        instanceCreateViewModel.startCoroutine(context)
     }
 
     Row(modifier = Modifier.fillMaxSize()) {

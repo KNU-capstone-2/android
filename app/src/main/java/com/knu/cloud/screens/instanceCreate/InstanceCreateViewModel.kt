@@ -2,6 +2,7 @@ package com.knu.cloud.screens.instanceCreate
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
@@ -64,6 +65,9 @@ var possibleKeypairDataSet = mutableListOf(
 class InstanceCreateViewModel @Inject constructor(
 
 ): ViewModel() {
+
+    private val _isDialogOpen = mutableStateOf(false)
+    val isDialogOpen :State<Boolean> = _isDialogOpen
 
     /* 리소스 프로비저닝 Dialog box */
     private val _openResourceDialog = MutableStateFlow<CreateInstanceState>(CreateInstanceState(showProgressDialog = false))
@@ -175,11 +179,13 @@ class InstanceCreateViewModel @Inject constructor(
     }
 
     fun openDialog() {
-        viewModelScope.launch {
-            _openResourceDialog.update { state ->
-                state.copy(showProgressDialog = true)
-            }
-        }
+        _isDialogOpen.value = true
+        Timber.tag("dialog").d("_isDialogOpen : ${_isDialogOpen.value}")
+//        viewModelScope.launch {
+//            _openResourceDialog.update { state ->
+//                state.copy(showProgressDialog = true)
+//            }
+//        }
     }
 
     fun startCoroutine(
@@ -202,11 +208,12 @@ class InstanceCreateViewModel @Inject constructor(
     private fun closeDialog(
         context: Context
     ) {
-        viewModelScope.launch {
-            _openResourceDialog.update { state ->
-                state.copy(showProgressDialog = false)
-            }
-        }
+        _isDialogOpen.value = false
+//        viewModelScope.launch {
+//            _openResourceDialog.update { state ->
+//                state.copy(showProgressDialog = false)
+//            }
+//        }
         Toast.makeText(context, "리소스 프로지버닝 완료!", Toast.LENGTH_SHORT).show()
     }
 }
