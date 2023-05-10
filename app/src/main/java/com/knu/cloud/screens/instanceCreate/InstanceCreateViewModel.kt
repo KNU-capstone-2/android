@@ -1,15 +1,28 @@
 package com.knu.cloud.screens.instanceCreate
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.knu.cloud.model.dialog.CreateInstanceState
 import com.knu.cloud.model.instanceCreate.Flavor
 import com.knu.cloud.model.instanceCreate.Keypair
 import com.knu.cloud.model.instanceCreate.Network
 import com.knu.cloud.model.instanceCreate.Source
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -51,6 +64,12 @@ var possibleKeypairDataSet = mutableListOf(
 class InstanceCreateViewModel @Inject constructor(
 
 ): ViewModel() {
+
+    /* 리소스 프로비저닝 Dialog box */
+    private val _openResourceDialog = MutableStateFlow<CreateInstanceState>(CreateInstanceState(showProgressDialog = false))
+    val openResourceDialog: StateFlow<CreateInstanceState>
+        get() = _openResourceDialog.asStateFlow()
+
     private val _uploadFlavor = mutableStateOf<List<Flavor>>(emptyList())
     val uploadFlavor: State<List<Flavor>> = _uploadFlavor
     private val _possibleFlavor = mutableStateOf<List<Flavor>>(emptyList())
@@ -155,4 +174,40 @@ class InstanceCreateViewModel @Inject constructor(
         Timber.tag("viewModel_KeypairScreen").e(keyType.value)
     }
 
+    fun openDialog() {
+        viewModelScope.launch {
+            _openResourceDialog.update { state ->
+                state.copy(showProgressDialog = true)
+            }
+        }
+    }
+
+    fun startCoroutine(
+        context: Context
+    ) {
+        viewModelScope.launch {
+            // Do the background work here
+            delay(3000)
+            closeDialog(context)
+        }
+    }
+    fun updateOpenResourceDialog(openResourceDialog: CreateInstanceState) {
+        Timber.tag("update").e("${openResourceDialog.showProgressDialog}")
+        viewModelScope.launch {
+            _openResourceDialog.update {
+                it.copy(showProgressDialog = openResourceDialog.showProgressDialog)
+            }
+        }
+    }
+    private fun closeDialog(
+        context: Context
+    ) {
+        viewModelScope.launch {
+            _openResourceDialog.update { state ->
+                state.copy(showProgressDialog = false)
+            }
+        }
+        Toast.makeText(context, "리소스 프로지버닝 완료!", Toast.LENGTH_SHORT).show()
+    }
 }
+
