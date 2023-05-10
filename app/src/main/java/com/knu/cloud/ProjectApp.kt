@@ -33,7 +33,7 @@ fun ProjectApp(appState: ProjectAppState = rememberProjectAppState()) {
         Scaffold(
             scaffoldState = appState.scaffoldState,
             topBar = {
-                if (appState.isHomeSection.value) {
+                if (appState.enabledTopAppBar.value) {
                     ProjectAppBar(
                         title = "POCKET",
                         path = "프로젝트 / Compute / 대시보드"
@@ -58,7 +58,7 @@ fun ProjectApp(appState: ProjectAppState = rememberProjectAppState()) {
                 LaunchedEffect(appState.navController){
                     appState.addDestinationChangedListener()
                 }
-                if(appState.isHomeSection.value){
+                if(appState.enabledNavDrawer.value){
                     Timber.tag("navigation").d("NavDrawer composition 일어남")
                     NavDrawer(
                         modifier = Modifier
@@ -88,7 +88,8 @@ fun ProjectApp(appState: ProjectAppState = rememberProjectAppState()) {
                     homeNavGraph(
                         navController = appState.navController,
                         navActions = appState.navActions,
-                        onInstanceCreateBtnClicked = appState.navActions::navigateToInstanceCreate
+                        onInstanceCreateBtnClicked = appState.navActions::navigateToInstanceCreate,
+                        onInstanceDetailBtnClicked = appState.navActions::navigateToInstanceDetail
                     )
                     dialog(
                         route = MainDestination.INSTANCE_CREATE_ROUTE,

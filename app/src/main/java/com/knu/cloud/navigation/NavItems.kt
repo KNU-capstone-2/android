@@ -13,6 +13,7 @@ object MainDestination{
     const val HOME_ROUTE = "home"
     const val INSTANCE_CREATE_ROUTE ="instance_create"
     const val SETTING_ROUTE = "home/setting"
+    const val INSTANCE_DETAIL_ROUTE = "home/compute/instance/detail"
 }
 
 val homeSections : Array<Section> = ComputeSections.sectionValues().plus(NetworkSections.sectionValues())
