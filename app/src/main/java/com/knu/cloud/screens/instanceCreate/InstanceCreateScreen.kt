@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -24,10 +25,9 @@ import com.knu.cloud.screens.home.instance.InstanceViewModel
 import timber.log.Timber
 
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun InstanceCreateScreen(
-    instanceCreateViewModel : InstanceCreateViewModel = hiltViewModel()
+    instanceCreateViewModel : InstanceCreateViewModel = viewModel()
 ){
     val context = LocalContext.current
 

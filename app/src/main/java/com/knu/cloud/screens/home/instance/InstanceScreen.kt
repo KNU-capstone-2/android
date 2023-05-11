@@ -2,6 +2,7 @@ package com.knu.cloud.screens.home.instance
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -9,10 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.knu.cloud.R
 import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.components.summary.InstanceSummary
 import timber.log.Timber
@@ -25,7 +28,7 @@ fun InstanceScreen (
     modifier: Modifier = Modifier,
     viewModel : InstanceViewModel  = hiltViewModel()
 ) {
-    val context = LocalContext.current                                       //Toast 메세지를 위함
+    val context = LocalContext.current // Toast 메세지를 위함
     val testData = viewModel.testData.collectAsState()
     val checkedInstanceIdList = viewModel.checkedInstanceData.collectAsState()
     var selectedInstance by rememberSaveable {
@@ -74,10 +77,10 @@ fun InstanceScreen (
                     },
                     onRowChecked = { checked,  instanceId ->
                         Timber.tag("vm_test").d("onRowChecked")
-                        if(checked){
+                        if(checked) {
                             Timber.tag("vm_test").d("instanceCheck call")
                             viewModel.instanceCheck(instanceId)
-                        }else{
+                        }else {
                             viewModel.instanceUncheck(instanceId)
                         }
                     },
@@ -162,6 +165,18 @@ fun InstancesBar(
     onLaunchBtnClicked : () -> Unit,
     onDeleteBtnClicked : () -> Unit
 ) {
+    var isDeleteDialogOpen by remember {
+        mutableStateOf(false)
+    }
+
+    if (isDeleteDialogOpen) {
+        DeleteDialog(
+            onDeleteBtnClicked
+        ) {
+            isDeleteDialogOpen = false
+        }
+    }
+
     Row(modifier = modifier
         .fillMaxSize()
     ) {
@@ -188,7 +203,7 @@ fun InstancesBar(
         }
         OutlinedButton(
             modifier = Modifier.weight(0.1f),
-            onClick = onDeleteBtnClicked
+            onClick = { isDeleteDialogOpen = true }
         ) {
             Text(text = "Delete Instances")
         }
@@ -204,3 +219,43 @@ fun TestInstanceScreen() {
     )
 }
 
+
+
+@Composable
+fun DeleteDialog(
+    onDeleteBtnClicked: () -> Unit,
+    isDeleteDialogOpen: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = {isDeleteDialogOpen()},
+        title = {
+            Text(text = stringResource(id = R.string.Instance_Delete_Btn_Title))
+        },
+        text = {
+            Text(text = stringResource(id = R.string.Instance_Delete_Btn_Text))
+        },
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .width(350.dp)
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = {
+                        onDeleteBtnClicked()
+                        isDeleteDialogOpen()
+                    }
+                ) {
+                    Text("확인")
+                }
+                TextButton(
+                    onClick = {isDeleteDialogOpen()}
+                ) {
+                    Text("취소")
+                }
+            }
+        },
+        shape = RoundedCornerShape(24.dp)
+    )
+}
