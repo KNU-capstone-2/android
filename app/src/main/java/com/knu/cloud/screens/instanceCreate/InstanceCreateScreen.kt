@@ -1,28 +1,61 @@
 package com.knu.cloud.screens.instanceCreate
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.knu.cloud.components.CreateLoadingDialog
 import com.knu.cloud.components.LaunchButton
 import com.knu.cloud.navigation.InstanceCreateSections
 import com.knu.cloud.navigation.findStartDestination
 import com.knu.cloud.navigation.instanceCreateNavGraph
+import com.knu.cloud.screens.home.instance.InstanceViewModel
+import timber.log.Timber
 
 
 @Composable
-fun InstanceCreateScreen(){
-    val instanceCreateViewModel = InstanceCreateViewModel()
+fun InstanceCreateScreen(
+    instanceCreateViewModel : InstanceCreateViewModel = viewModel()
+){
+    val context = LocalContext.current
+
+//    val instanceCreateViewModel = remember {
+//        InstanceCreateViewModel()
+//    }
     val instanceCreateNavController :NavHostController = rememberNavController()
     val navBackStackEntry by instanceCreateNavController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: InstanceCreateSections.Details.route
+
+    val isDialogOpen = instanceCreateViewModel.isDialogOpen.value
+//    val openResourceDialog by instanceCreateViewModel.openResourceDialog.collectAsStateWithLifecycle()
+
+//    LaunchedEffect(key1 = openResourceDialog) {
+//        instanceCreateViewModel.updateOpenResourceDialog(openResourceDialog)
+//    }
+
+//    if (openResourceDialog.showProgressDialog) {
+//        Timber.tag("openResource").e("${openResourceDialog.showProgressDialog}")
+//        instanceCreateViewModel.startCoroutine(context)
+//        CreateLoadingDialog()
+//    }
+    Timber.tag("dialog").d("isDialogOpen : ${isDialogOpen}")
+    if(isDialogOpen){
+        CreateLoadingDialog()
+        instanceCreateViewModel.startCoroutine(context)
+    }
+
     Row(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier.weight(0.1f)
@@ -65,7 +98,9 @@ fun InstanceCreateScreen(){
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Bottom
             ) {
-                LaunchButton( /* do something */ )
+                LaunchButton {
+                    instanceCreateViewModel.openDialog()
+                }
             }
         }
     }

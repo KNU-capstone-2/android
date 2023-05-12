@@ -98,7 +98,7 @@ class InstanceViewModel @Inject constructor (
     init {
         _testData.value = testInstanceData
     }
-    fun instanceCheck(instanceId : String){
+    fun instanceCheck(instanceId : String) {
         coroutineScope.launch {
             _checkedInstanceIdList.emit(_checkedInstanceIdList.value +instanceId)
             Timber.tag("vm_test").d("_checkedInstanceIdList ${_checkedInstanceIdList.value}")

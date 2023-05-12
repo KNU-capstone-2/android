@@ -22,7 +22,9 @@ fun LaunchButton(
     onLaunchBtnClicked:() -> Unit = {}
 ) {
     OutlinedButton(
-        onClick = { onLaunchBtnClicked() },
+        onClick = {
+            onLaunchBtnClicked()
+        },
         shape = RoundedCornerShape(percent = 50), // 모서리를 둥글게 처리
         modifier = Modifier
             .padding(16.dp)
