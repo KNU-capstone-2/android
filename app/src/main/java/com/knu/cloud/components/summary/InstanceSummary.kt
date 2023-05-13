@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.knu.cloud.R
 import com.knu.cloud.components.InstanceActionButtons
-import com.knu.cloud.screens.home.instance.InstanceData
+import com.knu.cloud.model.instance.InstanceData
 
 
 @Composable
