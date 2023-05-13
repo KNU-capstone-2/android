@@ -1,0 +1,30 @@
+{
+  "status": 200,
+  "message": "success",
+  "data": [
+    {
+      "instancesId": "i-0f204053ab80b5cc8",
+      "instancesName": "ec2-test",
+      "publicIPv4Address": "52.83.423.531",
+      "privateIPv4Address": "172.31.5.206",
+      "instanceState": "Running",
+      "publicIPv4DNS": "ec2-52-78-233-109 ap",
+      "hostNameType": "ip-173-31-92-94.31.ec2",
+      "privateIpDnsName": "IPv4(A)",
+      "instanceType": "t2.micro",
+      "statusCheck": "2/2 check passe"
+    },
+    {
+      "instancesId": "i-0123456789abcdef0",
+      "instancesName": "ec2-test2",
+      "publicIPv4Address": "52.83.423.532",
+      "privateIPv4Address": "172.31.5.207",
+      "instanceState": "Stopped",
+      "publicIPv4DNS": "ec2-52-78-233-110 ap",
+      "hostNameType": "ip-173-31-92-94.32.ec2",
+      "privateIpDnsName": "IPv4(A)",
+      "instanceType": "t2.small",
+      "statusCheck": "2/2 checks failed"
+    }
+  ]
+}
