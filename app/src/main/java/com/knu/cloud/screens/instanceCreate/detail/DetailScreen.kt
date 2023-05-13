@@ -61,7 +61,7 @@ fun DetailScreen(
 @Preview(showBackground = true)
 @Composable
 fun Detail(
-    viewModel: InstanceCreateViewModel = InstanceCreateViewModel(),
+    viewModel: InstanceCreateViewModel = hiltViewModel(),
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     Row(
