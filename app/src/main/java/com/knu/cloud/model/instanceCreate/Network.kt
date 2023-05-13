@@ -1,6 +1,6 @@
 package com.knu.cloud.model.instanceCreate
 
-data class NetworkResponse(
+data class Network(
     val network: String,
     val subNet: String,
     val share: String,

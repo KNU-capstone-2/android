@@ -30,7 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
 import com.knu.cloud.components.data_grid.*
 import com.knu.cloud.components.text_input.*
-import com.knu.cloud.model.instanceCreate.SourceResponse
+import com.knu.cloud.model.instanceCreate.Source
 
 @ExperimentalComposeUiApi
 @Composable
@@ -120,7 +120,7 @@ fun Source(
         if (uploadExpanded) {
             itemsIndexed(uploadList) { index, item ->
                 if (index == 0) DataGridHeader(screenType = "Source")
-                DataGridElementList<SourceResponse>(
+                DataGridElementList<Source>(
                     item = item,
                     index = index,
                     type = "할당됨",
@@ -144,7 +144,7 @@ fun Source(
         if (possibleExpanded) {
             itemsIndexed(possibleList) { index, item ->
                 if (index == 0) DataGridHeader(screenType = "Source")
-                DataGridElementList<SourceResponse>(
+                DataGridElementList<Source>(
                     item = item,
                     index = index,
                     type = "사용 가능",

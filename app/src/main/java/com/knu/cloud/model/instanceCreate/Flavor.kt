@@ -1,6 +1,6 @@
 package com.knu.cloud.model.instanceCreate
 
-data class FlavorResponse (
+data class Flavor (
     val name: String,
     val vcpus: Int,
     val ram: Int,

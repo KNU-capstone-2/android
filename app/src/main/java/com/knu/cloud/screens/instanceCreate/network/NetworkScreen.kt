@@ -17,7 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
 import com.knu.cloud.components.data_grid.*
 import com.knu.cloud.components.text_input.addFocusCleaner
-import com.knu.cloud.model.instanceCreate.NetworkResponse
+import com.knu.cloud.model.instanceCreate.Network
 
 @ExperimentalComposeUiApi
 @Composable
@@ -79,7 +79,7 @@ fun Network(
         if (uploadExpanded) {
             itemsIndexed(uploadList) { index, item ->
                 if (index == 0) DataGridHeader(screenType = "Network")
-                DataGridElementList<NetworkResponse>(
+                DataGridElementList<Network>(
                     item = item,
                     index = index,
                     type = "할당됨",
@@ -103,7 +103,7 @@ fun Network(
         if (possibleExpanded) {
             itemsIndexed(possibleList) { index, item ->
                 if (index == 0) DataGridHeader(screenType = "Network")
-                DataGridElementList<NetworkResponse>(
+                DataGridElementList<Network>(
                     item = item,
                     index = index,
                     type = "사용 가능",

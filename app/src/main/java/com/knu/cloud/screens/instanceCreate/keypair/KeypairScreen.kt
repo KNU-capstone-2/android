@@ -30,7 +30,7 @@ import com.knu.cloud.components.data_grid.DataGridHeader
 import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
 import com.knu.cloud.components.text_input.addFocusCleaner
-import com.knu.cloud.model.instanceCreate.KeypairResponse
+import com.knu.cloud.model.instanceCreate.Keypair
 import com.knu.cloud.screens.instanceCreate.InstanceCreateViewModel
 import timber.log.Timber
 
@@ -106,7 +106,7 @@ fun Keypair(
         if (uploadExpanded) {
             itemsIndexed(uploadList) { index, item ->
                 if (index == 0) DataGridHeader(screenType = "Keypair")
-                DataGridElementList<KeypairResponse>(
+                DataGridElementList<Keypair>(
                     item = item,
                     index = index,
                     type = "할당됨",
@@ -130,7 +130,7 @@ fun Keypair(
         if (possibleExpanded) {
             itemsIndexed(possibleList) { index, item ->
                 if (index == 0) DataGridHeader(screenType = "Keypair")
-                DataGridElementList<KeypairResponse>(
+                DataGridElementList<Keypair>(
                     item = item,
                     index = index,
                     type = "사용 가능",
