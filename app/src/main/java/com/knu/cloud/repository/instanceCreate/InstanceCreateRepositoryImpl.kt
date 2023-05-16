@@ -5,7 +5,6 @@ import com.knu.cloud.model.instanceCreate.FlavorResponse
 import com.knu.cloud.model.instanceCreate.KeypairResponse
 import com.knu.cloud.model.instanceCreate.NetworkResponse
 import com.knu.cloud.model.instanceCreate.SourceResponse
-import com.knu.cloud.utils.RetrofitFailureStateException
 import com.knu.cloud.utils.instanceCreateResponseToResult
 import timber.log.Timber
 import javax.inject.Inject

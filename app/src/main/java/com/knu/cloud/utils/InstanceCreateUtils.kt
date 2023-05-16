@@ -2,6 +2,7 @@ package com.knu.cloud.utils
 
 import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.auth.AuthResponse
+import com.knu.cloud.network.RetrofitFailureStateException
 import retrofit2.Response
 
 fun <T:Any> instanceCreateResponseToResult(networkResult: NetworkResult<AuthResponse<T>>): Result<T?> {
