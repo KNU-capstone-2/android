@@ -17,6 +17,9 @@
     <string name="SignIn_loginState">로그인 상태 유지</string>
     <string name="SignIn_policy">이용 약관</string>
 
+    <string name="Login_success">로그인 성공</string>
+    <string name="Login_failure">아이디 또는 비밀번호가 일치하지 않습니다</string>
+
     <!-- SignUp Screen -->
     <string name="SignUp_title">Cloud 계정 만들기</string>
     <string name="SignUp_subTitle">다음 사항에 동의할 경우 이메일과 비밀번호를 입력해주세요.</string>

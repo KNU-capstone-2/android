@@ -10,7 +10,4 @@ interface AuthRepository {
     suspend fun signUp(email :String , username : String, password:String): Result<String>
     suspend fun login(id : String, password : String): Result<String>
 
-    val isSignIn : StateFlow<Boolean>
-    val signInError : StateFlow<String>
-
 }

@@ -227,6 +227,7 @@ fun SignUp(
             }
         }
 
+        // 회원가입 버튼
         Button(
             onClick ={
 //                if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {

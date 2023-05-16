@@ -1,5 +1,6 @@
 package com.knu.cloud.screens.auth.login
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,7 +8,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -15,6 +15,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
@@ -23,155 +24,166 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.knu.cloud.R
 import com.knu.cloud.components.LoginLogo
 import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
 import com.knu.cloud.components.text_input.addFocusCleaner
+import timber.log.Timber
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @ExperimentalComposeUiApi
 @Composable
 fun LoginScreen(
     onLoginClick: () -> Unit,
-    onSignUpClick : () -> Unit
+    onSignUpClick : () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
     ) {
-        Login(
-            onLoginClick = onLoginClick,
-            onSignUpClick = onSignUpClick
-        )
-    }
-}
+        val keyboardController = LocalSoftwareKeyboardController.current
+        val passwordFocusRequester = FocusRequester()
+        val context = LocalContext.current
 
-@ExperimentalComposeUiApi
-@Composable
-fun Login(
-    onLoginClick: () -> Unit,
-    onSignUpClick : () -> Unit,
-    viewModel: LoginViewModel = hiltViewModel(),
-) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val passwordFocusRequester = FocusRequester()
+        var loginStateCheck by rememberSaveable { mutableStateOf(false) }
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    var loginStateCheck by rememberSaveable { mutableStateOf(false) }
-    val isSignIn = viewModel.loginState.collectAsState()
-    val isSignInError = viewModel.loginError.collectAsState()
-
-    if (isSignIn.value) {
-
-        onLoginClick()
-    }
-
-    Column(
-        modifier = Modifier
-            .padding(22.dp)
-            .verticalScroll(rememberScrollState())
-            .addFocusCleaner(keyboardController!!),
-        verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.weight(1f))
-        LoginLogo()
-        Spacer(modifier = Modifier.weight(1f))
-
-        Row(
-            modifier = Modifier
-                .padding(5.dp)
-                .height(25.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            if (isSignInError.value.isNotEmpty()) {
-                Icon(imageVector = Icons.Default.Warning, contentDescription = "", tint = colorResource(id = R.color.Waring))
-                Text(
-                    text = isSignInError.value,
-                    style = MaterialTheme.typography.caption,
-                    color = colorResource(id = R.color.Waring)
-                )
+        uiState.userMessage?.let { message ->
+            val toastMsg = stringResource(message)
+            LaunchedEffect(message,toastMsg){
+                Toast.makeText(context, toastMsg ,Toast.LENGTH_SHORT).show()
+                Timber.tag("login").d("launchedEffect message : $message")
             }
         }
-
-        UserForm(
-            keyboardController = keyboardController,
-            passwordFocusRequester = passwordFocusRequester,
-            viewModel = viewModel
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentWidth(align = Alignment.Start),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = loginStateCheck,
-                onCheckedChange = { loginStateCheck = it }
-            )
-            Text(
-                text = stringResource(R.string.SignIn_loginState),
-                style = MaterialTheme.typography.caption
-            )
-        }
-
-        Button(
-            onClick = {
-                //viewModel.login() // 로그인 유효성 판단
+        LaunchedEffect(uiState.navigateToHome){
+            if(uiState.navigateToHome){
                 onLoginClick()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp),
-            shape = RoundedCornerShape(15.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.Black_Main))
-        ) {
-            Text(
-                text = stringResource(id = R.string.SignIn_login),
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
+            }
         }
+//        LaunchedEffect(loginMsg){
+//            Timber.tag("login").d("launchedEffect loginMsg: ${loginMsg.value}")
+//            if(loginMsg.value.isNotEmpty()){
+//                Toast.makeText(context,loginMsg.value,Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//        LaunchedEffect(loginState){
+//            if(loginState.value){
+//                viewModel.loginFinish()
+//                onLoginClick()
+//            }
+//        }
 
-        PolicyButton()
-
-        Row(
-            modifier = Modifier.padding(bottom = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+        Column(
+            modifier = Modifier
+                .padding(22.dp)
+                .verticalScroll(rememberScrollState())
+                .addFocusCleaner(keyboardController!!),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TextButton(
-                onClick = {}
+            Spacer(modifier = Modifier.weight(1f))
+            LoginLogo()
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .height(25.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
+//            if (isSignInError.value.isNotEmpty()) {
+//                Icon(imageVector = Icons.Default.Warning, contentDescription = "", tint = colorResource(id = R.color.Waring))
+//                Text(
+//                    text = isSignInError.value,
+//                    style = MaterialTheme.typography.caption,
+//                    color = colorResource(id = R.color.Waring)
+//                )
+//            }
+            }
+
+            UserForm(
+                keyboardController = keyboardController,
+                passwordFocusRequester = passwordFocusRequester,
+                viewModel = viewModel
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentWidth(align = Alignment.Start),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = loginStateCheck,
+                    onCheckedChange = { loginStateCheck = it }
+                )
                 Text(
-                    text = stringResource(id = R.string.SignIn_find_email),
-                    color = Color.LightGray,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
+                    text = stringResource(R.string.SignIn_loginState),
+                    style = MaterialTheme.typography.caption
                 )
             }
-            TextButton(
-                onClick = {}
+            // 로그인 버튼
+            Button(
+                onClick = {
+                    viewModel.login()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                shape = RoundedCornerShape(15.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.Black_Main))
             ) {
                 Text(
-                    text = stringResource(id = R.string.SignIn_find_password),
-                    color = Color.LightGray,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
+                    text = stringResource(id = R.string.SignIn_login),
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
-            TextButton(
-                onClick = onSignUpClick
+
+            PolicyButton()
+
+            Row(
+                modifier = Modifier.padding(bottom = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(
-                    text = stringResource(id = R.string.SignIn_signUp),
-                    color = colorResource(id = R.color.Black_Main),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                TextButton(
+                    onClick = {}
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.SignIn_find_email),
+                        color = Color.LightGray,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+                TextButton(
+                    onClick = {}
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.SignIn_find_password),
+                        color = Color.LightGray,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+                TextButton(
+                    onClick = onSignUpClick
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.SignIn_signUp),
+                        color = colorResource(id = R.color.Black_Main),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
         }
     }
@@ -196,7 +208,7 @@ fun UserForm(
             keyboardController = keyboardController,
             passwordFocusRequester = passwordFocusRequester
         ) { email ->
-            viewModel.setUserEmail(email)
+            viewModel.updateUserEmail(email)
         }
 
         ProjectTextInput(
@@ -204,7 +216,7 @@ fun UserForm(
             keyboardController = keyboardController,
             passwordFocusRequester = passwordFocusRequester
         ) { password ->
-            viewModel.setUserPassword(password)
+            viewModel.updateUserPassword(password)
         }
     }
 }
