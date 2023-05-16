@@ -4,6 +4,8 @@ import com.knu.cloud.repository.AuthRepository
 import com.knu.cloud.repository.AuthRepositoryImpl
 import com.knu.cloud.repository.OpenStackRepository
 import com.knu.cloud.repository.OpenStackRepositoryImpl
+import com.knu.cloud.repository.instanceCreate.InstanceCreateRepository
+import com.knu.cloud.repository.instanceCreate.InstanceCreateRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -29,5 +31,11 @@ abstract class RepositoryModule {
     abstract fun bindOpenStackRepository (
         OpenStackRepositoryImpl: OpenStackRepositoryImpl
     ): OpenStackRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindInstanceCreateRepository (
+        InstanceCreateRepositoryImpl: InstanceCreateRepositoryImpl
+    ): InstanceCreateRepository
 
 }

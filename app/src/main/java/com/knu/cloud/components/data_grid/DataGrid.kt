@@ -11,10 +11,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.knu.cloud.model.instanceCreate.Flavor
-import com.knu.cloud.model.instanceCreate.Keypair
-import com.knu.cloud.model.instanceCreate.Network
-import com.knu.cloud.model.instanceCreate.Source
+import com.knu.cloud.model.instanceCreate.FlavorResponse
+import com.knu.cloud.model.instanceCreate.KeypairResponse
+import com.knu.cloud.model.instanceCreate.NetworkResponse
+import com.knu.cloud.model.instanceCreate.SourceResponse
 import com.knu.cloud.utils.*
 
 @Composable
@@ -94,7 +94,7 @@ fun <T> DataGridElementList(
         when(screenType) {
             "Flavor" ->
                 FlavorDataTableCell(
-                    item = item as Flavor, // Flavor로 캐스팅
+                    item = item as FlavorResponse, // Flavor로 캐스팅
                     index = index,
                     type = type
                 ) { it, idx ->
@@ -102,7 +102,7 @@ fun <T> DataGridElementList(
                 }
             "Source" ->
                 SourceDataTableCell(
-                    item = item as Source, // Source로 캐스팅
+                    item = item as SourceResponse, // Source로 캐스팅
                     index = index,
                     type = type
                 ) { it, idx ->
@@ -110,7 +110,7 @@ fun <T> DataGridElementList(
                 }
             "Network" ->
                 NetworkDataTableCell(
-                    item = item as Network, // Network로 캐스팅
+                    item = item as NetworkResponse, // Network로 캐스팅
                     index = index,
                     type = type
                 ) { it, idx ->
@@ -118,7 +118,7 @@ fun <T> DataGridElementList(
                 }
             "Keypair" ->
                 KeypairDataTableCell(
-                    item = item as Keypair, // Network로 캐스팅
+                    item = item as KeypairResponse, // Network로 캐스팅
                     index = index,
                     type = type
                 ) { it, idx ->

@@ -15,10 +15,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.knu.cloud.R
-import com.knu.cloud.model.instanceCreate.Flavor
-import com.knu.cloud.model.instanceCreate.Keypair
-import com.knu.cloud.model.instanceCreate.Network
-import com.knu.cloud.model.instanceCreate.Source
+import com.knu.cloud.model.instanceCreate.FlavorResponse
+import com.knu.cloud.model.instanceCreate.KeypairResponse
+import com.knu.cloud.model.instanceCreate.NetworkResponse
+import com.knu.cloud.model.instanceCreate.SourceResponse
 
 object FlavorUtils{
     const val columnNameWeight = .2f
@@ -91,7 +91,7 @@ fun FlavorHeaderTableCell() {
 }
 
 @Composable
-fun FlavorDataTableCell(item: Flavor, index: Int, type: String, onClickButton: (Flavor, Int) -> Unit) {
+fun FlavorDataTableCell(item: FlavorResponse, index: Int, type: String, onClickButton: (FlavorResponse, Int) -> Unit) {
     var backGcolor = Color.White
     if (index % 2 == 0) {
         backGcolor = Color.LightGray
@@ -150,7 +150,7 @@ fun SourceHeaderTableCell() {
 }
 
 @Composable
-fun SourceDataTableCell(item: Source, index: Int, type: String, onClickButton: (Source, Int) -> Unit) {
+fun SourceDataTableCell(item: SourceResponse, index: Int, type: String, onClickButton: (SourceResponse, Int) -> Unit) {
     var backGcolor = Color.White
     if (index % 2 == 0) {
         backGcolor = Color.LightGray
@@ -207,7 +207,7 @@ fun NetworkHeaderTableCell() {
 }
 
 @Composable
-fun NetworkDataTableCell(item: Network, index: Int, type: String, onClickButton: (Network, Int) -> Unit) {
+fun NetworkDataTableCell(item: NetworkResponse, index: Int, type: String, onClickButton: (NetworkResponse, Int) -> Unit) {
     var backGcolor = Color.White
     if (index % 2 == 0) {
         backGcolor = Color.LightGray
@@ -261,7 +261,7 @@ fun KeypairHeaderTableCell() {
 }
 
 @Composable
-fun KeypairDataTableCell(item: Keypair, index: Int, type: String, onClickButton: (Keypair, Int) -> Unit) {
+fun KeypairDataTableCell(item: KeypairResponse, index: Int, type: String, onClickButton: (KeypairResponse, Int) -> Unit) {
     var backGcolor = Color.White
     if (index % 2 == 0) {
         backGcolor = Color.LightGray
