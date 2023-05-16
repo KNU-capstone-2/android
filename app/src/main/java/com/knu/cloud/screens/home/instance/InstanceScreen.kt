@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
 import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.components.summary.InstanceSummary
+import com.knu.cloud.model.instance.InstanceData
 import timber.log.Timber
 
 
@@ -29,7 +30,7 @@ fun InstanceScreen (
     viewModel : InstanceViewModel  = hiltViewModel()
 ) {
     val context = LocalContext.current // Toast 메세지를 위함
-    val testData = viewModel.testData.collectAsState()
+    val instances = viewModel.instances.collectAsState()
     val checkedInstanceIdList = viewModel.checkedInstanceData.collectAsState()
     var selectedInstance by rememberSaveable {
         mutableStateOf<InstanceData?>(null)
@@ -51,7 +52,7 @@ fun InstanceScreen (
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            totalInstanceCnt = testData.value.size,
+            totalInstanceCnt = instances.value.size,
             checkedInstanceCnt = checkedInstanceIdList.value.size,
             onLaunchBtnClicked = onInstanceCreateClicked,
             onDeleteBtnClicked = {
@@ -68,7 +69,7 @@ fun InstanceScreen (
                 modifier = Modifier.weight(.7f)
             ) {
                 InstanceTable(
-                    dataList = testData.value,
+                    dataList = instances.value,
                     isAllSelected = isAllSelected,
                     isHeaderClick = isHeaderClick,
                     selectedItemIndex = selectedItemIndex,
@@ -85,7 +86,7 @@ fun InstanceScreen (
                         }
                     },
                     onRowSelected = { instanceId ->
-                        val selectedData = testData.value.find { it.instancesId == instanceId }
+                        val selectedData = instances.value.find { it.instancesId == instanceId }
                         selectedInstance = if (selectedInstance == selectedData) null else selectedData
                     }
                 )
@@ -105,7 +106,9 @@ fun InstanceScreen (
                         StartClicked = { /*TODO*/ },
                         ReStartClicked = { /*TODO*/ },
                         StopClicked = { /*TODO*/ },
-                        onInstanceDetailClicked = onInstanceDetailClicked
+                        onInstanceDetailClicked = {
+                            onInstanceDetailClicked(it)
+                        }
                     )
                 }
             }

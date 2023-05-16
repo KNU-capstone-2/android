@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ConfigModule {
 
-    private const val BASE_URL = "http://192.168.25.11:8080"
+    private const val BASE_URL = "http://52.78.233.108"
     @Singleton
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {

@@ -41,10 +41,11 @@ class AuthInterceptor(
         val newRequest = chain.request().newBuilder()
             .addHeader("Authorization", "Bearer $sessionId")
             .build()
+
         val response = chain.proceed(newRequest)
-        if(response.header("Token") != null){
+        if(response.header("Authorization") != null){
             // token이 vaild할 경우 sessionId를 저장해줘야함
-            sessionManager.setSessionId(response.header("Token")!!)
+            sessionManager.setSessionId(response.header("Authorization")!!)
         }
         // token이 invalid 하면  이미 response 객체에 오류가 붙어서 올거임-> NetworkCallAdapter가 그 뒤에 처리할거임
         return response

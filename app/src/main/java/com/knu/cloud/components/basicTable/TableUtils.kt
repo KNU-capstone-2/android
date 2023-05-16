@@ -25,7 +25,10 @@ object TableCellType{
     const val CHECK_BOX = "checkbox"
 }
 
-
+data class TableRowData(
+    val dataList : List<String>,
+    var isRowSelected : Boolean
+)
 
 @Composable
 fun HeaderCell(

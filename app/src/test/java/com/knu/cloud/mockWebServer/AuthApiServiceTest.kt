@@ -6,8 +6,8 @@ import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.auth.LoginRequest
 import com.knu.cloud.model.onSuccess
 import com.knu.cloud.network.AuthApiService
+import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.network.networkResultCallAdapter.NetworkResultCallAdapterFactory
-import com.knu.cloud.utils.RetrofitFailureStateException
 import org.junit.Assert.*
 import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl
@@ -59,8 +59,8 @@ class AuthApiServiceTest {
     fun `Login success 200`(){
         runBlocking {
             var mockResponse = MockResponse()
-            mockResponse =setResponseBody(mockResponse, fileName = "loginResponse.json")
-            mockResponse.addHeader("Token","token1234")
+            mockResponse = setResponseBody(mockResponse, fileName = "loginResponse.json")
+            mockResponse.addHeader("Authorization","token1234")
             server.enqueue(mockResponse)
 
             val response = service.login(LoginRequest("test","1234"))
