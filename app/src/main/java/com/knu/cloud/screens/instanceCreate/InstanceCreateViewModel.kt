@@ -12,8 +12,8 @@ import com.knu.cloud.model.instanceCreate.FlavorResponse
 import com.knu.cloud.model.instanceCreate.KeypairResponse
 import com.knu.cloud.model.instanceCreate.NetworkResponse
 import com.knu.cloud.model.instanceCreate.SourceResponse
+import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.instanceCreate.InstanceCreateRepository
-import com.knu.cloud.utils.RetrofitFailureStateException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

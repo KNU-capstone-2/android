@@ -20,7 +20,16 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun login(id : String, password : String) : Result<String>{
         return when(val authResponse = remoteDataSource.login(LoginRequest(id,password))){
             is NetworkResult.Success -> {
-                Result.success("login success")
+                if(authResponse.data.status == 200){
+                    Result.success(authResponse.data.message)
+                }else{
+                    Result.failure(
+                        RetrofitFailureStateException(
+                            code = authResponse.data.status,
+                            error = authResponse.data.message
+                        )
+                    )
+                }
                 // TODO : 만약 백엔드에서 success이지만 status를 404로 준다면 여기서 처리해줘야함
             }
             is NetworkResult.Error -> Result.failure(
