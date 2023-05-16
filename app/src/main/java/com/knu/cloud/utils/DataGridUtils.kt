@@ -18,7 +18,7 @@ import com.knu.cloud.R
 import com.knu.cloud.model.instanceCreate.FlavorResponse
 import com.knu.cloud.model.instanceCreate.KeypairResponse
 import com.knu.cloud.model.instanceCreate.NetworkResponse
-import com.knu.cloud.model.instanceCreate.Source
+import com.knu.cloud.model.instanceCreate.SourceResponse
 
 object FlavorUtils{
     const val columnNameWeight = .2f
@@ -150,7 +150,7 @@ fun SourceHeaderTableCell() {
 }
 
 @Composable
-fun SourceDataTableCell(item: Source, index: Int, type: String, onClickButton: (Source, Int) -> Unit) {
+fun SourceDataTableCell(item: SourceResponse, index: Int, type: String, onClickButton: (SourceResponse, Int) -> Unit) {
     var backGcolor = Color.White
     if (index % 2 == 0) {
         backGcolor = Color.LightGray
