@@ -1,5 +1,7 @@
 package com.knu.cloud.screens.auth.signup
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,12 +16,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.knu.cloud.R
 import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
@@ -32,6 +37,8 @@ fun SignUpScreen(
     onSignUpSubmitClick : () -> Unit,
     viewModel: SignUpViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+
     Surface(
         modifier = Modifier
             .fillMaxSize(),
@@ -40,11 +47,11 @@ fun SignUpScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-        ){
+        ) {
             TopAppBar(
                 title = { Text("") },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle back button click */ }) {
+                    IconButton(onClick = { onSignUpSubmitClick() }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -64,23 +71,23 @@ fun SignUpScreen(
             )
             SignUp(
                 onSignUpSubmitClick = onSignUpSubmitClick,
-                viewModel = viewModel
+                viewModel = viewModel,
+                context = context
             )
         }
     }
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @ExperimentalComposeUiApi
 @Composable
 fun SignUp(
     onSignUpSubmitClick : () -> Unit,
-    viewModel: SignUpViewModel
+    viewModel: SignUpViewModel,
+    context: Context
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val emailErrorCheck = viewModel.userEmailError.collectAsState()
-    val emailErrorState = viewModel.userEmailErrorState.collectAsState()
-    val passwordErrorCheck = viewModel.userPasswordError.collectAsState()
-    val passwordErrorState = viewModel.userPasswordErrorState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var personalInfoCheck by rememberSaveable { mutableStateOf(false) }
     var expirationDateCheck by rememberSaveable { mutableStateOf(false) }
@@ -100,7 +107,7 @@ fun SignUp(
         ) { nickName ->
             viewModel.setUserNickName(nickName)
         }
-
+        Spacer(modifier = Modifier.size(8.dp))
         ProjectTextInput(
             type = TextInputType.FIELD,
             label = stringResource(R.string.SignUp_email),
@@ -109,7 +116,7 @@ fun SignUp(
             viewModel.setUserEmail(email)
         }
 
-        if (emailErrorCheck.value) {
+        if (uiState.userEmailError) {
             Row(
                 modifier = Modifier
                     .padding(5.dp)
@@ -119,7 +126,7 @@ fun SignUp(
             ) {
                 Icon(imageVector = Icons.Default.Warning, contentDescription = "", tint = colorResource(id = R.color.Waring))
                 Text(
-                    text = emailErrorState.value,
+                    text = uiState.userEmailErrorState,
                     style = MaterialTheme.typography.caption,
                     color = colorResource(id = R.color.Waring)
                 )
@@ -160,8 +167,7 @@ fun SignUp(
         ) { passwordCheck ->
             viewModel.setUserPasswordCheck(passwordCheck)
         }
-
-        if (passwordErrorCheck.value) {
+        if (uiState.userPasswordError) {
             Row(
                 modifier = Modifier
                     .padding(5.dp)
@@ -171,7 +177,7 @@ fun SignUp(
             ) {
                 Icon(imageVector = Icons.Default.Warning, contentDescription = "", tint = colorResource(id = R.color.Waring))
                 Text(
-                    text = passwordErrorState.value,
+                    text = uiState.userPasswordErrorState,
                     style = MaterialTheme.typography.caption,
                     color = colorResource(id = R.color.Waring)
                 )
@@ -230,11 +236,12 @@ fun SignUp(
         // 회원가입 버튼
         Button(
             onClick ={
-//                if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
+                if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
                     viewModel.signUp()
                     Timber.tag("test").d("테스트 성공")
+                    Toast.makeText(context, "회원가입 완료", Toast.LENGTH_SHORT).show()
                     onSignUpSubmitClick()
-//                }
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()

@@ -112,7 +112,7 @@ fun TextInput(
     errorMsg: State<String> = remember { mutableStateOf("") },
     onValueChangeListener: (value: String) -> Unit = {},
 ) {
-    var textValue = rememberSaveable { mutableStateOf("") }
+    val textValue = rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
         value = textValue.value,

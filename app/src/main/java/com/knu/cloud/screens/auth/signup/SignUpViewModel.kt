@@ -3,42 +3,36 @@ package com.knu.cloud.screens.auth.signup
 import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.knu.cloud.repository.AuthRepository
 import com.knu.cloud.repository.AuthRepositoryImpl
+import com.knu.cloud.screens.auth.login.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+data class SignUpState(
+    val userNickName : String ="",
+    val userEmail: String = "",
+    val userEmailError: Boolean = false,
+    val userEmailErrorState: String = "",
+    val userPassword: String = "",
+    val userPasswordError: Boolean = false,
+    val userPasswordErrorState: String = "",
+    val userPasswordCheck: String = ""
+)
+
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val authRepository: AuthRepositoryImpl
+    private val authRepository: AuthRepository
 ): ViewModel() {
 
-    private val userNickName = MutableStateFlow("")
-
-    private val userEmail = MutableStateFlow("")
-    private val _userEmailError = MutableStateFlow(false)
-
-    val userEmailError
-        get() = _userEmailError.asStateFlow()
-
-    private val _userEmailErrorState = MutableStateFlow("")
-    val userEmailErrorState
-        get() = _userEmailErrorState.asStateFlow()
-
-    private val userPassword = MutableStateFlow("")
-    private val _userPasswordError = MutableStateFlow(false)
-    val userPasswordError
-        get() = _userPasswordError.asStateFlow()
-
-    private val _userPasswordErrorState = MutableStateFlow("")
-    val userPasswordErrorState
-        get() = _userPasswordErrorState.asStateFlow()
-
-    private val userPasswordCheck = MutableStateFlow("")
-
+    private val _uiState = MutableStateFlow(SignUpState())
+    val uiState : StateFlow<SignUpState> = _uiState.asStateFlow()
 
     fun signUp() {
         viewModelScope.launch {
@@ -51,68 +45,84 @@ class SignUpViewModel @Inject constructor(
 //        )
     }
     fun setUserNickName(nickName: String) {
-        userNickName.value = nickName
-        Timber.tag("SignUp_UserNickName").d(nickName)
+        _uiState.update {
+            it.copy(userNickName = nickName)
+        }
+        Timber.tag("SignUp_UserNickName").d(_uiState.value.userNickName)
     }
 
     fun setUserEmail(email: String) {
-        userEmail.value = email
-        Timber.tag("SignUp_UserEmail").d(userEmail.value)
+        _uiState.update {
+            it.copy(userEmail = email)
+        }
+        Timber.tag("SignUp_UserEmail").d(_uiState.value.userEmail)
     }
 
     fun setUserPassword(password: String) {
-        userPassword.value = password
-        Timber.tag("SignUp_userPassword").d(userPassword.value)
+        _uiState.update {
+            it.copy(userPassword = password)
+        }
+        Timber.tag("SignUp_userPassword").d(_uiState.value.userPassword)
     }
 
     fun setUserPasswordCheck(pwCheck: String) {
-        userPasswordCheck.value = pwCheck
-        Timber.d("SignUp_userPasswordCheck", userPasswordCheck.value)
+        _uiState.update {
+            it.copy(userPasswordCheck = pwCheck)
+        }
+        Timber.tag("SignUp_userPasswordCheck").d(_uiState.value.userPasswordCheck)
     }
 
     private fun isEmailEmpty(): Boolean {
-        val condition = userEmail.value.isEmpty()
+        val condition = _uiState.value.userEmail.isEmpty()
         return getResultOfEmailCondition(condition, SignUpErrorState.EMAIL_EMPTY)
     }
 
     private fun isEmailPattern(): Boolean {
-        val condition = !PatternsCompat.EMAIL_ADDRESS.matcher(userEmail.value).matches()
+        val condition = !PatternsCompat.EMAIL_ADDRESS.matcher(_uiState.value.userEmail).matches()
         return getResultOfEmailCondition(condition, SignUpErrorState.EMAIL_PATTERN_NOT_SATISFIED)
     }
 
     private fun isPasswordEmpty(): Boolean {
-        val condition = userPassword.value.isEmpty()
+        val condition = _uiState.value.userPassword.isEmpty()
         return getResultOfPwCondition(condition, SignUpErrorState.PASSWORD_EMPTY)
     }
 
     private fun isPasswordLength(minLen: Int = 6, maxLen: Int = 20): Boolean {
-        val length = userPassword.value.length
+        val length = _uiState.value.userPassword.length
         val condition = length < minLen || length > maxLen
         return getResultOfPwCondition(condition, SignUpErrorState.PASSWORD_LENGTH_NOT_SATISFIED)
     }
 
     private fun isPasswordValidation(): Boolean {
         val reg = Regex("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,20}")
-        val condition = !userPassword.value.matches(reg)
+        val condition = !_uiState.value.userPassword.matches(reg)
         return getResultOfPwCondition(condition, SignUpErrorState.PASSWORD_VALIDATION_NOT_SATISFIED)
     }
 
     private fun isPasswordSame(): Boolean {
-        val condition = userPassword.value != userPasswordCheck.value
+        val condition = _uiState.value.userPassword != _uiState.value.userPasswordCheck
         return getResultOfPwCondition(condition, SignUpErrorState.PASSWORD_NOT_SAME)
     }
 
     // 조건을 만족하면 true, 아니면 false 반환
     private fun getResultOfEmailCondition(condition: Boolean, errorState: String): Boolean {
-        _userEmailError.value = condition
-        _userEmailErrorState.value = if (condition) errorState else ""
+        _uiState.update {
+            it.copy(
+                userEmailError = condition,
+                userEmailErrorState = if(condition) errorState else ""
+            )
+        }
         return condition
     }
 
     // 조건을 만족하면 true, 아니면 false 반환
     private fun getResultOfPwCondition(condition: Boolean, errorState: String): Boolean {
-        _userPasswordError.value = condition
-        _userPasswordErrorState.value = if (condition) errorState else ""
+        _uiState.update {
+            it.copy(
+                userPasswordError = condition,
+                userPasswordErrorState = if(condition) errorState else ""
+            )
+        }
         return condition
     }
 
