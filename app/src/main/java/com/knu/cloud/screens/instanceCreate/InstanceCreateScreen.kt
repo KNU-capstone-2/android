@@ -27,7 +27,7 @@ import timber.log.Timber
 
 @Composable
 fun InstanceCreateScreen(
-    instanceCreateViewModel : InstanceCreateViewModel = viewModel()
+    instanceCreateViewModel : InstanceCreateViewModel = hiltViewModel()
 ){
     val context = LocalContext.current
 
