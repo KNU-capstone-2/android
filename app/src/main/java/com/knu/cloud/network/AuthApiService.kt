@@ -13,7 +13,7 @@ interface AuthApiService {
 //    @Headers(
 //        "Content-Type:application/json",
 //        "Authorization:Bearer API")
-    @POST("/user/sign-up")
+    @POST("/auth/join")
     suspend fun signUp(
         @Body signUpRequest : SignUpRequest
     ) : NetworkResult<AuthResponse<Token>>

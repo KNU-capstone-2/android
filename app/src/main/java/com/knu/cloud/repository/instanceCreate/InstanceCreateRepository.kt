@@ -4,10 +4,10 @@ import com.knu.cloud.model.instance.InstanceData
 import com.knu.cloud.model.instanceCreate.*
 
 interface InstanceCreateRepository {
-    suspend fun getAllFlavorData(): Result<List<FlavorResponse>?>
-    suspend fun getAllKeypairData(): Result<List<KeypairResponse>?>
-    suspend fun getAllNetworkData(): Result<List<NetworkResponse>?>
-    suspend fun getAllSourceData(): Result<List<SourceResponse>?>
+    suspend fun getAllFlavorData(): Result<FlavorsResponse?>
+    suspend fun getAllKeypairData(): Result<KeypairsResponse?>
+    suspend fun getAllNetworkData(): Result<NetworksResponse?>
+    suspend fun getAllSourceData(): Result<SourcesResponse?>
 
     suspend fun createInstance(createRequest: CreateRequest) : Result<InstanceData?>
 }
