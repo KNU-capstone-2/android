@@ -32,7 +32,7 @@ class AuthInterceptor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val sessionId = runBlocking { sessionManager.sessionId.value }
         val newRequest = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer $sessionId")
+//            .addHeader("Authorization", "Bearer $sessionId")
             .build()
 
         val response = chain.proceed(newRequest)

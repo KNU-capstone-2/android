@@ -15,7 +15,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ConfigModule {
 
-    private const val BASE_URL = "http://52.78.233.108"
+//    private const val BASE_URL = "http://52.78.233.108"
+    private const val BASE_URL = "https://a923-211-51-176-234.ngrok-free.app"
     @Singleton
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {

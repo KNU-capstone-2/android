@@ -1,10 +1,8 @@
 package com.knu.cloud.repository.instanceCreate
 
 import com.knu.cloud.data.instanceCreate.InstanceCreateDataSource
-import com.knu.cloud.model.instanceCreate.FlavorResponse
-import com.knu.cloud.model.instanceCreate.KeypairResponse
-import com.knu.cloud.model.instanceCreate.NetworkResponse
-import com.knu.cloud.model.instanceCreate.SourceResponse
+import com.knu.cloud.model.instance.InstanceData
+import com.knu.cloud.model.instanceCreate.*
 import com.knu.cloud.utils.instanceCreateResponseToResult
 import timber.log.Timber
 import javax.inject.Inject
@@ -14,6 +12,11 @@ import javax.inject.Singleton
 class InstanceCreateRepositoryImpl @Inject constructor(
     private val remoteDataSource: InstanceCreateDataSource
 ): InstanceCreateRepository {
+
+    override suspend fun createInstance(createRequest: CreateRequest): Result<InstanceData?> {
+        val instanceCreateResponse = remoteDataSource.createInstance(createRequest)
+        return instanceCreateResponseToResult(instanceCreateResponse)
+    }
 
     override suspend fun getAllFlavorData(): Result<List<FlavorResponse>?> {
         val flavorResponse = remoteDataSource.getFlavorData()
