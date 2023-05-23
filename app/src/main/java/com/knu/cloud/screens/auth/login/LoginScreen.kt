@@ -72,18 +72,6 @@ fun LoginScreen(
                     onLoginClick()
                 }
             }
-//        LaunchedEffect(loginMsg){
-//            Timber.tag("login").d("launchedEffect loginMsg: ${loginMsg.value}")
-//            if(loginMsg.value.isNotEmpty()){
-//                Toast.makeText(context,loginMsg.value,Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//        LaunchedEffect(loginState){
-//            if(loginState.value){
-//                viewModel.loginFinish()
-//                onLoginClick()
-//            }
-//        }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -141,7 +129,8 @@ fun LoginScreen(
                     // 로그인 버튼
                     Button(
                         onClick = {
-                            viewModel.login()
+                                  onLoginClick()
+//                            viewModel.login()
                         },
                         modifier = Modifier
                             .fillMaxWidth()
