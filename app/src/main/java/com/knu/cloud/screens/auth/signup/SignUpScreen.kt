@@ -1,5 +1,7 @@
 package com.knu.cloud.screens.auth.signup
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -34,6 +37,8 @@ fun SignUpScreen(
     onSignUpSubmitClick : () -> Unit,
     viewModel: SignUpViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+
     Surface(
         modifier = Modifier
             .fillMaxSize(),
@@ -66,7 +71,8 @@ fun SignUpScreen(
             )
             SignUp(
                 onSignUpSubmitClick = onSignUpSubmitClick,
-                viewModel = viewModel
+                viewModel = viewModel,
+                context = context
             )
         }
     }
@@ -77,7 +83,8 @@ fun SignUpScreen(
 @Composable
 fun SignUp(
     onSignUpSubmitClick : () -> Unit,
-    viewModel: SignUpViewModel
+    viewModel: SignUpViewModel,
+    context: Context
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -232,6 +239,7 @@ fun SignUp(
                 if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
                     viewModel.signUp()
                     Timber.tag("test").d("테스트 성공")
+                    Toast.makeText(context, "회원가입 완료", Toast.LENGTH_SHORT).show()
                     onSignUpSubmitClick()
                 }
             },
