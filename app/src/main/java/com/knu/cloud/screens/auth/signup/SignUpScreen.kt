@@ -20,6 +20,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.knu.cloud.R
 import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
@@ -40,7 +42,7 @@ fun SignUpScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-        ){
+        ) {
             TopAppBar(
                 title = { Text("") },
                 navigationIcon = {
@@ -70,6 +72,7 @@ fun SignUpScreen(
     }
 }
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @ExperimentalComposeUiApi
 @Composable
 fun SignUp(
@@ -77,10 +80,7 @@ fun SignUp(
     viewModel: SignUpViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val emailErrorCheck = viewModel.userEmailError.collectAsState()
-    val emailErrorState = viewModel.userEmailErrorState.collectAsState()
-    val passwordErrorCheck = viewModel.userPasswordError.collectAsState()
-    val passwordErrorState = viewModel.userPasswordErrorState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var personalInfoCheck by rememberSaveable { mutableStateOf(false) }
     var expirationDateCheck by rememberSaveable { mutableStateOf(false) }
@@ -100,7 +100,7 @@ fun SignUp(
         ) { nickName ->
             viewModel.setUserNickName(nickName)
         }
-
+        Spacer(modifier = Modifier.size(8.dp))
         ProjectTextInput(
             type = TextInputType.FIELD,
             label = stringResource(R.string.SignUp_email),
@@ -109,7 +109,7 @@ fun SignUp(
             viewModel.setUserEmail(email)
         }
 
-        if (emailErrorCheck.value) {
+        if (uiState.userEmailError) {
             Row(
                 modifier = Modifier
                     .padding(5.dp)
@@ -119,7 +119,7 @@ fun SignUp(
             ) {
                 Icon(imageVector = Icons.Default.Warning, contentDescription = "", tint = colorResource(id = R.color.Waring))
                 Text(
-                    text = emailErrorState.value,
+                    text = uiState.userEmailErrorState,
                     style = MaterialTheme.typography.caption,
                     color = colorResource(id = R.color.Waring)
                 )
@@ -160,8 +160,7 @@ fun SignUp(
         ) { passwordCheck ->
             viewModel.setUserPasswordCheck(passwordCheck)
         }
-
-        if (passwordErrorCheck.value) {
+        if (uiState.userPasswordError) {
             Row(
                 modifier = Modifier
                     .padding(5.dp)
@@ -171,7 +170,7 @@ fun SignUp(
             ) {
                 Icon(imageVector = Icons.Default.Warning, contentDescription = "", tint = colorResource(id = R.color.Waring))
                 Text(
-                    text = passwordErrorState.value,
+                    text = uiState.userPasswordErrorState,
                     style = MaterialTheme.typography.caption,
                     color = colorResource(id = R.color.Waring)
                 )
@@ -230,11 +229,11 @@ fun SignUp(
         // 회원가입 버튼
         Button(
             onClick ={
-//                if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
+                if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
                     viewModel.signUp()
                     Timber.tag("test").d("테스트 성공")
                     onSignUpSubmitClick()
-//                }
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
