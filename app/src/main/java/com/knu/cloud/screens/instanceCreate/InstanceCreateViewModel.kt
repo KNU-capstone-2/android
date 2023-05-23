@@ -8,10 +8,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.knu.cloud.model.dialog.CreateInstanceState
-import com.knu.cloud.model.instanceCreate.FlavorResponse
-import com.knu.cloud.model.instanceCreate.KeypairResponse
-import com.knu.cloud.model.instanceCreate.NetworkResponse
-import com.knu.cloud.model.instanceCreate.SourceResponse
+import com.knu.cloud.model.instanceCreate.*
 import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.instanceCreate.InstanceCreateRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -190,7 +187,14 @@ class InstanceCreateViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             // Do the background work here
-            delay(3000)
+//            delay(3000)
+            instanceCreateRepository.createInstance(
+                createRequest = CreateRequest()
+            ).onSuccess {
+                Timber.tag("instanceCreate").d("Success instanceData : $it")
+            }.onFailure {
+                Timber.tag("instanceCreate").d("Failure : $it")
+            }
             closeDialog(context)
         }
     }
