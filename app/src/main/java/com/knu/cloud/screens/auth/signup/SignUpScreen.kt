@@ -46,7 +46,7 @@ fun SignUpScreen(
             TopAppBar(
                 title = { Text("") },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle back button click */ }) {
+                    IconButton(onClick = { onSignUpSubmitClick() }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
