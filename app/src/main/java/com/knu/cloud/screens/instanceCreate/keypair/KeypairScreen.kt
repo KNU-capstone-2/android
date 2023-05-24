@@ -121,7 +121,7 @@ fun Keypair(
         item {
             DataGridBar(
                 type = "사용 가능",
-                numbers = viewModel.possibleFlavor.value.size,
+                numbers = viewModel.possibleKeypair.value.size,
                 expanded = possibleExpanded,
             ) {
                 possibleExpanded = it

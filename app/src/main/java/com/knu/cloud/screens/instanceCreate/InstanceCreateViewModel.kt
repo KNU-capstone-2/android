@@ -62,37 +62,6 @@ class InstanceCreateViewModel @Inject constructor(
     var uploadNetworkDataSet = mutableListOf<NetworkResponse>()
     var uploadKeypairDataSet = mutableListOf<KeypairResponse>()
 
-    /*
-    var possibleFlavorDataSet = mutableListOf(
-        FlavorResponse("m1.nano", 1, 128, 1, 1, 0, "예"),
-        FlavorResponse("m1.micro", 1, 192, 1, 1, 0, "예"),
-        FlavorResponse("cirros256", 1, 256, 1, 1, 0,"예"),
-        FlavorResponse("m1.tiny", 1, 512, 1, 1, 0, "예"),
-        FlavorResponse("ds512M", 1, 512 , 5, 5, 0 , "예"),
-        FlavorResponse("ds1G", 1, 1, 10, 10, 0, "예"),
-        FlavorResponse("m1.small", 1, 2, 20, 20, 0, "예"),
-        FlavorResponse("ds2G", 2, 2, 10, 10, 0, "예"),
-        FlavorResponse("m1.medium", 2, 4, 40, 40, 0, "예"),
-        FlavorResponse("ds4G",  4, 4, 20, 20, 0, "예"),
-        FlavorResponse("m1.large", 4, 8, 80, 80, 0, "예"),
-        FlavorResponse("m1.xlarge", 8, 16, 160, 160, 0, "예")
-    )
-
-    var possibleSourceDataSet = mutableListOf(
-        SourceResponse("cirros-0.5.2-x86_64-disk", "3/13/23 7:31 AM", 15.55, "QCOW2", "공용"),
-        SourceResponse("nano-1-x86_64-disk", "3/24/23 11:13 PM", 5.55, "QCOW2", "공용")
-    )
-
-    var possibleNetworkDataSet = mutableListOf(
-        NetworkResponse("shared", "shared-subnet","예", "Up", "Active"),
-        NetworkResponse("private", "ipv6-private-subnet private-subnet","아니오", "Up", "Active")
-    )
-
-    var possibleKeypairDataSet = mutableListOf(
-        KeypairResponse("test-pocket", "ssh"),
-        KeypairResponse("test-1", "ssh")
-    )
-    */
     private var possibleFlavorDataSet: MutableList<FlavorResponse> = mutableListOf()
     private var possibleKeypairDataSet: MutableList<KeypairResponse> = mutableListOf()
     private var possibleNetworkDataSet: MutableList<NetworkResponse> = mutableListOf()
@@ -223,7 +192,7 @@ class InstanceCreateViewModel @Inject constructor(
             instanceCreateRepository.getAllFlavorData()
                 .onSuccess { it ->
                     if (it != null) {
-                        possibleFlavorDataSet = it.toMutableList()
+                        possibleFlavorDataSet = it.flavors.toMutableList()
                     }else{
                        //_instances.value = testInstanceDataList
                     }
@@ -242,7 +211,7 @@ class InstanceCreateViewModel @Inject constructor(
             instanceCreateRepository.getAllKeypairData()
                 .onSuccess { it ->
                     if (it != null) {
-                        possibleKeypairDataSet = it.toMutableList()
+                        possibleKeypairDataSet = it.keypairs.toMutableList()
                     }else{
                         //_instances.value = testInstanceDataList
                     }
@@ -261,7 +230,7 @@ class InstanceCreateViewModel @Inject constructor(
             instanceCreateRepository.getAllNetworkData()
                 .onSuccess { it ->
                     if (it != null) {
-                        possibleNetworkDataSet = it.toMutableList()
+                        possibleNetworkDataSet = it.networks.toMutableList()
                     }else{
                         //_instances.value = testInstanceDataList
                     }
@@ -280,7 +249,7 @@ class InstanceCreateViewModel @Inject constructor(
             instanceCreateRepository.getAllSourceData()
                 .onSuccess { it ->
                     if (it != null) {
-                        possibleSourceDataSet = it.toMutableList()
+                        possibleSourceDataSet = it.images.toMutableList()
                     }else{
                         //_instances.value = testInstanceDataList
                     }

@@ -1,16 +1,16 @@
 package com.knu.cloud.repository.instanceCreate
 
-import com.knu.cloud.data.instanceCreate.InstanceCreateDataSource
+import com.knu.cloud.data.instanceCreate.InstanceCreateRemoteDataSource
 import com.knu.cloud.model.instance.InstanceData
 import com.knu.cloud.model.instanceCreate.*
+import com.knu.cloud.utils.instanceCreateOpenstackResponseToResult
 import com.knu.cloud.utils.instanceCreateResponseToResult
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class InstanceCreateRepositoryImpl @Inject constructor(
-    private val remoteDataSource: InstanceCreateDataSource
+    private val remoteDataSource: InstanceCreateRemoteDataSource
 ): InstanceCreateRepository {
 
     override suspend fun createInstance(createRequest: CreateRequest): Result<InstanceData?> {
@@ -18,24 +18,24 @@ class InstanceCreateRepositoryImpl @Inject constructor(
         return instanceCreateResponseToResult(instanceCreateResponse)
     }
 
-    override suspend fun getAllFlavorData(): Result<List<FlavorResponse>?> {
+    override suspend fun getAllFlavorData(): Result<FlavorsResponse?> {
         val flavorResponse = remoteDataSource.getFlavorData()
-        return instanceCreateResponseToResult(flavorResponse)
+        return instanceCreateOpenstackResponseToResult(flavorResponse)
     }
 
-    override suspend fun getAllKeypairData(): Result<List<KeypairResponse>?> {
+    override suspend fun getAllKeypairData(): Result<KeypairsResponse?> {
         val keypairResponse = remoteDataSource.getKeypairData()
-        return instanceCreateResponseToResult(keypairResponse)
+        return instanceCreateOpenstackResponseToResult(keypairResponse)
     }
 
-    override suspend fun getAllNetworkData(): Result<List<NetworkResponse>?> {
+    override suspend fun getAllNetworkData(): Result<NetworksResponse?> {
         val networkResponse = remoteDataSource.getNetworkData()
-        return instanceCreateResponseToResult(networkResponse)
+        return instanceCreateOpenstackResponseToResult(networkResponse)
     }
 
-    override suspend fun getAllSourceData(): Result<List<SourceResponse>?> {
+    override suspend fun getAllSourceData(): Result<SourcesResponse?> {
         val sourceResponse = remoteDataSource.getSourceData()
-        return instanceCreateResponseToResult(sourceResponse)
+        return instanceCreateOpenstackResponseToResult(sourceResponse)
     }
 
 }

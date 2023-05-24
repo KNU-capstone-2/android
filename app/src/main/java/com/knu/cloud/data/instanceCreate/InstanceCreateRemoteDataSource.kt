@@ -1,31 +1,32 @@
 package com.knu.cloud.data.instanceCreate
 
 import com.knu.cloud.model.NetworkResult
+import com.knu.cloud.model.OpenstackResponse
 import com.knu.cloud.model.auth.AuthResponse
 import com.knu.cloud.model.instance.InstanceData
 import com.knu.cloud.model.instanceCreate.*
 import com.knu.cloud.network.InstanceCreateApiService
 import javax.inject.Inject
 
-class InstanceCreateDataSource @Inject constructor(
+class InstanceCreateRemoteDataSource @Inject constructor(
     private val instanceCreateApiService: InstanceCreateApiService
 ) {
     suspend fun createInstance(createRequest: CreateRequest) :NetworkResult<AuthResponse<InstanceData>>{
         return instanceCreateApiService.instanceCreate(createRequest)
     }
-    suspend fun getFlavorData() : NetworkResult<AuthResponse<List<FlavorResponse>>> {
+    suspend fun getFlavorData() : NetworkResult<OpenstackResponse<FlavorsResponse>> {
         return instanceCreateApiService.getFlavorData()
     }
 
-    suspend fun getKeypairData() : NetworkResult<AuthResponse<List<KeypairResponse>>> {
+    suspend fun getKeypairData() : NetworkResult<OpenstackResponse<KeypairsResponse>> {
         return instanceCreateApiService.getKeypairData()
     }
 
-    suspend fun getNetworkData() : NetworkResult<AuthResponse<List<NetworkResponse>>> {
+    suspend fun getNetworkData() : NetworkResult<OpenstackResponse<NetworksResponse>> {
         return instanceCreateApiService.getNetworkData()
     }
 
-    suspend fun getSourceData() : NetworkResult<AuthResponse<List<SourceResponse>>> {
+    suspend fun getSourceData() : NetworkResult<OpenstackResponse<SourcesResponse>> {
         return instanceCreateApiService.getSourceData()
     }
 }
