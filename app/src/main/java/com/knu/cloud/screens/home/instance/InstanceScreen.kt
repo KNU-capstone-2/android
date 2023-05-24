@@ -30,20 +30,43 @@ fun InstanceScreen (
     viewModel : InstanceViewModel  = hiltViewModel()
 ) {
     val context = LocalContext.current // Toast 메세지를 위함
-    val instances = viewModel.instances.collectAsState()
-    val checkedInstanceIdList = viewModel.checkedInstanceIds.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     var selectedInstance by rememberSaveable {
         mutableStateOf<InstanceData?>(null)
     }
     val isAllSelected = rememberSaveable { mutableStateOf(false) }
     val isHeaderClick = rememberSaveable { mutableStateOf(false) }
 
+    var isDeleteConfirmDialogOpen by remember { mutableStateOf(false) }
 
-    Timber.tag("vm_test").d("InstanceScreen : checkedInstanceIdList ${checkedInstanceIdList.value}")
-    if(checkedInstanceIdList.value.isEmpty()){
-        /* to initialize table checkBoxes*/
-        isAllSelected.value = false
-        isHeaderClick.value = true
+    LaunchedEffect(uiState.checkedInstanceIds){
+        Timber.tag("uiState").d("${this.javaClass.name} : uiState.checkedInstanceIds ${uiState.checkedInstanceIds}")
+        if(uiState.checkedInstanceIds.isEmpty()){
+            /* to initialize table checkBoxes*/
+            isAllSelected.value = false
+            isHeaderClick.value = true
+        }
+
+    }
+
+    if (isDeleteConfirmDialogOpen) {
+        DeleteConfirmDialog(
+            onDeleteBtnClicked = {
+                viewModel.deleteCheckedInstances()
+            },
+            onCloseBtnClicked =  {
+                isDeleteConfirmDialogOpen = false
+            }
+        )
+    }
+
+    if (uiState.deleteComplete){
+        DeleteResultDialog(
+            deleteResult = uiState.deleteResult,
+            onCloseBtnClicked = {
+                viewModel.closeDeleteResultDialog()
+            }
+        )
     }
 
     Column(
@@ -52,11 +75,11 @@ fun InstanceScreen (
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            totalInstanceCnt = instances.value.size,
-            checkedInstanceCnt = checkedInstanceIdList.value.size,
+            totalInstanceCnt = uiState.instances.size,
+            checkedInstanceCnt = uiState.checkedInstanceIds.size,
             onLaunchBtnClicked = onInstanceCreateClicked,
             onDeleteBtnClicked = {
-                viewModel.deleteCheckedInstances()
+                isDeleteConfirmDialogOpen = true
             }
         )
         Divider(modifier = Modifier.height(1.dp), color = Color.Black)
@@ -69,7 +92,7 @@ fun InstanceScreen (
                 modifier = Modifier.weight(.7f)
             ) {
                 InstanceTable(
-                    dataList = instances.value,
+                    dataList = uiState.instances,
                     isAllSelected = isAllSelected,
                     isHeaderClick = isHeaderClick,
                     onAllChecked = {
@@ -85,7 +108,7 @@ fun InstanceScreen (
                         }
                     },
                     onRowSelected = { instanceId ->
-                        val selectedData = instances.value.find { it.instancesId == instanceId }
+                        val selectedData = uiState.instances.find { it.instancesId == instanceId }
                         selectedInstance = if (selectedInstance == selectedData) null else selectedData
                     }
                 )
@@ -155,8 +178,6 @@ fun InstanceTable(
     )
 }
 
-
-
 @Composable
 fun InstancesBar(
     modifier: Modifier = Modifier,
@@ -165,18 +186,6 @@ fun InstancesBar(
     onLaunchBtnClicked : () -> Unit,
     onDeleteBtnClicked : () -> Unit
 ) {
-    var isDeleteDialogOpen by remember {
-        mutableStateOf(false)
-    }
-
-    if (isDeleteDialogOpen) {
-        DeleteDialog(
-            onDeleteBtnClicked
-        ) {
-            isDeleteDialogOpen = false
-        }
-    }
-
     Row(modifier = modifier
         .fillMaxSize()
     ) {
@@ -203,7 +212,7 @@ fun InstancesBar(
         }
         OutlinedButton(
             modifier = Modifier.weight(0.1f),
-            onClick = { isDeleteDialogOpen = true }
+            onClick =  onDeleteBtnClicked
         ) {
             Text(text = "Delete Instances")
         }
@@ -211,24 +220,13 @@ fun InstancesBar(
 
 }
 
-@Preview(showBackground = true, device = Devices.TABLET)
 @Composable
-fun InstanceScreenPrev() {
-    InstanceScreen(
-        onInstanceCreateClicked = {},
-        onInstanceDetailClicked = {}
-    )
-}
-
-
-
-@Composable
-fun DeleteDialog(
+fun DeleteConfirmDialog(
     onDeleteBtnClicked: () -> Unit,
-    isDeleteDialogOpen: () -> Unit
+    onCloseBtnClicked: () -> Unit
 ) {
     AlertDialog(
-        onDismissRequest = {isDeleteDialogOpen()},
+        onDismissRequest = {onCloseBtnClicked()},
         title = {
             Text(text = stringResource(id = R.string.Instance_Delete_Btn_Title))
         },
@@ -245,13 +243,13 @@ fun DeleteDialog(
                 TextButton(
                     onClick = {
                         onDeleteBtnClicked()
-                        isDeleteDialogOpen()
+                        onCloseBtnClicked()
                     }
                 ) {
                     Text("확인")
                 }
                 TextButton(
-                    onClick = {isDeleteDialogOpen()}
+                    onClick = { onCloseBtnClicked() }
                 ) {
                     Text("취소")
                 }
@@ -260,3 +258,54 @@ fun DeleteDialog(
         shape = RoundedCornerShape(24.dp)
     )
 }
+
+
+@Composable
+fun DeleteResultDialog(
+    deleteResult : List<Pair<String,Boolean>>,
+    onCloseBtnClicked: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = {onCloseBtnClicked()},
+        title = {
+            Text(text = stringResource(id = R.string.Instance_Delete_Result_Title))
+        },
+        text = {
+            deleteResult.forEach {
+                if(it.second){
+                    Text(text = "인스턴스 ${it.first} 삭제 결과 : 성공)")
+                }else{
+                    Text(text = "인스턴스 ${it.first} 삭제 결과 : 실패")
+                }
+            }
+        },
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .width(350.dp)
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = {
+                        onCloseBtnClicked()
+                    }
+                ) {
+                    Text("확인")
+                }
+            }
+        },
+        shape = RoundedCornerShape(24.dp)
+    )
+}
+
+@Preview(showBackground = true, device = Devices.TABLET)
+@Composable
+fun InstanceScreenPrev() {
+    InstanceScreen(
+        onInstanceCreateClicked = {},
+        onInstanceDetailClicked = {}
+    )
+}
+
