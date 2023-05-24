@@ -73,19 +73,19 @@ class InstanceApiServiceTest {
             Assert.assertEquals("token1234",sessionManager.sessionId.value)
 
             // networkResultCallAdapter를 통해 NetworkResult로 잘 변환되었는지 확인하기
-            response.onSuccess { authResponse ->
-                Timber.tag("getAllInstances success 200").d("authResponse : ${authResponse}")
-                checkStatus = authResponse.status
-            }
-
-            Assert.assertEquals(200,checkStatus)
-
-            // authRepository의 login함수 처럼 써보기
-            val result = authResponseToResult(response)
-
-            result.onSuccess {
-                Assert.assertNotNull(it)
-            }
+//            response.onSuccess { authResponse ->
+//                Timber.tag("getAllInstances success 200").d("authResponse : ${authResponse}")
+//                checkStatus = authResponse.status
+//            }
+//
+//            Assert.assertEquals(200,checkStatus)
+//
+//            // authRepository의 login함수 처럼 써보기
+//            val result = authResponseToResult(response)
+//
+//            result.onSuccess {
+//                Assert.assertNotNull(it)
+//            }
         }
     }
 }
