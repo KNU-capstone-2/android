@@ -18,7 +18,7 @@ class InstanceRemoteDataSource @Inject constructor (
         Timber.tag("network").d("InstanceRemoteDataSource getAllInstances() 호출")
         return instanceApiService.getAllInstances()
     }
-    suspend fun getInstance(instanceId: String) : NetworkResult<OpenstackResponse<InstanceData>> {
+    suspend fun getInstance(instanceId: String) : NetworkResult<InstanceData> {
         Timber.tag("network").d("InstanceRemoteDataSource getInstance($instanceId) 호출")
         return instanceApiService.getInstance(instanceId)
     }

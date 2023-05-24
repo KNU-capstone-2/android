@@ -9,6 +9,7 @@ import com.knu.cloud.model.onException
 import com.knu.cloud.model.onSuccess
 import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.network.openstackResponseToResult
+import com.knu.cloud.network.responseToResult
 import javax.inject.Inject
 
 class InstanceRepositoryImpl @Inject constructor(
@@ -22,7 +23,7 @@ class InstanceRepositoryImpl @Inject constructor(
         openstackResponseToResult(remoteDataSource.getAllInstances())
 
     override suspend fun getInstance(instanceId: String): Result<InstanceData?> =
-        openstackResponseToResult(remoteDataSource.getInstance(instanceId))
+        responseToResult(remoteDataSource.getInstance(instanceId))
 
     override suspend fun deleteInstance(instanceId: String): Result<String?> =
         openstackResponseToResult(remoteDataSource.deleteInstance(instanceId))

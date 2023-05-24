@@ -15,10 +15,10 @@ interface InstanceApiService {
     @GET("/servers")
     suspend fun getAllInstances() : NetworkResult<OpenstackResponse<InstancesResponse>>
 
-    @GET("/servers")
+    @GET("/servers/{id}")
     suspend fun getInstance(
-        @Query("id") instanceId : String
-    ) : NetworkResult<OpenstackResponse<InstanceData>>
+        @Path("id") instanceId : String
+    ) : NetworkResult<InstanceData>
 
     @DELETE("/servers/{id}")
     suspend fun deleteInstance(
