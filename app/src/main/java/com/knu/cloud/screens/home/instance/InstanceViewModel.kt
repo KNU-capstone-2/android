@@ -16,6 +16,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 data class InstanceUiState(
+    val isLoading : Boolean = false,
     val instances : List<InstanceData> = emptyList(),
     val checkedInstanceIds : List<String> = emptyList(),
     val deleteComplete : Boolean = false,
@@ -28,8 +29,6 @@ class InstanceViewModel @Inject constructor (
 
     private val _uiState = MutableStateFlow(InstanceUiState())
     val uiState :StateFlow<InstanceUiState> = _uiState.asStateFlow()
-
-
     init {
 //        _instances.value = testInstanceData
         getAllInstances()
@@ -40,14 +39,18 @@ class InstanceViewModel @Inject constructor (
      */
     private fun getAllInstances(){
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             instanceRepository.getAllInstances()
                 .onSuccess { instanceList ->
                     if (instanceList != null) {
-                        _uiState.update { it.copy(instances = instanceList.instances) }
+                        _uiState.update { it.copy(instances = instanceList.instances, isLoading = false) }
                     }else{
-                        _uiState.update { it.copy(instances = testInstanceDataList) }
+                        _uiState.update { it.copy(instances = emptyList(), isLoading = false) }
                     }
                 }.onFailure {
+                    _uiState.update { state ->
+                        state.copy(instances = emptyList(), isLoading = false)
+                    }
                     it as RetrofitFailureStateException
                     Timber.tag("${this.javaClass.name}_getAllInstances")
                         .e("message :${it.message} , code :${it.code}")
@@ -87,10 +90,8 @@ class InstanceViewModel @Inject constructor (
         }
     }
     fun instanceCheck(instanceId : String) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(checkedInstanceIds = it.checkedInstanceIds + instanceId) }
-            Timber.tag("${this.javaClass.name}_instanceCheck()").d(" : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
-        }
+        _uiState.update { it.copy(checkedInstanceIds = it.checkedInstanceIds + instanceId) }
+        Timber.tag("${this.javaClass.name}_instanceCheck()").d(" : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
     }
     fun instanceUncheck(instanceId: String) {
         _uiState.update { state ->

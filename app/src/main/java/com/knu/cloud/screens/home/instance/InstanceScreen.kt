@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
+import com.knu.cloud.components.CenterCircularProgressIndicator
 import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.components.summary.InstanceSummary
 import com.knu.cloud.model.instance.InstanceData
@@ -39,9 +40,10 @@ fun InstanceScreen (
 
     var isDeleteConfirmDialogOpen by remember { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.checkedInstanceIds){
-        Timber.tag("uiState").d("${this.javaClass.name} : uiState.checkedInstanceIds ${uiState.checkedInstanceIds}")
-        if(uiState.checkedInstanceIds.isEmpty()){
+    LaunchedEffect(uiState.checkedInstanceIds) {
+        Timber.tag("uiState")
+            .d("${this.javaClass.name} : uiState.checkedInstanceIds ${uiState.checkedInstanceIds}")
+        if (uiState.checkedInstanceIds.isEmpty()) {
             /* to initialize table checkBoxes*/
             isAllSelected.value = false
             isHeaderClick.value = true
@@ -68,70 +70,76 @@ fun InstanceScreen (
             }
         )
     }
-
-    Column(
-    ){
-        InstancesBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            totalInstanceCnt = uiState.instances.size,
-            checkedInstanceCnt = uiState.checkedInstanceIds.size,
-            onLaunchBtnClicked = onInstanceCreateClicked,
-            onDeleteBtnClicked = {
-                isDeleteConfirmDialogOpen = true
-            }
-        )
-        Divider(modifier = Modifier.height(1.dp), color = Color.Black)
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-        ){
-            Column(
-                modifier = Modifier.weight(.7f)
+    if (uiState.isLoading) {
+        CenterCircularProgressIndicator()
+    } else {
+        Column(
+        ) {
+            InstancesBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                totalInstanceCnt = uiState.instances.size,
+                checkedInstanceCnt = uiState.checkedInstanceIds.size,
+                onLaunchBtnClicked = onInstanceCreateClicked,
+                onDeleteBtnClicked = {
+                    isDeleteConfirmDialogOpen = true
+                }
+            )
+            Divider(modifier = Modifier.height(1.dp), color = Color.Black)
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
             ) {
-                InstanceTable(
-                    dataList = uiState.instances,
-                    isAllSelected = isAllSelected,
-                    isHeaderClick = isHeaderClick,
-                    onAllChecked = {
-                       viewModel.allInstanceCheck(it)
-                    },
-                    onRowChecked = { checked,  instanceId ->
-                        Timber.tag("vm_test").d("onRowChecked")
-                        if(checked) {
-                            Timber.tag("vm_test").d("instanceCheck call")
-                            viewModel.instanceCheck(instanceId)
-                        }else {
-                            viewModel.instanceUncheck(instanceId)
-                        }
-                    },
-                    onRowSelected = { instanceId ->
-                        val selectedData = uiState.instances.find { it.instancesId == instanceId }
-                        selectedInstance = if (selectedInstance == selectedData) null else selectedData
-                    }
-                )
-            }
-            if(selectedInstance != null){
                 Column(
-                    modifier = Modifier
-                        .weight(.3f)
-                        .background(Color.White)
-                        .fillMaxHeight()
-                    , verticalArrangement = Arrangement.Center
-                    , horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier.weight(.7f)
                 ) {
-                    InstanceSummary(
-                        context = context,
-                        instance = selectedInstance,
-                        StartClicked = { /*TODO*/ },
-                        ReStartClicked = { /*TODO*/ },
-                        StopClicked = { /*TODO*/ },
-                        onInstanceDetailClicked = {
-                            onInstanceDetailClicked(it)
+                    InstanceTable(
+                        modifier = Modifier,
+                        dataList = uiState.instances,
+                        isAllSelected = isAllSelected,
+                        isHeaderClick = isHeaderClick,
+                        onAllChecked = {
+                            viewModel.allInstanceCheck(it)
+                        },
+                        onRowChecked = { checked, instanceId ->
+                            Timber.tag("vm_test").d("onRowChecked")
+                            if (checked) {
+                                Timber.tag("vm_test").d("instanceCheck call")
+                                viewModel.instanceCheck(instanceId)
+                            } else {
+                                viewModel.instanceUncheck(instanceId)
+                            }
+                        },
+                        onRowSelected = { instanceId ->
+                            val selectedData =
+                                uiState.instances.find { it.instancesId == instanceId }
+                            selectedInstance =
+                                if (selectedInstance == selectedData) null else selectedData
                         }
                     )
+                }
+                if (selectedInstance != null) {
+                    Column(
+                        modifier = Modifier
+                            .weight(.3f)
+                            .background(Color.White)
+                            .fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        InstanceSummary(
+                            context = context,
+                            instance = selectedInstance,
+                            StartClicked = { /*TODO*/ },
+                            ReStartClicked = { /*TODO*/ },
+                            StopClicked = { /*TODO*/ },
+                            onInstanceDetailClicked = {
+                                onInstanceDetailClicked(it)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -140,6 +148,7 @@ fun InstanceScreen (
 
 @Composable
 fun InstanceTable(
+    modifier: Modifier = Modifier,
     dataList :List<InstanceData>,
     isAllSelected : MutableState<Boolean>,
     isHeaderClick : MutableState<Boolean>,
@@ -149,6 +158,7 @@ fun InstanceTable(
 ) {
     val weightList = listOf(.2f,.25f,.125f,.125f,.2f)
     BasicTable(
+        modifier = modifier,
         tableHeaderItem = TableHeaderItem(
             textList = listOf("Instance Name", "Instance ID","Instance State", "Instance Type", "Status Check"),
             weightList = weightList

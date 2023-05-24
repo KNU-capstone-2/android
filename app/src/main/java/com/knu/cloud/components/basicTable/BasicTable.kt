@@ -77,7 +77,9 @@ fun BasicTable(
 ) {
     val selectedItemIndex = rememberSaveable { mutableStateOf(-1) }
 
-    Column() {
+    Column(
+        modifier = modifier
+    ) {
         TableHeader(
             textList = tableHeaderItem.textList,
             weightList = tableHeaderItem.weightList,
