@@ -36,14 +36,18 @@ fun ProjectApp(appState: ProjectAppState = rememberProjectAppState()) {
                 if (appState.enabledTopAppBar.value) {
                     ProjectAppBar(
                         title = "POCKET",
-                        path = "프로젝트 / Compute / 대시보드"
+                        path = "프로젝트 ${
+                            appState.currentRoute?.split("/")?.drop(1)
+                                ?.joinToString(" ") { route ->
+                                    "/ ${route.replaceFirstChar { it.uppercase() }}" 
+                                }
+                        }"
                     )
                 }
             },
             floatingActionButton = {
                 if (appState.isInstanceScreen) {
                     FABContent {
-//                    showInstanceCreateDialog.value = true
                         appState.navController.navigate(MainDestination.INSTANCE_CREATE_ROUTE)
                     }
                 }
@@ -83,7 +87,6 @@ fun ProjectApp(appState: ProjectAppState = rememberProjectAppState()) {
                         onLoginClicked = appState.navActions::navigateToHome,
                         onSignUpClicked = appState.navActions::navigateToSignUp,
                         onSignUpSubmitClicked = appState.navActions::navigateToLogin
-                        /* TODO: 로그인 request 보내기 */
                     )
                     homeNavGraph(
                         navController = appState.navController,
