@@ -31,13 +31,13 @@ fun InstanceScreen (
 ) {
     val context = LocalContext.current // Toast 메세지를 위함
     val instances = viewModel.instances.collectAsState()
-    val checkedInstanceIdList = viewModel.checkedInstanceData.collectAsState()
+    val checkedInstanceIdList = viewModel.checkedInstanceIds.collectAsState()
     var selectedInstance by rememberSaveable {
         mutableStateOf<InstanceData?>(null)
     }
     val isAllSelected = rememberSaveable { mutableStateOf(false) }
     val isHeaderClick = rememberSaveable { mutableStateOf(false) }
-    val selectedItemIndex = rememberSaveable { mutableStateOf(-1) }
+
 
     Timber.tag("vm_test").d("InstanceScreen : checkedInstanceIdList ${checkedInstanceIdList.value}")
     if(checkedInstanceIdList.value.isEmpty()){
@@ -72,7 +72,6 @@ fun InstanceScreen (
                     dataList = instances.value,
                     isAllSelected = isAllSelected,
                     isHeaderClick = isHeaderClick,
-                    selectedItemIndex = selectedItemIndex,
                     onAllChecked = {
                        viewModel.allInstanceCheck(it)
                     },
@@ -121,7 +120,6 @@ fun InstanceTable(
     dataList :List<InstanceData>,
     isAllSelected : MutableState<Boolean>,
     isHeaderClick : MutableState<Boolean>,
-    selectedItemIndex : MutableState<Int>,
     onAllChecked : (Boolean) -> Unit,
     onRowChecked : (Boolean, String) -> Unit,
     onRowSelected : (String) -> Unit
@@ -154,7 +152,6 @@ fun InstanceTable(
         onRowSelected = onRowSelected,
         isAllSelected = isAllSelected,
         isHeaderClick = isHeaderClick,
-        selectedItemIndex = selectedItemIndex
     )
 }
 
@@ -213,9 +210,10 @@ fun InstancesBar(
     }
 
 }
+
 @Preview(showBackground = true, device = Devices.TABLET)
 @Composable
-fun TestInstanceScreen() {
+fun InstanceScreenPrev() {
     InstanceScreen(
         onInstanceCreateClicked = {},
         onInstanceDetailClicked = {}
