@@ -38,3 +38,18 @@ fun <T:Any> openstackResponseToResult(networkResult: NetworkResult<OpenstackResp
         is NetworkResult.Exception -> Result.failure(networkResult.e)
     }
 }
+
+fun <T:Any> responseToResult(networkResult: NetworkResult<T>): Result<T?> {
+    return when(networkResult) {
+        is NetworkResult.Success -> {
+            Result.success(networkResult.data)
+        }
+        is NetworkResult.Error -> Result.failure(
+            RetrofitFailureStateException(
+                networkResult.message,
+                networkResult.code
+            )
+        )
+        is NetworkResult.Exception -> Result.failure(networkResult.e)
+    }
+}
