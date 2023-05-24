@@ -47,7 +47,7 @@ val data = listOf(
 @Composable
 fun InstanceDetailScreen (
     instanceId : String,
-    viewModel : InstanceViewModel = hiltViewModel()
+    viewModel : InstanceDetailViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val instanceState = viewModel.instance.collectAsState()
