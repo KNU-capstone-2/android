@@ -133,18 +133,12 @@ fun FABContent(onTap: () -> Unit) {
 }
 @Composable
 fun CenterCircularProgressIndicator() {
-    Surface( modifier = Modifier
-        .height(70.dp)
-        .width(70.dp),
-        color = Color.LightGray
+    Column(
+        modifier = Modifier.fillMaxSize().padding(4.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier.padding(4.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CircularProgressIndicator()
-        }
+        CircularProgressIndicator()
     }
 }
 @Preview(showBackground = true)

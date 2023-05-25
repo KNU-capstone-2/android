@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
+import com.knu.cloud.components.CenterCircularProgressIndicator
 import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.components.summary.InstanceSummary
 import com.knu.cloud.model.instance.InstanceData
@@ -30,86 +31,115 @@ fun InstanceScreen (
     viewModel : InstanceViewModel  = hiltViewModel()
 ) {
     val context = LocalContext.current // Toast 메세지를 위함
-    val instances = viewModel.instances.collectAsState()
-    val checkedInstanceIdList = viewModel.checkedInstanceData.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     var selectedInstance by rememberSaveable {
         mutableStateOf<InstanceData?>(null)
     }
     val isAllSelected = rememberSaveable { mutableStateOf(false) }
     val isHeaderClick = rememberSaveable { mutableStateOf(false) }
-    val selectedItemIndex = rememberSaveable { mutableStateOf(-1) }
 
-    Timber.tag("vm_test").d("InstanceScreen : checkedInstanceIdList ${checkedInstanceIdList.value}")
-    if(checkedInstanceIdList.value.isEmpty()){
-        /* to initialize table checkBoxes*/
-        isAllSelected.value = false
-        isHeaderClick.value = true
+    var isDeleteConfirmDialogOpen by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.checkedInstanceIds) {
+        Timber.tag("uiState")
+            .d("${this.javaClass.name} : uiState.checkedInstanceIds ${uiState.checkedInstanceIds}")
+        if (uiState.checkedInstanceIds.isEmpty()) {
+            /* to initialize table checkBoxes*/
+            isAllSelected.value = false
+            isHeaderClick.value = true
+        }
+
     }
 
-    Column(
-    ){
-        InstancesBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            totalInstanceCnt = instances.value.size,
-            checkedInstanceCnt = checkedInstanceIdList.value.size,
-            onLaunchBtnClicked = onInstanceCreateClicked,
+    if (isDeleteConfirmDialogOpen) {
+        DeleteConfirmDialog(
             onDeleteBtnClicked = {
                 viewModel.deleteCheckedInstances()
+            },
+            onCloseBtnClicked =  {
+                isDeleteConfirmDialogOpen = false
             }
         )
-        Divider(modifier = Modifier.height(1.dp), color = Color.Black)
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-        ){
-            Column(
-                modifier = Modifier.weight(.7f)
-            ) {
-                InstanceTable(
-                    dataList = instances.value,
-                    isAllSelected = isAllSelected,
-                    isHeaderClick = isHeaderClick,
-                    selectedItemIndex = selectedItemIndex,
-                    onAllChecked = {
-                       viewModel.allInstanceCheck(it)
-                    },
-                    onRowChecked = { checked,  instanceId ->
-                        Timber.tag("vm_test").d("onRowChecked")
-                        if(checked) {
-                            Timber.tag("vm_test").d("instanceCheck call")
-                            viewModel.instanceCheck(instanceId)
-                        }else {
-                            viewModel.instanceUncheck(instanceId)
-                        }
-                    },
-                    onRowSelected = { instanceId ->
-                        val selectedData = instances.value.find { it.instancesId == instanceId }
-                        selectedInstance = if (selectedInstance == selectedData) null else selectedData
-                    }
-                )
+    }
+
+    if (uiState.deleteComplete){
+        DeleteResultDialog(
+            deleteResult = uiState.deleteResult,
+            onCloseBtnClicked = {
+                viewModel.closeDeleteResultDialog()
             }
-            if(selectedInstance != null){
+        )
+    }
+    if (uiState.isLoading) {
+        CenterCircularProgressIndicator()
+    } else {
+        Column(
+        ) {
+            InstancesBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                totalInstanceCnt = uiState.instances.size,
+                checkedInstanceCnt = uiState.checkedInstanceIds.size,
+                onLaunchBtnClicked = onInstanceCreateClicked,
+                onDeleteBtnClicked = {
+                    isDeleteConfirmDialogOpen = true
+                }
+            )
+            Divider(modifier = Modifier.height(1.dp), color = Color.Black)
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {
                 Column(
-                    modifier = Modifier
-                        .weight(.3f)
-                        .background(Color.White)
-                        .fillMaxHeight()
-                    , verticalArrangement = Arrangement.Center
-                    , horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier.weight(.7f)
                 ) {
-                    InstanceSummary(
-                        context = context,
-                        instance = selectedInstance,
-                        StartClicked = { /*TODO*/ },
-                        ReStartClicked = { /*TODO*/ },
-                        StopClicked = { /*TODO*/ },
-                        onInstanceDetailClicked = {
-                            onInstanceDetailClicked(it)
+                    InstanceTable(
+                        modifier = Modifier,
+                        dataList = uiState.instances,
+                        isAllSelected = isAllSelected,
+                        isHeaderClick = isHeaderClick,
+                        onAllChecked = {
+                            viewModel.allInstanceCheck(it)
+                        },
+                        onRowChecked = { checked, instanceId ->
+                            Timber.tag("vm_test").d("onRowChecked")
+                            if (checked) {
+                                Timber.tag("vm_test").d("instanceCheck call")
+                                viewModel.instanceCheck(instanceId)
+                            } else {
+                                viewModel.instanceUncheck(instanceId)
+                            }
+                        },
+                        onRowSelected = { instanceId ->
+                            val selectedData =
+                                uiState.instances.find { it.instancesId == instanceId }
+                            selectedInstance =
+                                if (selectedInstance == selectedData) null else selectedData
                         }
                     )
+                }
+                if (selectedInstance != null) {
+                    Column(
+                        modifier = Modifier
+                            .weight(.3f)
+                            .background(Color.White)
+                            .fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        InstanceSummary(
+                            context = context,
+                            instance = selectedInstance,
+                            StartClicked = { /*TODO*/ },
+                            ReStartClicked = { /*TODO*/ },
+                            StopClicked = { /*TODO*/ },
+                            onInstanceDetailClicked = {
+                                onInstanceDetailClicked(it)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -118,16 +148,17 @@ fun InstanceScreen (
 
 @Composable
 fun InstanceTable(
+    modifier: Modifier = Modifier,
     dataList :List<InstanceData>,
     isAllSelected : MutableState<Boolean>,
     isHeaderClick : MutableState<Boolean>,
-    selectedItemIndex : MutableState<Int>,
     onAllChecked : (Boolean) -> Unit,
     onRowChecked : (Boolean, String) -> Unit,
     onRowSelected : (String) -> Unit
 ) {
     val weightList = listOf(.2f,.25f,.125f,.125f,.2f)
     BasicTable(
+        modifier = modifier,
         tableHeaderItem = TableHeaderItem(
             textList = listOf("Instance Name", "Instance ID","Instance State", "Instance Type", "Status Check"),
             weightList = weightList
@@ -154,11 +185,8 @@ fun InstanceTable(
         onRowSelected = onRowSelected,
         isAllSelected = isAllSelected,
         isHeaderClick = isHeaderClick,
-        selectedItemIndex = selectedItemIndex
     )
 }
-
-
 
 @Composable
 fun InstancesBar(
@@ -168,18 +196,6 @@ fun InstancesBar(
     onLaunchBtnClicked : () -> Unit,
     onDeleteBtnClicked : () -> Unit
 ) {
-    var isDeleteDialogOpen by remember {
-        mutableStateOf(false)
-    }
-
-    if (isDeleteDialogOpen) {
-        DeleteDialog(
-            onDeleteBtnClicked
-        ) {
-            isDeleteDialogOpen = false
-        }
-    }
-
     Row(modifier = modifier
         .fillMaxSize()
     ) {
@@ -206,31 +222,21 @@ fun InstancesBar(
         }
         OutlinedButton(
             modifier = Modifier.weight(0.1f),
-            onClick = { isDeleteDialogOpen = true }
+            onClick =  onDeleteBtnClicked
         ) {
             Text(text = "Delete Instances")
         }
     }
 
 }
-@Preview(showBackground = true, device = Devices.TABLET)
-@Composable
-fun TestInstanceScreen() {
-    InstanceScreen(
-        onInstanceCreateClicked = {},
-        onInstanceDetailClicked = {}
-    )
-}
-
-
 
 @Composable
-fun DeleteDialog(
+fun DeleteConfirmDialog(
     onDeleteBtnClicked: () -> Unit,
-    isDeleteDialogOpen: () -> Unit
+    onCloseBtnClicked: () -> Unit
 ) {
     AlertDialog(
-        onDismissRequest = {isDeleteDialogOpen()},
+        onDismissRequest = {onCloseBtnClicked()},
         title = {
             Text(text = stringResource(id = R.string.Instance_Delete_Btn_Title))
         },
@@ -247,13 +253,13 @@ fun DeleteDialog(
                 TextButton(
                     onClick = {
                         onDeleteBtnClicked()
-                        isDeleteDialogOpen()
+                        onCloseBtnClicked()
                     }
                 ) {
                     Text("확인")
                 }
                 TextButton(
-                    onClick = {isDeleteDialogOpen()}
+                    onClick = { onCloseBtnClicked() }
                 ) {
                     Text("취소")
                 }
@@ -262,3 +268,54 @@ fun DeleteDialog(
         shape = RoundedCornerShape(24.dp)
     )
 }
+
+
+@Composable
+fun DeleteResultDialog(
+    deleteResult : List<Pair<String,Boolean>>,
+    onCloseBtnClicked: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = {onCloseBtnClicked()},
+        title = {
+            Text(text = stringResource(id = R.string.Instance_Delete_Result_Title))
+        },
+        text = {
+            deleteResult.forEach {
+                if(it.second){
+                    Text(text = "인스턴스 ${it.first} 삭제 결과 : 성공)")
+                }else{
+                    Text(text = "인스턴스 ${it.first} 삭제 결과 : 실패")
+                }
+            }
+        },
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .width(350.dp)
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = {
+                        onCloseBtnClicked()
+                    }
+                ) {
+                    Text("확인")
+                }
+            }
+        },
+        shape = RoundedCornerShape(24.dp)
+    )
+}
+
+@Preview(showBackground = true, device = Devices.TABLET)
+@Composable
+fun InstanceScreenPrev() {
+    InstanceScreen(
+        onInstanceCreateClicked = {},
+        onInstanceDetailClicked = {}
+    )
+}
+

@@ -71,12 +71,15 @@ fun BasicTable(
     tableRowItems : List<TableRowItem>,
     isAllSelected : MutableState<Boolean>,
     isHeaderClick : MutableState<Boolean>,
-    selectedItemIndex : MutableState<Int>,
     onAllChecked : (Boolean) -> Unit,
     onRowChecked : (Boolean, String) -> Unit,
     onRowSelected : (String) -> Unit
 ) {
-    Column() {
+    val selectedItemIndex = rememberSaveable { mutableStateOf(-1) }
+
+    Column(
+        modifier = modifier
+    ) {
         TableHeader(
             textList = tableHeaderItem.textList,
             weightList = tableHeaderItem.weightList,
@@ -235,9 +238,6 @@ fun TestInstanceTable() {
         },
         isHeaderClick = remember {
             mutableStateOf(false)
-        },
-        selectedItemIndex = remember {
-            mutableStateOf(-1)
         },
     )
 }

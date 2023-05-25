@@ -5,57 +5,30 @@ import androidx.lifecycle.viewModelScope
 import com.knu.cloud.components.basicTable.TableRowData
 import com.knu.cloud.model.instance.InstanceData
 import com.knu.cloud.network.RetrofitFailureStateException
-import com.knu.cloud.repository.InstanceRepositoryImpl
+import com.knu.cloud.repository.instance.InstanceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-
-
-/*TODO : ViewState 처리해주기
-* @Composable
-fun MyScreen(viewModel: MyViewModel) {
-    val viewState by viewModel.viewState.collectAsState()
-    when (viewState) {
-        is ViewState.Loading -> {
-            CircularProgressIndicator()
-        }
-        is ViewState.Loaded -> {
-            val data = (viewState as ViewState.Loaded).data
-            GridView(data = data)
-        }
-        is ViewState.Error -> {
-            val errorMessage = (viewState as ViewState.Error).message
-            // show error message
-        }
-    }
-
-    // request data on initial launch
-    LaunchedEffect(Unit) {
-        viewModel.loadData()
-    }
-}
-* */
-
-
+data class InstanceUiState(
+    val isLoading : Boolean = false,
+    val instances : List<InstanceData> = emptyList(),
+    val checkedInstanceIds : List<String> = emptyList(),
+    val deleteComplete : Boolean = false,
+    val deleteResult : List<Pair<String,Boolean>> = emptyList()
+)
 @HiltViewModel
 class InstanceViewModel @Inject constructor (
-    private val instanceRepository: InstanceRepositoryImpl
+    private val instanceRepository: InstanceRepository
 ) : ViewModel(){
 
-    private val _instances = MutableStateFlow<List<InstanceData>>(emptyList())
-    val instances get() = _instances.asStateFlow()
-
-    private val _instance = MutableStateFlow<InstanceData?>(null)
-    val instance get() = _instance.asStateFlow()
-
-    private val _checkedInstanceIdList = MutableStateFlow<List<String>>(emptyList())
-    val checkedInstanceData : StateFlow<List<String>> = _checkedInstanceIdList.asStateFlow()
-
+    private val _uiState = MutableStateFlow(InstanceUiState())
+    val uiState :StateFlow<InstanceUiState> = _uiState.asStateFlow()
     init {
 //        _instances.value = testInstanceData
         getAllInstances()
@@ -66,72 +39,89 @@ class InstanceViewModel @Inject constructor (
      */
     private fun getAllInstances(){
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             instanceRepository.getAllInstances()
                 .onSuccess { instanceList ->
                     if (instanceList != null) {
-                        _instances.value = instanceList
+                        _uiState.update { it.copy(instances = instanceList.instances, isLoading = false) }
                     }else{
-                        _instances.value = testInstanceDataList
+                        _uiState.update { it.copy(instances = emptyList(), isLoading = false) }
                     }
                 }.onFailure {
+                    _uiState.update { state ->
+                        state.copy(instances = emptyList(), isLoading = false)
+                    }
                     it as RetrofitFailureStateException
                     Timber.tag("${this.javaClass.name}_getAllInstances")
                         .e("message :${it.message} , code :${it.code}")
                 }
         }
     }
-    fun getInstance(instanceId : String){
-        Timber.tag("InstanceViewModel").d("getInstance($instanceId)")
-        viewModelScope.launch{
-            instanceRepository.getInstance(instanceId)
-                .onSuccess { instanceData ->
-                    if(instanceData != null ){
-                        _instance.value  = instanceData
-                    }else{
-                        _instance.value = null
-                    }
-                }.onFailure {
-                    it as RetrofitFailureStateException
-                    Timber.tag("${this.javaClass.name}_getInstance")
-                        .e("message :${it.message} , code :${it.code}")
-                }
-        }
-        Timber.tag("InstanceViewModel").d("getInstance - instance : ${_instance.value}")
-    }
+    /**
+     * 체크된 instance들을 하나씩 삭제하고 결과를 deleteResult에 넣는다.
+     * uiState는 마지막에 한 번만 업데이트함
+     * */
     fun deleteCheckedInstances(){
-        /*TODO : Repository의 deleteInstances 함수 호출*/
-        Timber.tag("vm_test").d("deleteCheckedInstances ${_checkedInstanceIdList.value}가 삭제될 예정")
-
-        val filteredData = _instances.value.filterNot { it.instancesId in _checkedInstanceIdList.value }
+        Timber.tag("${this.javaClass.name}_deleteCheckedInstances()").d(" : checkedInstanceIds ${uiState.value.checkedInstanceIds} 삭제될 예정")
+//        val filteredData = _instances.value.filterNot { it.instancesId in _checkedInstanceIdList.value }                   // 삭제 과정 시뮬레이션
 
         viewModelScope.launch {
-            _instances.emit(filteredData)
-            _checkedInstanceIdList.emit(listOf())
+            val deleteSuccessList : MutableList<String> = mutableListOf()
+            _uiState.value.checkedInstanceIds.forEach{ instanceId ->
+                instanceRepository.deleteInstance(instanceId)
+                    .onSuccess {
+                        deleteSuccessList.add(instanceId)
+                    }.onFailure {
+                        it as RetrofitFailureStateException
+                        Timber.tag("${this.javaClass.name}_getAllInstances")
+                            .e("message :${it.message} , code :${it.code}")
+                    }
+            }
+            _uiState.update { state ->
+                state.copy(
+                    instances = state.instances.filterNot { it.instancesId in deleteSuccessList },                              // 삭제 성공한  리스트에 없는 instances
+                    deleteResult = state.checkedInstanceIds.map { id ->
+                        Pair(id, id in deleteSuccessList)
+                    },
+                    deleteComplete = true
+                )
+            }
+//            _instances.emit(filteredData)                                                                                      // 삭제 완료 후 처리 시뮬레이션
         }
     }
     fun instanceCheck(instanceId : String) {
-        viewModelScope.launch {
-            _checkedInstanceIdList.emit(_checkedInstanceIdList.value +instanceId)
-            Timber.tag("vm_test").d("_checkedInstanceIdList ${_checkedInstanceIdList.value}")
-        }
+        _uiState.update { it.copy(checkedInstanceIds = it.checkedInstanceIds + instanceId) }
+        Timber.tag("${this.javaClass.name}_instanceCheck()").d(" : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
     }
     fun instanceUncheck(instanceId: String) {
-        viewModelScope.launch {
-            _checkedInstanceIdList.emit(_checkedInstanceIdList.value.filterNot { it == instanceId })
-            Timber.tag("vm_test").d("_checkedInstanceIdList ${_checkedInstanceIdList.value}")
+        _uiState.update { state ->
+            state.copy(
+                checkedInstanceIds = state.checkedInstanceIds.filterNot { it == instanceId }
+            )
         }
+        Timber.tag("${this.javaClass.name}_instanceUncheck()").d(": checkedInstanceIds ${uiState.value.checkedInstanceIds}")
     }
 
     fun allInstanceCheck(allChecked: Boolean) {
-        viewModelScope.launch {
-            if(allChecked){
-                _checkedInstanceIdList.emit(_instances.value.map{it.instancesId})
-            }else{
-                _checkedInstanceIdList.emit(listOf())
+        if(allChecked) {
+            _uiState.update { state ->
+                state.copy( checkedInstanceIds = state.instances.map { it.instancesId })
             }
-            Timber.tag("vm_test").d("_checkedInstanceIdList ${_checkedInstanceIdList.value}")
+        }else initializeCheckInstanceIds()
+        Timber.tag("vm_test").d("checkedInstanceIds ${uiState.value.checkedInstanceIds}")
+    }
+
+    fun closeDeleteResultDialog(){
+        _uiState.update {
+            it.copy( deleteComplete = false, checkedInstanceIds = emptyList())
         }
     }
+    private fun initializeCheckInstanceIds(){
+        _uiState.update { state ->
+            state.copy(checkedInstanceIds = emptyList())
+        }
+    }
+
 }
 
 var testTableRowData = mutableListOf(
