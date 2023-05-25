@@ -1,6 +1,7 @@
 package com.knu.cloud.di
 
 import com.knu.cloud.network.networkResultCallAdapter.NetworkResultCallAdapterFactory
+import com.knu.cloud.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +17,7 @@ import javax.inject.Singleton
 object ConfigModule {
 
 //    private const val BASE_URL = "https://d8f3-39-116-133-230.ngrok-free.app"
-    private const val BASE_URL = "http://43.201.133.78:8000/"
+    private const val BASE_URL = Constants.OPENSTACK_BASE_URL
 //    private const val BASE_URL = "https://a923-211-51-176-234.ngrok-free.app"
     @Singleton
     @Provides
