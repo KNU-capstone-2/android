@@ -37,4 +37,14 @@
     <color name="instance_Summary_background">#F6F6F6</color>
     <color name="instance_running_text">#177100</color>
 
+    <!-- dashboard -->
+    <color name="dashboard_title">#595085</color>
+    <color name="dashboard_card_color_1">#F6F5FB</color>
+    <color name="dashboard_card_text_1_1">#61598B</color>
+    <color name="dashboard_card_text_1_2">#403572</color>
+    <color name="dashboard_card_color_2">#FFF4F4</color>
+    <color name="dashboard_card_text_2">#FF5648</color>
+    <color name="dashboard_card_color_3">#F5F9F9</color>
+    <color name="dashboard_card_text_3">#479696</color>
+
 </resources>

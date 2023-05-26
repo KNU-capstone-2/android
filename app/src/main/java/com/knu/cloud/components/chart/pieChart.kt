@@ -1,18 +1,15 @@
-package com.knu.cloud.components
+package com.knu.cloud.components.chart
 
 import android.graphics.Paint
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -29,6 +26,8 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
+private val CARD_WIDTH = 150.dp
+
 @Composable
 fun PieChartComponent(
     title: String,
@@ -44,21 +43,27 @@ fun PieChartComponent(
     val remainingDataFloat: Float = remainingData.toFloat()
 
     Column(
-        modifier = Modifier.padding(10.dp).fillMaxSize(),
+        modifier = Modifier.padding(10.dp).width(CARD_WIDTH),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PieChart(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxSize(), // Pie 전체 크기 지정
-            colors = chartColors,
-            assignedDataFloat = assignedDataFloat,
-            remainingDataFloat = remainingDataFloat
-        )
+        Card(
+            modifier = Modifier.padding(5.dp),
+            elevation = 3.dp
+        ) {
+            PieChart(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxSize(), // Pie 전체 크기 지정
+                colors = chartColors,
+                assignedDataFloat = assignedDataFloat,
+                remainingDataFloat = remainingDataFloat
+            )
+        }
+        Spacer(modifier = Modifier.height(5.dp))
         Text(text = title)
         Spacer(modifier = Modifier.height(10.dp))
-        Text(text = "10 에 대한 사용됨 0")
+        Text(text = "${assignedData+remainingData} 에 대한 사용됨 ${assignedData}")
 
     }
 }
