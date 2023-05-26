@@ -18,7 +18,7 @@ import com.knu.cloud.R
 import com.knu.cloud.model.instanceCreate.FlavorResponse
 import com.knu.cloud.model.instanceCreate.KeypairResponse
 import com.knu.cloud.model.instanceCreate.NetworkResponse
-import com.knu.cloud.model.instanceCreate.SourceResponse
+import com.knu.cloud.model.instanceCreate.ImageData
 
 object FlavorUtils{
     const val columnNameWeight = .2f
@@ -150,7 +150,7 @@ fun SourceHeaderTableCell() {
 }
 
 @Composable
-fun SourceDataTableCell(item: SourceResponse, index: Int, type: String, onClickButton: (SourceResponse, Int) -> Unit) {
+fun SourceDataTableCell(item: ImageData, index: Int, type: String, onClickButton: (ImageData, Int) -> Unit) {
     var backGcolor = Color.White
     if (index % 2 == 0) {
         backGcolor = Color.LightGray
@@ -164,10 +164,10 @@ fun SourceDataTableCell(item: SourceResponse, index: Int, type: String, onClickB
         horizontalArrangement = Arrangement.Center
     ) {
         TableCell(text = item.name, weight = SourceUtils.columnNameWeight, type = SourceUtils.tableList)
-        TableCell(text = item.update, weight = SourceUtils.columnUpdateWeight, type = SourceUtils.tableList)
+        TableCell(text = item.updateDate, weight = SourceUtils.columnUpdateWeight, type = SourceUtils.tableList)
         TableCell(text = item.size.toString() + " MB", weight = SourceUtils.columnSizeWeight, type = SourceUtils.tableList)
-        TableCell(text = item.format, weight = SourceUtils.columnSizeWeight, type = SourceUtils.tableList)
-        TableCell(text = item.visible, weight = SourceUtils.columnVisibleWeight, type = SourceUtils.tableList)
+        TableCell(text = item.createdDate, weight = SourceUtils.columnSizeWeight, type = SourceUtils.tableList)
+        TableCell(text = item.status, weight = SourceUtils.columnVisibleWeight, type = SourceUtils.tableList)
         IconButton(
             onClick = {
                 onClickButton(item, index)

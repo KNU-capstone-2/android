@@ -3,8 +3,6 @@ package com.knu.cloud.network
 import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.OpenstackResponse
 import com.knu.cloud.model.auth.AuthResponse
-import com.knu.cloud.model.auth.LoginRequest
-import com.knu.cloud.model.auth.Token
 import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.model.instanceCreate.*
 import retrofit2.http.Body
@@ -23,7 +21,7 @@ interface InstanceCreateApiService {
     suspend fun getNetworkData(): NetworkResult<OpenstackResponse<NetworksResponse>>
 
     @GET("/images")
-    suspend fun getSourceData(): NetworkResult<OpenstackResponse<SourcesResponse>>
+    suspend fun getImages(): NetworkResult<OpenstackResponse<ImagesResponse>>
 
     @POST("/api/v1/create")
     suspend fun instanceCreate(

@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.knu.cloud.model.instanceCreate.FlavorResponse
 import com.knu.cloud.model.instanceCreate.KeypairResponse
 import com.knu.cloud.model.instanceCreate.NetworkResponse
-import com.knu.cloud.model.instanceCreate.SourceResponse
+import com.knu.cloud.model.instanceCreate.ImageData
 import com.knu.cloud.utils.*
 
 @Composable
@@ -102,7 +102,7 @@ fun <T> DataGridElementList(
                 }
             "Source" ->
                 SourceDataTableCell(
-                    item = item as SourceResponse, // Source로 캐스팅
+                    item = item as ImageData, // Source로 캐스팅
                     index = index,
                     type = type
                 ) { it, idx ->

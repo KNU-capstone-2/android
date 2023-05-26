@@ -39,10 +39,10 @@ class InstanceCreateViewModel @Inject constructor(
     private val _possibleFlavor = mutableStateOf<List<FlavorResponse>>(emptyList())
     val possibleFlavor: State<List<FlavorResponse>> = _possibleFlavor
 
-    private val _uploadSource = mutableStateOf<List<SourceResponse>>(emptyList())
-    val uploadSource: State<List<SourceResponse>> = _uploadSource
-    private val _possibleSource = mutableStateOf<List<SourceResponse>>(emptyList())
-    val possibleSource: State<List<SourceResponse>> = _possibleSource
+    private val _uploadSource = mutableStateOf<List<ImageData>>(emptyList())
+    val uploadSource: State<List<ImageData>> = _uploadSource
+    private val _possibleSource = mutableStateOf<List<ImageData>>(emptyList())
+    val possibleSource: State<List<ImageData>> = _possibleSource
 
     private val _uploadNetwork = mutableStateOf<List<NetworkResponse>>(emptyList())
     val uploadNetwork: State<List<NetworkResponse>> = _uploadNetwork
@@ -58,14 +58,14 @@ class InstanceCreateViewModel @Inject constructor(
     private val keyType = MutableStateFlow("")
 
     var uploadFlavorDataSet = mutableListOf<FlavorResponse>()
-    var uploadSourceDataSet = mutableListOf<SourceResponse>()
+    var uploadSourceDataSet = mutableListOf<ImageData>()
     var uploadNetworkDataSet = mutableListOf<NetworkResponse>()
     var uploadKeypairDataSet = mutableListOf<KeypairResponse>()
 
     private var possibleFlavorDataSet: MutableList<FlavorResponse> = mutableListOf()
     private var possibleKeypairDataSet: MutableList<KeypairResponse> = mutableListOf()
     private var possibleNetworkDataSet: MutableList<NetworkResponse> = mutableListOf()
-    private var possibleSourceDataSet: MutableList<SourceResponse> = mutableListOf()
+    private var possibleSourceDataSet: MutableList<ImageData> = mutableListOf()
 
     init {
         getAllFlavorData()
@@ -88,17 +88,17 @@ class InstanceCreateViewModel @Inject constructor(
         _possibleFlavor.value = possibleFlavorDataSet.toMutableStateList()
     }
 
-    fun uploadSource(sourceResponse: SourceResponse, position: Int) {
-        uploadSourceDataSet.add(sourceResponse)
+    fun uploadSource(imageData: ImageData, position: Int) {
+        uploadSourceDataSet.add(imageData)
         _uploadSource.value = uploadSourceDataSet.toMutableStateList()
         possibleSourceDataSet.removeAt(position)
         _possibleSource.value = possibleSourceDataSet.toMutableStateList()
     }
 
-    fun deleteSource(sourceResponse: SourceResponse, position: Int) {
+    fun deleteSource(imageData: ImageData, position: Int) {
         uploadSourceDataSet.removeAt(position)
         _uploadSource.value = uploadSourceDataSet.toMutableStateList()
-        possibleSourceDataSet.add(sourceResponse)
+        possibleSourceDataSet.add(imageData)
         _possibleSource.value = possibleSourceDataSet.toMutableStateList()
     }
 
