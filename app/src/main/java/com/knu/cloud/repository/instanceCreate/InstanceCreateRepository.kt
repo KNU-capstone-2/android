@@ -7,7 +7,7 @@ interface InstanceCreateRepository {
     suspend fun getAllFlavorData(): Result<FlavorsResponse?>
     suspend fun getAllKeypairData(): Result<KeypairsResponse?>
     suspend fun getAllNetworkData(): Result<NetworksResponse?>
-    suspend fun getAllSourceData(): Result<SourcesResponse?>
+    suspend fun getAllSourceData(): Result<ImagesResponse?>
 
     suspend fun createInstance(createRequest: CreateRequest) : Result<InstanceData?>
 }

@@ -17,8 +17,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
-import com.knu.cloud.components.CenterCircularProgressIndicator
 import com.knu.cloud.components.CenterLottieLoadingIndicator
+import com.knu.cloud.components.DeleteConfirmDialog
+import com.knu.cloud.components.DeleteResultDialog
 import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.components.summary.InstanceSummary
 import com.knu.cloud.model.home.instance.InstanceData
@@ -41,6 +42,7 @@ fun InstanceScreen (
 
     if (isDeleteConfirmDialogOpen) {
         DeleteConfirmDialog(
+            data = "인스턴스",
             onDeleteBtnClicked = {
                 viewModel.deleteCheckedInstances()
             },
@@ -52,6 +54,7 @@ fun InstanceScreen (
 
     if (uiState.deleteComplete){
         DeleteResultDialog(
+            data = "인스턴스",
             deleteResult = uiState.deleteResult,
             onCloseBtnClicked = {
                 viewModel.closeDeleteResultDialog()
@@ -66,8 +69,8 @@ fun InstanceScreen (
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                totalInstanceCnt = uiState.instances.size,
-                checkedInstanceCnt = uiState.checkedInstanceIds.size,
+                totalCnt = uiState.instances.size,
+                checkedCnt = uiState.checkedInstanceIds.size,
                 onLaunchBtnClicked = onInstanceCreateClicked,
                 onDeleteBtnClicked = {
                     isDeleteConfirmDialogOpen = true
@@ -217,8 +220,8 @@ fun InstanceTable(
 @Composable
 fun InstancesBar(
     modifier: Modifier = Modifier,
-    totalInstanceCnt : Int,
-    checkedInstanceCnt : Int,
+    totalCnt : Int,
+    checkedCnt : Int,
     onLaunchBtnClicked : () -> Unit,
     onDeleteBtnClicked : () -> Unit
 ) {
@@ -235,7 +238,7 @@ fun InstancesBar(
                     modifier = Modifier.padding(10.dp),
                    style = MaterialTheme.typography.h6
                 )
-                Text(text = "Total : $totalInstanceCnt  Selected : $checkedInstanceCnt",
+                Text(text = "Total : $totalCnt  Selected : $checkedCnt",
                     modifier = Modifier.padding(10.dp)
                 )
             }
@@ -253,87 +256,6 @@ fun InstancesBar(
             Text(text = "Delete Instances")
         }
     }
-
-}
-
-@Composable
-fun DeleteConfirmDialog(
-    onDeleteBtnClicked: () -> Unit,
-    onCloseBtnClicked: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = {onCloseBtnClicked()},
-        title = {
-            Text(text = stringResource(id = R.string.Instance_Delete_Btn_Title))
-        },
-        text = {
-            Text(text = stringResource(id = R.string.Instance_Delete_Btn_Text))
-        },
-        buttons = {
-            Row(
-                modifier = Modifier
-                    .width(350.dp)
-                    .padding(bottom = 12.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                TextButton(
-                    onClick = {
-                        onDeleteBtnClicked()
-                        onCloseBtnClicked()
-                    }
-                ) {
-                    Text("확인")
-                }
-                TextButton(
-                    onClick = { onCloseBtnClicked() }
-                ) {
-                    Text("취소")
-                }
-            }
-        },
-        shape = RoundedCornerShape(24.dp)
-    )
-}
-
-
-@Composable
-fun DeleteResultDialog(
-    deleteResult : List<Pair<String,Boolean>>,
-    onCloseBtnClicked: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = {onCloseBtnClicked()},
-        title = {
-            Text(text = stringResource(id = R.string.Instance_Delete_Result_Title))
-        },
-        text = {
-            deleteResult.forEach {
-                if(it.second){
-                    Text(text = "인스턴스 ${it.first} 삭제 결과 : 성공)")
-                }else{
-                    Text(text = "인스턴스 ${it.first} 삭제 결과 : 실패")
-                }
-            }
-        },
-        buttons = {
-            Row(
-                modifier = Modifier
-                    .width(350.dp)
-                    .verticalScroll(rememberScrollState())
-                    .padding(bottom = 12.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                TextButton(
-                    onClick = {
-                        onCloseBtnClicked()
-                    }
-                ) {
-                    Text("확인")
-                }
-            }
-        },
-        shape = RoundedCornerShape(24.dp)
-    )
 }
 
 @Preview(showBackground = true, device = Devices.TABLET)

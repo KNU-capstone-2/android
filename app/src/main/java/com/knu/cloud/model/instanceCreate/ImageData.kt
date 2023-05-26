@@ -2,20 +2,22 @@ package com.knu.cloud.model.instanceCreate
 
 import com.google.gson.annotations.SerializedName
 
-data class SourceResponse(
+data class ImageData(
+    @SerializedName("id")
+    val id : String,
     @SerializedName("name")
     val name: String,
     @SerializedName("updateDate") // 업데이트 완료
-    val update: String,
+    val updateDate: String,
     @SerializedName("size")
     val size: String,
     @SerializedName("createdDate") // 만들어진 날
-    val format: String,
+    val createdDate: String,
     @SerializedName("status") // 상태
-    val visible: String
+    val status: String
 )
 
-data class SourcesResponse(
+data class ImagesResponse(
     @SerializedName("images")
-    val images : List<SourceResponse>
+    val images : List<ImageData>
 )

@@ -26,7 +26,7 @@ class InstanceCreateRemoteDataSource @Inject constructor(
         return instanceCreateApiService.getNetworkData()
     }
 
-    suspend fun getSourceData() : NetworkResult<OpenstackResponse<SourcesResponse>> {
-        return instanceCreateApiService.getSourceData()
+    suspend fun getImages() : NetworkResult<OpenstackResponse<ImagesResponse>> {
+        return instanceCreateApiService.getImages()
     }
 }

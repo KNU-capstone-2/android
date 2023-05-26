@@ -33,8 +33,8 @@ class InstanceCreateRepositoryImpl @Inject constructor(
         return openstackResponseToResult(networkResponse)
     }
 
-    override suspend fun getAllSourceData(): Result<SourcesResponse?> {
-        val sourceResponse = remoteDataSource.getSourceData()
+    override suspend fun getAllSourceData(): Result<ImagesResponse?> {
+        val sourceResponse = remoteDataSource.getImages()
         return openstackResponseToResult(sourceResponse)
     }
 
