@@ -19,7 +19,6 @@ import com.knu.cloud.components.DeleteConfirmDialog
 import com.knu.cloud.components.DeleteResultDialog
 import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.model.instanceCreate.KeypairData
-import com.knu.cloud.utils.logd
 import timber.log.Timber
 
 val KEYPAIR_COLUMN_HEADERS  = listOf("Key Pair Name", "Type","FingerPrint")
@@ -173,7 +172,7 @@ fun KeypairTable(
     var rowItems by remember { mutableStateOf(emptyList<TableRowItem>()) }
 
     LaunchedEffect(checkedKeypairIds) {
-        Timber.logd("checkedKeypairIds : $checkedKeypairIds")
+        Timber.d("checkedKeypairIds : $checkedKeypairIds")
         if (checkedKeypairIds.isEmpty()) {
             /* to initialize table checkBoxes*/
             isAllSelected = false

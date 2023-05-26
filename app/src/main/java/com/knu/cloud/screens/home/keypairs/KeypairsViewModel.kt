@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.knu.cloud.model.instanceCreate.KeypairData
 import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.home.keypair.KeypairRepository
-import com.knu.cloud.utils.logd
-import com.knu.cloud.utils.loge
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,7 +41,7 @@ class KeypairsViewModel @Inject constructor (
             keypairRepository.getKeypairs()
                 .onSuccess { keypairs ->
                     if (keypairs != null) {
-                        Timber.logd("keypairs : $keypairs")
+                        Timber.d("keypairs : $keypairs")
                         _uiState.update { it.copy(keypairs = keypairs.keypairs, isLoading = false) }
                     } else {
                         _uiState.update { it.copy(keypairs = emptyList(), isLoading = false) }
@@ -53,7 +51,7 @@ class KeypairsViewModel @Inject constructor (
                         state.copy(keypairs = emptyList(), isLoading = false)
                     }
                     it as RetrofitFailureStateException
-                    Timber.loge("message :${it.message} , code :${it.code}")
+                    Timber.e("message :${it.message} , code :${it.code}")
                 }
         }
     }
@@ -67,7 +65,7 @@ class KeypairsViewModel @Inject constructor (
                         deleteSuccessList.add(keypairName)
                     }.onFailure {
                         it as RetrofitFailureStateException
-                        Timber.loge("message :${it.message} , code :${it.code}")
+                        Timber.e("message :${it.message} , code :${it.code}")
                     }
             }
             _uiState.update { state ->
@@ -86,7 +84,7 @@ class KeypairsViewModel @Inject constructor (
         if (keypairId !in _uiState.value.checkedKeypairIds) {
             _uiState.update { it.copy(checkedKeypairIds = it.checkedKeypairIds + keypairId) }
         }
-        Timber.logd("keypairCheck : checkedKeypairIds ${uiState.value.checkedKeypairIds}")
+        Timber.d("checkedKeypairIds : ${uiState.value.checkedKeypairIds}")
     }
 
     fun keypairUnCheck(keypairId: String) {
@@ -95,7 +93,7 @@ class KeypairsViewModel @Inject constructor (
                 checkedKeypairIds = state.checkedKeypairIds.filterNot { it == keypairId }
             )
         }
-        Timber.logd("checkedKeypairIds ${uiState.value.checkedKeypairIds}")
+        Timber.d("checkedKeypairIds : ${uiState.value.checkedKeypairIds}")
     }
 
     fun allKeypairsCheck(allChecked: Boolean) {
@@ -104,7 +102,7 @@ class KeypairsViewModel @Inject constructor (
                 state.copy(checkedKeypairIds = state.keypairs.map { it.name })
             }
         } else initializeCheckKeypairIds()
-        Timber.logd("checkedKeypairIds ${uiState.value.checkedKeypairIds}")
+        Timber.d("checkedKeypairIds : ${uiState.value.checkedKeypairIds}")
     }
 
     fun closeDeleteResultDialog() {
@@ -117,6 +115,6 @@ class KeypairsViewModel @Inject constructor (
         _uiState.update { state ->
             state.copy(checkedKeypairIds = emptyList())
         }
-        Timber.logd("checkedKeypairIds ${uiState.value.checkedKeypairIds}")
+        Timber.d("checkedKeypairIds : ${uiState.value.checkedKeypairIds}")
     }
 }
