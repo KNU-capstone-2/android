@@ -1,9 +1,6 @@
 package com.knu.cloud.di
 
-import com.knu.cloud.network.AuthApiService
-import com.knu.cloud.network.DashboardApiService
-import com.knu.cloud.network.InstanceCreateApiService
-import com.knu.cloud.network.InstanceApiService
+import com.knu.cloud.network.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,6 +34,12 @@ object RemoteModule {
     @Singleton
     fun provideDashboardApiService(retrofit: Retrofit): DashboardApiService {
         return retrofit.create(DashboardApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideImageApiService(retrofit: Retrofit): ImageApiService {
+        return retrofit.create(ImageApiService::class.java)
     }
 
 }

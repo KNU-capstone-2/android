@@ -6,6 +6,8 @@ import com.knu.cloud.repository.OpenStackRepository
 import com.knu.cloud.repository.OpenStackRepositoryImpl
 import com.knu.cloud.repository.home.dashboard.DashboardRepository
 import com.knu.cloud.repository.home.dashboard.DashboardRepositoryImpl
+import com.knu.cloud.repository.home.image.ImageRepository
+import com.knu.cloud.repository.home.image.ImageRepositoryImpl
 import com.knu.cloud.repository.home.instance.InstanceRepository
 import com.knu.cloud.repository.home.instance.InstanceRepositoryImpl
 import com.knu.cloud.repository.instanceCreate.InstanceCreateRepository
@@ -53,4 +55,10 @@ abstract class RepositoryModule {
     abstract fun bindDashboardRepository (
         DashboardRepositoryImpl: DashboardRepositoryImpl
     ): DashboardRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindImageRepository (
+        ImageRepositoryImpl: ImageRepositoryImpl
+    ): ImageRepository
 }
