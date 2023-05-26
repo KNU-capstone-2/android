@@ -17,9 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
 import com.knu.cloud.components.CenterCircularProgressIndicator
+import com.knu.cloud.components.CenterLottieLoadingIndicator
 import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.components.summary.InstanceSummary
-import com.knu.cloud.model.instance.InstanceData
+import com.knu.cloud.model.home.instance.InstanceData
 import timber.log.Timber
 
 
@@ -48,7 +49,6 @@ fun InstanceScreen (
             isAllSelected.value = false
             isHeaderClick.value = true
         }
-
     }
 
     if (isDeleteConfirmDialogOpen) {
@@ -71,10 +71,9 @@ fun InstanceScreen (
         )
     }
     if (uiState.isLoading) {
-        CenterCircularProgressIndicator()
+        CenterLottieLoadingIndicator()
     } else {
-        Column(
-        ) {
+        Column() {
             InstancesBar(
                 modifier = Modifier
                     .fillMaxWidth()

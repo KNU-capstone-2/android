@@ -11,8 +11,11 @@ https://github.com/airbnb/lottie/blob/master/android-compose.md
  */
 
 @Composable
-fun LottieImage(modifier: Modifier) {
-    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.create))
+fun LottieImage(
+    modifier: Modifier,
+    rawAnimation: Int
+) {
+    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(rawAnimation))
     val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
     LottieAnimation(
         composition = composition,
