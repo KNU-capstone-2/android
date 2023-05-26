@@ -1,6 +1,6 @@
 package com.knu.cloud.repository.instanceCreate
 
-import com.knu.cloud.model.instance.InstanceData
+import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.model.instanceCreate.*
 
 interface InstanceCreateRepository {

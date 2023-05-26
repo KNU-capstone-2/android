@@ -2,9 +2,9 @@ package com.knu.cloud.screens.home.instanceDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.knu.cloud.model.instance.InstanceData
+import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.network.RetrofitFailureStateException
-import com.knu.cloud.repository.instance.InstanceRepository
+import com.knu.cloud.repository.home.instance.InstanceRepository
 import com.knu.cloud.screens.home.instance.InstanceUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

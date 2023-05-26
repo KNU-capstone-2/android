@@ -28,7 +28,7 @@ import com.knu.cloud.components.LineChartComponent
 import com.knu.cloud.components.ProjectAppBar
 import com.knu.cloud.components.summary.CopyIncludedText
 import com.knu.cloud.components.summary.StateWithText
-import com.knu.cloud.model.instance.InstanceData
+import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.screens.home.instance.InstanceViewModel
 
 val data = listOf(

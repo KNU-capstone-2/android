@@ -156,7 +156,7 @@ class InstanceCreateViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             // Do the background work here
-//            delay(3000)
+            delay(3000)
             instanceCreateRepository.createInstance(
                 createRequest = CreateRequest()
             ).onSuccess {
