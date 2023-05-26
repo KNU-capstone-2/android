@@ -25,6 +25,6 @@ class KeypairRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteKeypair(keypairName: String): Result<String?> {
-        return openstackResponseToResult(remoteDataSource.deleteKeypair(keypairName))
+        return responseToResult(remoteDataSource.deleteKeypair(keypairName))
     }
 }

@@ -27,7 +27,7 @@ class KeypairRemoteDataSource @Inject constructor(
         return keypairApiService.createKeypair(keypairCreateRequest)
     }
 
-    suspend fun deleteKeypair(keypairName: String): NetworkResult<OpenstackResponse<String>> {
+    suspend fun deleteKeypair(keypairName: String): NetworkResult<String> {
         return keypairApiService.deleteKeypair(keypairName)
     }
 

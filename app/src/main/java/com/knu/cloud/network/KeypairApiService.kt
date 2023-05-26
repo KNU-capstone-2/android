@@ -29,6 +29,6 @@ interface KeypairApiService {
     @DELETE("/keypairs/{id}")
     suspend fun deleteKeypair(
         @Path("id") keypairName: String
-    ): NetworkResult<OpenstackResponse<String>>
+    ): NetworkResult<String>
 
 }
