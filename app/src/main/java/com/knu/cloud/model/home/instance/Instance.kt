@@ -1,4 +1,4 @@
-package com.knu.cloud.model.instance
+package com.knu.cloud.model.home.instance
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName

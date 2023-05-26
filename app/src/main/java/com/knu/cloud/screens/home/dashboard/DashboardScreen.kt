@@ -1,254 +1,195 @@
 package com.knu.cloud.screens.home.dashboard
 
-import android.widget.Space
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
-import com.knu.cloud.components.PieChartComponent
-import com.knu.cloud.components.ProjectAppBar
+import com.knu.cloud.components.LottieImage
+import com.knu.cloud.components.chart.PieChartComponent
+import com.knu.cloud.components.dashboard.CardFrame
+import com.knu.cloud.components.dashboard.CategoryRow
+import com.knu.cloud.model.home.dashboard.DashboardDataSet
+import com.knu.cloud.model.home.dashboard.DashboardData
 
-data class DashboardData(
-    val title: String,
-    val assignedData: Int,
-    val remainingData: Int
+@Composable
+fun DashboardScreen(
+    viewModel: DashboardViewModel = hiltViewModel()
+) {
+    val screenState by viewModel.uiState.collectAsState()
+
+    Content(screenState)
+}
+
+@Composable
+fun Content(
+    state: DashboardState
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        when (state) {
+            is DashboardState.Loading -> LoadingScreen()
+            is DashboardState.Success -> ReadyScreen(dataSet = state.dataSet)
+            is DashboardState.Error -> LoadingScreen()
+        }
+    }
+}
+
+@Composable
+fun LoadingScreen() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        LottieImage(
+            modifier = Modifier
+                .size(150.dp),
+            rawAnimation = R.raw.loading
+        )
+    }
+}
+
+@Composable
+fun ReadyScreen(
+    dataSet: DashboardDataSet
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        Column(
+            modifier = Modifier.weight(.2f)
+        ) {
+            Usage()
+        }
+        Column(
+            modifier = Modifier.weight(.1f)
+        ) {
+            ChartData(
+                type = "Compute",
+                dataSet = dataSet.computeDataSet
+            )
+            DividerDashboard()
+            ChartData(
+                type = "Volume",
+                dataSet = dataSet.volumeDataSet
+            )
+            DividerDashboard()
+            ChartData(
+                type = "Network",
+                dataSet = dataSet.networkDataSet
+            )
+            DividerDashboard()
+        }
+    }
+}
+
+@Composable
+fun ChartData(
+    type: String,
+    dataSet: List<DashboardData>
+) {
+    CategoryRow(
+        type = type,
+        dataSet = dataSet
+    )
+}
+
+@Composable
+fun Usage() {
+    Column(
+        modifier = Modifier.padding(12.dp)
+    ) {
+        Text(
+            text = "사용량 요약",
+            fontSize = 24.sp,
+        )
+        Spacer(modifier = Modifier.height(15.dp))
+
+        Test(
+            title1 = "활성화된 인스턴스",
+            count1 = 3,
+            title2 = "사용 중인 RAM",
+            count2 = 1
+        )
+
+        Test(
+            title1 = "VCPU 사용시간",
+            count1 = 2,
+            title2 = "GB 사용 시간",
+            count2 = 1
+        )
+
+        Test(
+            title1 = "RAM 사용시간",
+            count1 = 2,
+            title2 = "GB 사용 시간",
+            count2 = 1
+        )
+    }
+}
+
+val cardTheme = listOf(
+    Triple(R.color.dashboard_card_color_1, R.color.dashboard_card_text_1_1, R.color.dashboard_card_text_1_2),
+    Triple(R.color.dashboard_card_color_2, R.color.dashboard_card_text_2, R.color.dashboard_card_text_2),
+    Triple(R.color.dashboard_card_color_3, R.color.dashboard_card_text_3, R.color.dashboard_card_text_3)
 )
 
 @Composable
-fun DashBoardScreen(
-    // viewModel: ViewModel = hiltViewModel()
+fun Test(
+    title1: String,
+    count1: Int,
+    title2: String,
+    count2: Int
 ) {
-    var computeDataSet = mutableListOf(
-        DashboardData("인스턴스", 4,6),
-        DashboardData("VCPUs",2, 8),
-        DashboardData("RAM", 3, 7)
-    )
-
-    var volumeDataSet = mutableListOf(
-        DashboardData("볼륨", 5, 5),
-        DashboardData("볼륨 스냅샷", 1, 9),
-        DashboardData("볼륨 스토리지", 2, 8)
-    )
-
-    var networkDataSet = mutableListOf(
-        DashboardData("Floating IP", 1, 50),
-        DashboardData("보안 그룹", 1, 9),
-        DashboardData("네트워크", 3, 7),
-        DashboardData( "포트",3, 500)
-    )
-    Surface(
-        modifier = Modifier
+    Row(
+        modifier = Modifier.padding(5.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .verticalScroll(rememberScrollState())
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(.3f)
-                    .fillMaxSize()
-            ) {
-                Divider(
-                    color = Color.LightGray,
-                    thickness = 1.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 1.dp, vertical = 5.dp)
-                )
-
-                Compute(dataSet = computeDataSet)
-
-                Divider(
-                    color = Color.LightGray,
-                    thickness = 1.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 1.dp, vertical = 5.dp)
-                )
-
-                Volume(dataSet = volumeDataSet)
-
-                Divider(
-                    color = Color.LightGray,
-                    thickness = 1.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 1.dp, vertical = 5.dp)
-                )
-
-                Network(dataSet = networkDataSet)
-
-                Divider(
-                    color = Color.LightGray,
-                    thickness = 1.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 1.dp, vertical = 5.dp)
-                )
-                Usage()
-            }
-        }
+        val themeData1 = cardTheme.random()
+        CardFrame(
+            title = title1,
+            count = count1,
+            cardColor = themeData1.first,
+            textColor1 = themeData1.second,
+            textColor2 = themeData1.third
+        )
+        Spacer(modifier= Modifier.width(10.dp))
+        val themeData2 = cardTheme.random()
+        CardFrame(
+            title = title2,
+            count = count2,
+            cardColor = themeData2.first,
+            textColor1 = themeData2.second,
+            textColor2 = themeData2.third
+        )
     }
+    Spacer(modifier = Modifier.height(10.dp))
 }
 
 @Composable
-fun Compute(
-    dataSet: List<DashboardData>
-) {
-    Text(
-        text = "Compute",
-        fontSize = 20.sp
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Row(
+fun DividerDashboard() {
+    Divider(
+        color = Color.LightGray,
+        thickness = 1.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        dataSet.forEach { data ->
-            Column(
-                modifier = Modifier.weight(.1f)
-            ) {
-                PieChartComponent(
-                    title = data.title,
-                    assignedData = data.assignedData,
-                    remainingData = data.remainingData
-                )
-            }
-        }
-        Box(modifier = Modifier.weight(.1f))
-    }
-}
-
-@Composable
-fun Volume(
-    dataSet: List<DashboardData>
-) {
-    Text(
-        text = "볼륨",
-        fontSize = 20.sp
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        dataSet.forEach { data ->
-            Column(
-                modifier = Modifier.weight(.1f)
-            ) {
-                PieChartComponent(
-                    title = data.title,
-                    assignedData = data.assignedData,
-                    remainingData = data.remainingData
-                )
-            }
-        }
-        Box(modifier = Modifier.weight(.1f))
-    }
-}
-
-@Composable
-fun Network(
-    dataSet: List<DashboardData>
-) {
-    Text(
-        text = "네트워크",
-        fontSize = 20.sp
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        dataSet.forEach { data ->
-            Column(
-                modifier = Modifier.weight(.1f)
-            ) {
-                PieChartComponent(
-                    title = data.title,
-                    assignedData = data.assignedData,
-                    remainingData = data.remainingData
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun Usage(
-
-) {
-    Text(
-        text = "사용량 요약",
-        fontSize = 20.sp
-    )
-    Spacer(modifier = Modifier.height(15.dp))
-
-    Text(
-        text = "활성화된 인스턴스 : ",
-        fontWeight = Bold,
-        fontSize = 15.sp
-    )
-    Spacer(modifier = Modifier.height(5.dp))
-
-    Text(
-        text = "사용 중인 RAM : ",
-        fontWeight = Bold,
-        fontSize = 15.sp
-    )
-    Spacer(modifier = Modifier.height(5.dp))
-
-    Text(
-        text = "VCPU 사용 시간 : ",
-        fontWeight = Bold,
-        fontSize = 15.sp
-    )
-    Spacer(modifier = Modifier.height(5.dp))
-
-    Text(
-        text = "GB 사용 시간 : ",
-        fontWeight = Bold,
-        fontSize = 15.sp
-    )
-    Spacer(modifier = Modifier.height(5.dp))
-
-    Text(
-        text = "RAM 사용 시간 : ",
-        fontWeight = Bold,
-        fontSize = 15.sp
+            .padding(horizontal = 1.dp, vertical = 5.dp)
     )
 }
 

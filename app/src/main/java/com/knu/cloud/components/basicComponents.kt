@@ -141,6 +141,22 @@ fun CenterCircularProgressIndicator() {
         CircularProgressIndicator()
     }
 }
+
+@Composable
+fun CenterLottieLoadingIndicator(){
+    Column(
+        modifier = Modifier.fillMaxSize().padding(4.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LottieImage(
+            modifier = Modifier
+                .size(150.dp),
+            rawAnimation = R.raw.loading
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun BottomNavigationBarPreview() {

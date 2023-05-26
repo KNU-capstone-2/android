@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.knu.cloud.R
 import com.knu.cloud.model.dialog.CreateInstanceState
 import timber.log.Timber
 
@@ -64,7 +65,8 @@ fun CreateLoadingDialog(
             LottieImage(
                 modifier = Modifier
                     .size(200.dp)
-                    .align(Alignment.TopCenter)
+                    .align(Alignment.TopCenter),
+                rawAnimation = R.raw.create
             )
         }
     }

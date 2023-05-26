@@ -3,9 +3,9 @@ package com.knu.cloud.screens.home.instance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.knu.cloud.components.basicTable.TableRowData
-import com.knu.cloud.model.instance.InstanceData
+import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.network.RetrofitFailureStateException
-import com.knu.cloud.repository.instance.InstanceRepository
+import com.knu.cloud.repository.home.instance.InstanceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +22,7 @@ data class InstanceUiState(
     val deleteComplete : Boolean = false,
     val deleteResult : List<Pair<String,Boolean>> = emptyList()
 )
+
 @HiltViewModel
 class InstanceViewModel @Inject constructor (
     private val instanceRepository: InstanceRepository

@@ -6,8 +6,8 @@ import com.knu.cloud.model.auth.AuthResponse
 import com.knu.cloud.model.auth.LoginRequest
 import com.knu.cloud.model.auth.SignUpRequest
 import com.knu.cloud.model.auth.Token
-import com.knu.cloud.model.instance.InstanceData
-import com.knu.cloud.model.instance.InstancesResponse
+import com.knu.cloud.model.home.instance.InstanceData
+import com.knu.cloud.model.home.instance.InstancesResponse
 import retrofit2.http.*
 
 interface InstanceApiService {
