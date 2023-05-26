@@ -44,7 +44,7 @@ class ImageViewModel @Inject constructor (
             imageRepository.getImages()
                 .onSuccess { images ->
                     if (images != null) {
-                        Timber.tag("vm_test").d("getImages :  $images")
+                        Timber.d("images :  $images")
                         _uiState.update { it.copy(images = convertImageData(images.images), isLoading = false) }
                     }else{
                         _uiState.update { it.copy(images = emptyList(), isLoading = false) }
@@ -54,8 +54,7 @@ class ImageViewModel @Inject constructor (
                         state.copy(images = emptyList(), isLoading = false)
                     }
                     it as RetrofitFailureStateException
-                    Timber.tag("${this.javaClass.name}_getAllImages")
-                        .e("message :${it.message} , code :${it.code}")
+                    Timber.e("message :${it.message} , code :${it.code}")
                 }
         }
     }
@@ -71,8 +70,7 @@ class ImageViewModel @Inject constructor (
                         deleteSuccessList.add(imageId)
                     }.onFailure {
                         it as RetrofitFailureStateException
-                        Timber.tag("${this.javaClass.name}_getAllimages")
-                            .e("message :${it.message} , code :${it.code}")
+                        Timber.e("message :${it.message} , code :${it.code}")
                     }
             }
             _uiState.update { state ->
@@ -91,7 +89,7 @@ class ImageViewModel @Inject constructor (
         if(imageId !in _uiState.value.checkedImageIds){
             _uiState.update { it.copy(checkedImageIds = it.checkedImageIds + imageId) }
         }
-        Timber.tag("vm_test").d("imageCheck : checkedImageIds ${uiState.value.checkedImageIds}")
+        Timber.d("checkedImageIds : ${uiState.value.checkedImageIds}")
     }
     fun imageUncheck(imageId: String) {
         _uiState.update { state ->
@@ -99,7 +97,7 @@ class ImageViewModel @Inject constructor (
                 checkedImageIds = state.checkedImageIds.filterNot { it == imageId }
             )
         }
-        Timber.tag("vm_test").d("imageUncheck : checkedImageIds ${uiState.value.checkedImageIds}")
+        Timber.d("checkedImageIds : ${uiState.value.checkedImageIds}")
     }
 
     fun allImagesCheck(allChecked: Boolean) {
@@ -108,7 +106,7 @@ class ImageViewModel @Inject constructor (
                 state.copy( checkedImageIds = state.images.map { it.id})
             }
         }else initializeCheckImageIds()
-        Timber.tag("vm_test").d("allImagesCheck : checkedImageIds ${uiState.value.checkedImageIds}")
+        Timber.d("checkedImageIds : ${uiState.value.checkedImageIds}")
     }
 
     fun closeDeleteResultDialog(){
@@ -121,19 +119,18 @@ class ImageViewModel @Inject constructor (
         _uiState.update { state ->
             state.copy(checkedImageIds = emptyList())
         }
-        Timber.tag("vm_test").d("initializeCheckImageIds : checkedImageIds ${uiState.value.checkedImageIds}")
+        Timber.d("checkedImageIds : ${uiState.value.checkedImageIds}")
     }
 
     private fun convertImageData(images : List<ImageData>) :List<ImageData>{
         val convertedImages = mutableListOf<ImageData>()
-        Timber.tag("vm_test").d("convertImageData : images :  $images")
         images.forEach { image ->
-            Timber.tag("vm_test").d("convertImageData : image :  $image")
             convertedImages.add(image.copy(
                 createdDate = convertDateFormat(image.createdDate),
                 updateDate = convertDateFormat(image.updateDate))
             )
         }
+        Timber.d("convertedImages :  $images")
         return convertedImages.toList()
     }
 

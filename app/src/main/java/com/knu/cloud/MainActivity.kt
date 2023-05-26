@@ -16,12 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.knu.cloud.ui.theme.CloudTheme
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @ExperimentalComposeUiApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Timber.plant(Timber.DebugTree())
         setContent {
             ProjectApp()
         }

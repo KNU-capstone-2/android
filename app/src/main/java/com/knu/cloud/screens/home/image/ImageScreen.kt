@@ -89,13 +89,11 @@ fun ImageScreen(
                         onAllChecked = {
                             viewModel.allImagesCheck(it)
                         },
-                        onRowChecked = { checked, instanceId ->
-                            Timber.tag("vm_test").d("onRowChecked")
+                        onRowChecked = { checked, imageId ->
                             if (checked) {
-                                Timber.tag("vm_test").d("instanceCheck call")
-                                viewModel.imageCheck(instanceId)
+                                viewModel.imageCheck(imageId)
                             } else {
-                                viewModel.imageUncheck(instanceId)
+                                viewModel.imageUncheck(imageId)
                             }
                         },
                         onRowSelected = { imageId ->
@@ -164,8 +162,7 @@ fun ImageTable(
     var isHeaderChecked by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(checkedImageIds) {
-        Timber.tag("uiState")
-            .d("${this.javaClass.name} : uiState.checkedInstanceIds $checkedImageIds")
+        Timber.d("checkedInstanceIds $checkedImageIds")
         if (checkedImageIds.isEmpty()) {
             /* to initialize table checkBoxes*/
             isAllSelected = false
@@ -194,11 +191,11 @@ fun ImageTable(
         val imageStatusCell by mutableStateOf(
             TableCell(imageData.status, colorResource(id = R.color.instance_state_running))
         )
-        val instanceTypeCell by mutableStateOf( TableCell("${imageData.size} MB") )
+        val imageSizeCell by mutableStateOf( TableCell("${imageData.size} MB") )
         val createDateCell by mutableStateOf( TableCell( imageData.createdDate))
         val updateDateCell by mutableStateOf( TableCell( imageData.updateDate))
         val cellItems = remember { mutableListOf(
-            imageNameCell,imageStatusCell,instanceTypeCell,createDateCell,updateDateCell
+            imageNameCell,imageStatusCell,imageSizeCell,createDateCell,updateDateCell
         ) }
         TableRowItem(
             rowID = imageData.id,

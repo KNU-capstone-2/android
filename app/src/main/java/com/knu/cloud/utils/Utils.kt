@@ -13,3 +13,9 @@ fun convertDateFormat(input: String): String {
     Timber.tag("convertDateFormat").d("returnDate : $returnDate")
     return returnDate
 }
+
+class CustomTimberTree: Timber.DebugTree() {
+    override fun createStackElementTag(element: StackTraceElement): String? {
+        return "${element.className}_${element.methodName}"
+    }
+}

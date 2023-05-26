@@ -49,10 +49,10 @@ class InstanceCreateViewModel @Inject constructor(
     private val _possibleNetwork = mutableStateOf<List<NetworkResponse>>(emptyList())
     val possibleNetwork: State<List<NetworkResponse>> = _possibleNetwork
 
-    private val _uploadKeypair = mutableStateOf<List<KeypairResponse>>(emptyList())
-    val uploadKeypair: State<List<KeypairResponse>> = _uploadKeypair
-    private val _possibleKeypair = mutableStateOf<List<KeypairResponse>>(emptyList())
-    val possibleKeypair: State<List<KeypairResponse>> = _possibleKeypair
+    private val _uploadKeypair = mutableStateOf<List<KeypairData>>(emptyList())
+    val uploadKeypair: State<List<KeypairData>> = _uploadKeypair
+    private val _possibleKeypair = mutableStateOf<List<KeypairData>>(emptyList())
+    val possibleKeypair: State<List<KeypairData>> = _possibleKeypair
 
     private val keyName = MutableStateFlow("")
     private val keyType = MutableStateFlow("")
@@ -60,10 +60,10 @@ class InstanceCreateViewModel @Inject constructor(
     var uploadFlavorDataSet = mutableListOf<FlavorResponse>()
     var uploadSourceDataSet = mutableListOf<ImageData>()
     var uploadNetworkDataSet = mutableListOf<NetworkResponse>()
-    var uploadKeypairDataSet = mutableListOf<KeypairResponse>()
+    var uploadKeypairDataSet = mutableListOf<KeypairData>()
 
     private var possibleFlavorDataSet: MutableList<FlavorResponse> = mutableListOf()
-    private var possibleKeypairDataSet: MutableList<KeypairResponse> = mutableListOf()
+    private var possibleKeypairDataSet: MutableList<KeypairData> = mutableListOf()
     private var possibleNetworkDataSet: MutableList<NetworkResponse> = mutableListOf()
     private var possibleSourceDataSet: MutableList<ImageData> = mutableListOf()
 
@@ -116,17 +116,17 @@ class InstanceCreateViewModel @Inject constructor(
         _possibleNetwork.value = possibleNetworkDataSet.toMutableStateList()
     }
 
-    fun uploadKeypair(keypairResponse: KeypairResponse, position: Int) {
-        uploadKeypairDataSet.add(keypairResponse)
+    fun uploadKeypair(keypairData: KeypairData, position: Int) {
+        uploadKeypairDataSet.add(keypairData)
         _uploadKeypair.value = uploadKeypairDataSet.toMutableStateList()
         possibleKeypairDataSet.removeAt(position)
         _possibleKeypair.value = possibleKeypairDataSet.toMutableStateList()
     }
 
-    fun deleteKeypair(keypairResponse: KeypairResponse, position: Int) {
+    fun deleteKeypair(keypairData: KeypairData, position: Int) {
         uploadKeypairDataSet.removeAt(position)
         _uploadKeypair.value = uploadKeypairDataSet.toMutableStateList()
-        possibleKeypairDataSet.add(keypairResponse)
+        possibleKeypairDataSet.add(keypairData)
         _possibleKeypair.value = possibleKeypairDataSet.toMutableStateList()
     }
 

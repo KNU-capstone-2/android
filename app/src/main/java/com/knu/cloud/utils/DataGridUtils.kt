@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.knu.cloud.R
 import com.knu.cloud.model.instanceCreate.FlavorResponse
-import com.knu.cloud.model.instanceCreate.KeypairResponse
+import com.knu.cloud.model.instanceCreate.KeypairData
 import com.knu.cloud.model.instanceCreate.NetworkResponse
 import com.knu.cloud.model.instanceCreate.ImageData
 
@@ -261,7 +261,7 @@ fun KeypairHeaderTableCell() {
 }
 
 @Composable
-fun KeypairDataTableCell(item: KeypairResponse, index: Int, type: String, onClickButton: (KeypairResponse, Int) -> Unit) {
+fun KeypairDataTableCell(item: KeypairData, index: Int, type: String, onClickButton: (KeypairData, Int) -> Unit) {
     var backGcolor = Color.White
     if (index % 2 == 0) {
         backGcolor = Color.LightGray

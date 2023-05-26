@@ -10,6 +10,8 @@ import com.knu.cloud.repository.home.image.ImageRepository
 import com.knu.cloud.repository.home.image.ImageRepositoryImpl
 import com.knu.cloud.repository.home.instance.InstanceRepository
 import com.knu.cloud.repository.home.instance.InstanceRepositoryImpl
+import com.knu.cloud.repository.home.keypair.KeypairRepository
+import com.knu.cloud.repository.home.keypair.KeypairRepositoryImpl
 import com.knu.cloud.repository.instanceCreate.InstanceCreateRepository
 import com.knu.cloud.repository.instanceCreate.InstanceCreateRepositoryImpl
 import dagger.Binds
@@ -61,4 +63,11 @@ abstract class RepositoryModule {
     abstract fun bindImageRepository (
         ImageRepositoryImpl: ImageRepositoryImpl
     ): ImageRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindKeypairRepository (
+        KeypairRepositoryImpl: KeypairRepositoryImpl
+    ): KeypairRepository
+
 }

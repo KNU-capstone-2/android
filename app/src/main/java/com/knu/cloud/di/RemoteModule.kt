@@ -42,4 +42,10 @@ object RemoteModule {
         return retrofit.create(ImageApiService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideKeypairApiService(retrofit: Retrofit): KeypairApiService {
+        return retrofit.create(KeypairApiService::class.java)
+    }
+
 }
