@@ -71,7 +71,7 @@ fun ReadyScreen(
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+//            .verticalScroll(rememberScrollState())
     ) {
         Column(
             modifier = Modifier.weight(.2f)
@@ -79,33 +79,38 @@ fun ReadyScreen(
             Usage()
         }
         Column(
-            modifier = Modifier.weight(.1f)
+            modifier = Modifier.weight(.3f)
         ) {
             ChartData(
+                modifier = Modifier.weight(.1f),
                 type = "Compute",
                 dataSet = dataSet.computeDataSet
             )
-            DividerDashboard()
+//            DividerDashboard()
             ChartData(
+                modifier = Modifier.weight(.1f),
                 type = "Volume",
                 dataSet = dataSet.volumeDataSet
             )
-            DividerDashboard()
+//            DividerDashboard()
             ChartData(
+                modifier = Modifier.weight(.1f),
                 type = "Network",
                 dataSet = dataSet.networkDataSet
             )
-            DividerDashboard()
+//            DividerDashboard()
         }
     }
 }
 
 @Composable
 fun ChartData(
+    modifier: Modifier = Modifier,
     type: String,
     dataSet: List<DashboardData>
 ) {
     CategoryRow(
+        modifier = modifier,
         type = type,
         dataSet = dataSet
     )

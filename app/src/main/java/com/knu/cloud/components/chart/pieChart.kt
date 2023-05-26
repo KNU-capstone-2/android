@@ -26,7 +26,7 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
-private val CARD_WIDTH = 150.dp
+private val CARD_SIZE = 140 .dp
 
 @Composable
 fun PieChartComponent(
@@ -43,12 +43,12 @@ fun PieChartComponent(
     val remainingDataFloat: Float = remainingData.toFloat()
 
     Column(
-        modifier = Modifier.padding(10.dp).width(CARD_WIDTH),
+        modifier = Modifier.padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Card(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier.size(CARD_SIZE).padding(5.dp),
             elevation = 3.dp
         ) {
             PieChart(
@@ -64,7 +64,6 @@ fun PieChartComponent(
         Text(text = title)
         Spacer(modifier = Modifier.height(10.dp))
         Text(text = "${assignedData+remainingData} 에 대한 사용됨 ${assignedData}")
-
     }
 }
 

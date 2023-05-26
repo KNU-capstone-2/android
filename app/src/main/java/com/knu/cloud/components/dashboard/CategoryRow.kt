@@ -13,10 +13,11 @@ import com.knu.cloud.model.home.dashboard.DashboardData
 
 @Composable
 fun CategoryRow(
+    modifier: Modifier = Modifier,
     type: String,
     dataSet: List<DashboardData>
 ) {
-    Column {
+    Column( modifier= modifier.fillMaxSize()) {
         CategoryTitle(type)
         LazyRow(
             contentPadding = PaddingValues(
