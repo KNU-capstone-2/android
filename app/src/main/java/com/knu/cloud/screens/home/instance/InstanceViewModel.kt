@@ -91,8 +91,10 @@ class InstanceViewModel @Inject constructor (
         }
     }
     fun instanceCheck(instanceId : String) {
-        _uiState.update { it.copy(checkedInstanceIds = it.checkedInstanceIds + instanceId) }
-        Timber.tag("${this.javaClass.name}_instanceCheck()").d(" : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
+        if(instanceId !in _uiState.value.checkedInstanceIds){
+            _uiState.update { it.copy(checkedInstanceIds = it.checkedInstanceIds + instanceId) }
+        }
+        Timber.tag("vm_test").d("instanceCheck : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
     }
     fun instanceUncheck(instanceId: String) {
         _uiState.update { state ->
@@ -100,7 +102,7 @@ class InstanceViewModel @Inject constructor (
                 checkedInstanceIds = state.checkedInstanceIds.filterNot { it == instanceId }
             )
         }
-        Timber.tag("${this.javaClass.name}_instanceUncheck()").d(": checkedInstanceIds ${uiState.value.checkedInstanceIds}")
+        Timber.tag("vm_test").d("instanceUncheck : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
     }
 
     fun allInstanceCheck(allChecked: Boolean) {
@@ -109,7 +111,7 @@ class InstanceViewModel @Inject constructor (
                 state.copy( checkedInstanceIds = state.instances.map { it.instancesId })
             }
         }else initializeCheckInstanceIds()
-        Timber.tag("vm_test").d("checkedInstanceIds ${uiState.value.checkedInstanceIds}")
+        Timber.tag("vm_test").d("allInstanceCheck : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
     }
 
     fun closeDeleteResultDialog(){
@@ -121,6 +123,7 @@ class InstanceViewModel @Inject constructor (
         _uiState.update { state ->
             state.copy(checkedInstanceIds = emptyList())
         }
+        Timber.tag("vm_test").d("initializeCheckInstanceIds : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
     }
 
 }

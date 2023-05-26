@@ -2,6 +2,7 @@ package com.knu.cloud.components.basicTable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -31,14 +32,20 @@ fun TableHeader(
             .background(Color.LightGray)
         ,
     ) {
-        TableCellLayout(modifier,weight = 0.05f, type = TableCellType.CHECK_BOX ) {
+
+        TableCellLayout(
+            modifier = Modifier.width(64.dp)
+        ) {
             CheckBoxCell(
+                modifier = Modifier,
                 checked = checked,
                 onCheckedChange = onAllRowSelected
             )
         }
+//        TableCellLayout(modifier,weight = 0.05f) {
+//        }
         repeat(weightList.size){idx->
-            TableCellLayout(modifier,weight = weightList[idx], type = TableCellType.HEADER) {
+            TableCellLayout(modifier, weight = weightList[idx]) {
                 HeaderCell(text =textList[idx])
             }
         }
@@ -54,14 +61,22 @@ data class TableHeaderItem(
     val textList: List<String>,
     val weightList: List<Float>
 )
-data class TableRowItem(
-    val cellTypeList: List<String>,
-    val textList: List<String>,
-    val colorList: List<Color>,
-    val weightList: List<Float>,
-    val rowID : String,
-    var isSelected: MutableState<Boolean>
+
+data class TableCell(
+    val text : String,
+    val color : Color = Color.Black
 )
+data class TableRowItem(
+    val rowID : String,
+    val columnTypes: List<TableColumnType>,
+    val cells : List<TableCell>,
+    val isChecked : Boolean,
+    val isSelected : Boolean
+)
+//    val textList: List<String>,
+//    val colorList: List<Color>,
+//    val columnWeights: List<Float>,
+//    var isSelected: MutableState<Boolean>
 
 
 @Composable
@@ -69,13 +84,15 @@ fun BasicTable(
     modifier: Modifier = Modifier,
     tableHeaderItem: TableHeaderItem,
     tableRowItems : List<TableRowItem>,
-    isAllSelected : MutableState<Boolean>,
-    isHeaderClick : MutableState<Boolean>,
+    columnTypes : List<TableColumnType>,
+    columnWeights : List<Float>,
     onAllChecked : (Boolean) -> Unit,
     onRowChecked : (Boolean, String) -> Unit,
     onRowSelected : (String) -> Unit
 ) {
-    val selectedItemIndex = rememberSaveable { mutableStateOf(-1) }
+    var selectedItemIndex by rememberSaveable { mutableStateOf(-1) }
+    var isAllSelected by rememberSaveable{ mutableStateOf(false) }
+    var isHeaderClick by rememberSaveable{ mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -83,43 +100,46 @@ fun BasicTable(
         TableHeader(
             textList = tableHeaderItem.textList,
             weightList = tableHeaderItem.weightList,
-            checked = isAllSelected.value,
+            checked = isAllSelected,
             onAllRowSelected = {selected ->
-                isAllSelected.value = selected
-                isHeaderClick.value = true
+                isAllSelected = selected
+                isHeaderClick = true
                 onAllChecked(selected)
             }
         )
-        if (!isHeaderClick.value && tableRowItems.all { it.isSelected.value}){
-            isAllSelected.value = true
+        if (!isHeaderClick && tableRowItems.all { it.isSelected}){
+            isAllSelected = true
         }
-
+        // TODO : 인스턴스 하나 체크하고 헤더 체크하면 selected가 2가 됨
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ){
             itemsIndexed(
                 tableRowItems
             ){index, item ->
-                if(isHeaderClick.value){
-                    item.isSelected.value = isAllSelected.value
+                LaunchedEffect(isHeaderClick ){
+                    if(isHeaderClick){
+                        onRowChecked(isAllSelected,item.rowID)
+                    }
                 }
                 TableRow(
                     modifier = modifier,
                     tableItem = item,
-                    isRowChecked = item.isSelected.value,
+                    columnTypes = columnTypes,
+                    columnWeights = columnWeights,
+                    isRowChecked = item.isChecked,
                     onRowChecked = { checked ->
-                        if (isAllSelected.value){
-                            isAllSelected.value = false
+                        if (isAllSelected){
+                            isAllSelected = false
                         }
-                        isHeaderClick.value = false
-                        item.isSelected.value = checked
+                        isHeaderClick = false
                         Timber.tag("vm_test").d("BasicTable onRowChecked")
                         onRowChecked(checked, item.rowID)
                     },
-                    isRowSelected = index == selectedItemIndex.value,
+                    isRowSelected = index == selectedItemIndex,
                     onRowSelected = { tableRowItem ->
 //                        selectedItem = tableRowItem
-                        selectedItemIndex.value = if(selectedItemIndex.value == index) -1 else index
+                        selectedItemIndex = if(selectedItemIndex == index) -1 else index
                         onRowSelected(tableRowItem.rowID)
                     }
                 )
@@ -132,7 +152,9 @@ fun BasicTable(
 @Composable
 fun TableRow(
     modifier: Modifier = Modifier,
-    tableItem : TableRowItem ,
+    tableItem : TableRowItem,
+    columnTypes: List<TableColumnType>,
+    columnWeights: List<Float>,
     isRowChecked :Boolean,
     onRowChecked : ((Boolean) -> Unit)?,
     isRowSelected : Boolean,
@@ -142,23 +164,28 @@ fun TableRow(
     Row(
         modifier = modifier
             .height(50.dp)
-            .clickable {
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) {
                 onRowSelected(tableItem)
             }
             .background(if (isRowSelected) Color.LightGray.copy(alpha = .3f) else Color.Transparent)
     ) {
-        TableCellLayout(modifier,weight = 0.05f, type = TableCellType.CHECK_BOX) {
+        TableCellLayout(
+            modifier = Modifier.width(64.dp)
+        ) {
             CheckBoxCell(
                 checked = isRowChecked,
                 onCheckedChange = onRowChecked
             )
         }
-
-        repeat(tableItem.cellTypeList.size){idx->
-            TableCellLayout(modifier,weight = tableItem.weightList[idx], type = tableItem.cellTypeList[idx]) {
-                when(tableItem.cellTypeList[idx]){
-                    TableCellType.TEXT -> TextCell(text = tableItem.textList[idx])
-                    TableCellType.COLOR_BOX -> ColorBoxCell(text = tableItem.textList[idx], color = tableItem.colorList[idx])
+        repeat(tableItem.columnTypes.size){ idx->
+            TableCellLayout(modifier, weight = columnWeights[idx]) {
+                when(tableItem.columnTypes[idx]){
+                    is TableColumnType.Text -> TextCell(cell = tableItem.cells[idx])
+                    is TableColumnType.ColorBox-> ColorBoxCell(cell = tableItem.cells[idx])
+                    is TableColumnType.CheckBox ->{}
                 }
             }
         }
@@ -180,64 +207,58 @@ fun TestTableHeader() {
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun TestTableRow() {
-    val tableRowItem = TableRowItem(
-        cellTypeList =listOf(TableCellType.TEXT,TableCellType.TEXT,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX),
-        textList = listOf("ec2-test","i-of204053ab80b5cc8","Running","t2.micro","2/2 check passe"),
-        colorList = listOf(Color.Black,Color.Black,Color.Green,Color.LightGray,Color.Green),
-        weightList = listOf(.1f,.1f,.1f,.1f,.1f),
-        rowID = "i-of204053ab80b5cc8",
-        isSelected = remember{ mutableStateOf(false) }
-    )
-    Surface(modifier = Modifier.fillMaxWidth()) {
-        TableRow(
-            tableItem = tableRowItem ,
-            isRowChecked = false ,
-            onRowChecked = {},
-            isRowSelected = false,
-            onRowSelected = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, device = Devices.TABLET)
-@Composable
-fun TestInstanceTable() {
-    val testHeaderItem = TableHeaderItem(
-        textList = listOf("Instance Name", "Instance ID","Instance State", "Instance Type", "Status Check"),
-        weightList = listOf(.1f,.1f,.1f,.1f,.1f),
-    )
-    val testRowItems = mutableListOf<TableRowItem>(
-        TableRowItem(
-            cellTypeList =listOf(TableCellType.TEXT,TableCellType.TEXT,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX),
-            textList = listOf("ec2-test","i-of204053ab80b5cc8","Running","t2.micro","2/2 check passe"),
-            colorList = listOf(Color.Black,Color.Black,Color.Green,Color.LightGray,Color.Green),
-            weightList = listOf(.1f,.1f,.1f,.1f,.1f),
-            rowID = "i-of204053ab80b5cc8",
-            isSelected = remember{ mutableStateOf(false) }
-        ),
-        TableRowItem(
-            cellTypeList =listOf(TableCellType.TEXT,TableCellType.TEXT,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX),
-            textList = listOf("ec2-test","i-of204053ab80b5cc8","Running","t2.micro","2/2 check passe"),
-            colorList = listOf(Color.Black,Color.Black,Color.Green,Color.LightGray,Color.Green),
-            weightList = listOf(.1f,.1f,.1f,.1f,.1f),
-            rowID = "i-of204053ab80b5cc8",
-            isSelected = remember{ mutableStateOf(false) }
-        )
-    )
-    BasicTable(
-        tableHeaderItem = testHeaderItem,
-        tableRowItems = testRowItems,
-        onAllChecked = {},
-        onRowChecked = {a,b ->},
-        onRowSelected = {},
-        isAllSelected = remember {
-            mutableStateOf(false)
-        },
-        isHeaderClick = remember {
-            mutableStateOf(false)
-        },
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun TestTableRow() {
+//    val tableRowItem = TableRowItem(
+//        columnTypes =listOf(TableCellType.TEXT,TableCellType.TEXT,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX),
+//        textList = listOf("ec2-test","i-of204053ab80b5cc8","Running","t2.micro","2/2 check passe"),
+//        colorList = listOf(Color.Black,Color.Black,Color.Green,Color.LightGray,Color.Green),
+//        columnWeights = listOf(.1f,.1f,.1f,.1f,.1f),
+//        rowID = "i-of204053ab80b5cc8",
+//        isSelected = remember{ mutableStateOf(false) }
+//    )
+//    Surface(modifier = Modifier.fillMaxWidth()) {
+//        TableRow(
+//            tableItem = tableRowItem ,
+//            isRowChecked = false ,
+//            onRowChecked = {},
+//            isRowSelected = false,
+//            onRowSelected = {}
+//        )
+//    }
+//}
+//
+//@Preview(showBackground = true, device = Devices.TABLET)
+//@Composable
+//fun TestInstanceTable() {
+//    val testHeaderItem = TableHeaderItem(
+//        textList = listOf("Instance Name", "Instance ID","Instance State", "Instance Type", "Status Check"),
+//        weightList = listOf(.1f,.1f,.1f,.1f,.1f),
+//    )
+//    val testRowItems = mutableListOf<TableRowItem>(
+//        TableRowItem(
+//            columnTypes =listOf(TableCellType.TEXT,TableCellType.TEXT,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX),
+//            textList = listOf("ec2-test","i-of204053ab80b5cc8","Running","t2.micro","2/2 check passe"),
+//            colorList = listOf(Color.Black,Color.Black,Color.Green,Color.LightGray,Color.Green),
+//            columnWeights = listOf(.1f,.1f,.1f,.1f,.1f),
+//            rowID = "i-of204053ab80b5cc8",
+//            isSelected = remember{ mutableStateOf(false) }
+//        ),
+//        TableRowItem(
+//            columnTypes =listOf(TableCellType.TEXT,TableCellType.TEXT,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX,TableCellType.COLOR_BOX),
+//            textList = listOf("ec2-test","i-of204053ab80b5cc8","Running","t2.micro","2/2 check passe"),
+//            colorList = listOf(Color.Black,Color.Black,Color.Green,Color.LightGray,Color.Green),
+//            columnWeights = listOf(.1f,.1f,.1f,.1f,.1f),
+//            rowID = "i-of204053ab80b5cc8",
+//            isSelected = remember{ mutableStateOf(false) }
+//        )
+//    )
+//    BasicTable(
+//        tableHeaderItem = testHeaderItem,
+//        tableRowItems = testRowItems,
+//        onAllChecked = {},
+//        onRowChecked = {a,b ->},
+//        onRowSelected = {},
+//    )
+//}

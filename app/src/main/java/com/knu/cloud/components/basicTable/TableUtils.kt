@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -12,17 +11,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 
-object TableCellType{
-    const val HEADER = "header"
-    const val TEXT = "text"
-    const val COLOR_BOX = "colorbox"
-    const val CHECK_BOX = "checkbox"
+sealed class TableColumnType{
+    object Text :TableColumnType()
+    object ColorBox :TableColumnType()
+    object CheckBox :TableColumnType()
 }
 
 data class TableRowData(
@@ -51,24 +48,29 @@ fun HeaderCell(
 
 @Composable
 fun CheckBoxCell(
+    modifier: Modifier = Modifier,
     checked : Boolean,
     onCheckedChange : ((Boolean) -> Unit)?
 ) {
     Checkbox(
+        modifier = modifier,
         checked = checked,
         onCheckedChange = onCheckedChange
     )
 }
 @Composable
-fun TextCell(text : String) {
+fun TextCell(
+    cell : TableCell,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .background(Color.Transparent),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {
         Text(
-            text = text,
+            text = cell.text,
             color = Color.Black.copy(alpha= 0.7f),
             fontWeight = FontWeight.Normal,
             modifier = Modifier
@@ -79,20 +81,23 @@ fun TextCell(text : String) {
 
 @Composable
 fun ColorBoxCell(
-    text : String,
-    color: Color,
+    modifier: Modifier = Modifier,
+    cell : TableCell
 ) {
     Box(
-        modifier = Modifier.clip(shape = RoundedCornerShape(15.dp)),
+        modifier = modifier,
         contentAlignment = Alignment.CenterStart
     ){
-        Box(modifier = Modifier
-            .background(color.copy(alpha = 0.2f))
+        val boxColor = if(cell.color == Color.Black) Color.LightGray
+            else cell.color
+        Box(modifier = modifier
+            .clip(shape = RoundedCornerShape(10.dp))
+            .background(boxColor)
             .padding(5.dp)
         ){
             Text(
-                text = text,
-                color = color.copy(alpha= 0.7f),
+                text = cell.text,
+                color = Color.Black,
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier
             )
@@ -104,12 +109,12 @@ fun ColorBoxCell(
 @Composable
 fun RowScope.TableCellLayout(
     modifier: Modifier = Modifier,
-    weight: Float,
-    type: String,
-    content : @Composable () -> Unit
+    weight: Float? = null,
+//    type: TableColumnType,
+    content: @Composable () -> Unit
 ) {
     Surface (modifier = modifier
-        .weight(weight)
+        .then(if(weight !=null) Modifier.weight(weight) else Modifier)
         .fillMaxHeight()
         , color = Color.Transparent
     ){
@@ -120,8 +125,5 @@ fun RowScope.TableCellLayout(
 @Preview(showBackground = true)
 @Composable
 fun TestColorBoxCell() {
-    ColorBoxCell(
-        text = "Running",
-        color = Color.Green
-    )
+
 }
