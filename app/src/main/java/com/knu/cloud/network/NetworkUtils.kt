@@ -27,15 +27,22 @@ fun <T:Any> authResponseToResult(networkResult: NetworkResult<AuthResponse<T>>) 
 fun <T:Any> openstackResponseToResult(networkResult: NetworkResult<OpenstackResponse<T>>): Result<T?> {
     return when(networkResult) {
         is NetworkResult.Success -> {
+            Timber.tag("network").d("OpenstackResponse Success : ${networkResult.data.data}")
             Result.success(networkResult.data.data)
         }
-        is NetworkResult.Error -> Result.failure(
-            RetrofitFailureStateException(
-                networkResult.message,
-                networkResult.code
-            )
-        )
-        is NetworkResult.Exception -> Result.failure(networkResult.e)
+        is NetworkResult.Error -> {
+            Timber.tag("network").d("OpenstackResponse Error message : ${networkResult.message} code : ${networkResult.code}")
+                Result.failure(
+                    RetrofitFailureStateException(
+                        networkResult.message,
+                        networkResult.code
+                    )
+                )
+            }
+        is NetworkResult.Exception -> {
+            Timber.tag("network").d("OpenstackResponse Exception e : ${networkResult.e}")
+            Result.failure(networkResult.e)
+        }
     }
 }
 
