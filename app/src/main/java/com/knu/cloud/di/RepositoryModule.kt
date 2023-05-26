@@ -4,8 +4,10 @@ import com.knu.cloud.repository.AuthRepository
 import com.knu.cloud.repository.AuthRepositoryImpl
 import com.knu.cloud.repository.OpenStackRepository
 import com.knu.cloud.repository.OpenStackRepositoryImpl
-import com.knu.cloud.repository.instance.InstanceRepository
-import com.knu.cloud.repository.instance.InstanceRepositoryImpl
+import com.knu.cloud.repository.home.dashboard.DashboardRepository
+import com.knu.cloud.repository.home.dashboard.DashboardRepositoryImpl
+import com.knu.cloud.repository.home.instance.InstanceRepository
+import com.knu.cloud.repository.home.instance.InstanceRepositoryImpl
 import com.knu.cloud.repository.instanceCreate.InstanceCreateRepository
 import com.knu.cloud.repository.instanceCreate.InstanceCreateRepositoryImpl
 import dagger.Binds
@@ -46,4 +48,9 @@ abstract class RepositoryModule {
         InstanceRepositoryImpl: InstanceRepositoryImpl
     ): InstanceRepository
 
+    @Singleton
+    @Binds
+    abstract fun bindDashboardRepository (
+        DashboardRepositoryImpl: DashboardRepositoryImpl
+    ): DashboardRepository
 }
