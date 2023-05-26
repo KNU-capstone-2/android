@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import com.knu.cloud.screens.instanceCreate.*
 import com.knu.cloud.screens.auth.login.LoginScreen
 import com.knu.cloud.screens.auth.signup.SignUpScreen
-import com.knu.cloud.screens.home.dashboard.DashBoardScreen
+import com.knu.cloud.screens.home.dashboard.DashboardScreen
 import com.knu.cloud.screens.home.image.ImageScreen
 import com.knu.cloud.screens.home.instance.InstanceScreen
 import com.knu.cloud.screens.home.instanceDetail.InstanceDetailScreen
@@ -30,7 +30,7 @@ fun NavGraphBuilder.homeNavGraph(
         startDestination = ComputeSections.DashBoard.route
     ){
         composable(ComputeSections.DashBoard.route){ from ->
-            DashBoardScreen()
+            DashboardScreen()
         }
         composable(ComputeSections.Instance.route){ from ->
             InstanceScreen(

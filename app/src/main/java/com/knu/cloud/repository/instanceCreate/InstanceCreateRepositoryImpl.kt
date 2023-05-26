@@ -1,7 +1,7 @@
 package com.knu.cloud.repository.instanceCreate
 
 import com.knu.cloud.data.instanceCreate.InstanceCreateRemoteDataSource
-import com.knu.cloud.model.instance.InstanceData
+import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.model.instanceCreate.*
 import com.knu.cloud.network.openstackResponseToResult
 import com.knu.cloud.utils.instanceCreateResponseToResult
