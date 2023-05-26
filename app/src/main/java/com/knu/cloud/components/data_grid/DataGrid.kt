@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.knu.cloud.model.instanceCreate.FlavorResponse
-import com.knu.cloud.model.instanceCreate.KeypairResponse
+import com.knu.cloud.model.instanceCreate.KeypairData
 import com.knu.cloud.model.instanceCreate.NetworkResponse
 import com.knu.cloud.model.instanceCreate.ImageData
 import com.knu.cloud.utils.*
@@ -118,7 +118,7 @@ fun <T> DataGridElementList(
                 }
             "Keypair" ->
                 KeypairDataTableCell(
-                    item = item as KeypairResponse, // Network로 캐스팅
+                    item = item as KeypairData, // Network로 캐스팅
                     index = index,
                     type = type
                 ) { it, idx ->
