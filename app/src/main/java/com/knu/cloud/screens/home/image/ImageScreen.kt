@@ -194,9 +194,9 @@ fun ImageTable(
         val imageSizeCell by mutableStateOf( TableCell("${imageData.size} MB") )
         val createDateCell by mutableStateOf( TableCell( imageData.createdDate))
         val updateDateCell by mutableStateOf( TableCell( imageData.updateDate))
-        val cellItems = remember { mutableListOf(
-            imageNameCell,imageStatusCell,imageSizeCell,createDateCell,updateDateCell
-        ) }
+        val cellItems by remember { mutableStateOf(
+            listOf(imageNameCell,imageStatusCell,imageSizeCell,createDateCell,updateDateCell
+        )) }
         TableRowItem(
             rowID = imageData.id,
             columnTypes = columnTypes,

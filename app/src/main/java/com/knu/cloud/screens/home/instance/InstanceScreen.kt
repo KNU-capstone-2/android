@@ -177,8 +177,8 @@ fun InstanceTable(
         val statusCheckCell by mutableStateOf(
             TableCell(instanceData.statusCheck,colorResource(id = R.color.instance_state_running))
         )
-        val cellItems = remember { mutableListOf(
-            instanceNameCell,instanceIdCell,instanceStateCell,instanceTypeCell,statusCheckCell
+        val cellItems by remember { mutableStateOf(
+            listOf(instanceNameCell,instanceIdCell,instanceStateCell,instanceTypeCell,statusCheckCell)
         ) }
         TableRowItem(
                 rowID = instanceData.instancesId,

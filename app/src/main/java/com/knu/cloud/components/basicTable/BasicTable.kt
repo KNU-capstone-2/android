@@ -83,7 +83,7 @@ data class TableRowItem(
 fun BasicTable(
     modifier: Modifier = Modifier,
     tableHeaderItem: TableHeaderItem,
-    tableRowItems : List<TableRowItem>,
+    tableRowItems : List<TableRowItem>,                                             // 데이터 변경에 따라 tableRowItem도 변함
     columnTypes : List<TableColumnType>,
     columnWeights : List<Float>,
     onAllChecked : (Boolean) -> Unit,
@@ -110,31 +110,31 @@ fun BasicTable(
         if (!isHeaderClick && tableRowItems.all { it.isSelected}){
             isAllSelected = true
         }
-        // TODO : 인스턴스 하나 체크하고 헤더 체크하면 selected가 2가 됨
+        Timber.d("tableRowItems : size : ${tableRowItems.size} $tableRowItems")
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ){
             itemsIndexed(
                 tableRowItems
-            ){index, item ->
+            ){index, tableRowItem ->
                 LaunchedEffect(isHeaderClick ){
                     if(isHeaderClick){
-                        onRowChecked(isAllSelected,item.rowID)
+                        onRowChecked(isAllSelected,tableRowItem.rowID)
                     }
                 }
                 TableRow(
                     modifier = modifier,
-                    tableItem = item,
+                    tableRowItem = tableRowItem,
                     columnTypes = columnTypes,
                     columnWeights = columnWeights,
-                    isRowChecked = item.isChecked,
+                    isRowChecked = tableRowItem.isChecked,
                     onRowChecked = { checked ->
                         if (isAllSelected){
                             isAllSelected = false
                         }
                         isHeaderClick = false
                         Timber.tag("vm_test").d("BasicTable onRowChecked")
-                        onRowChecked(checked, item.rowID)
+                        onRowChecked(checked, tableRowItem.rowID)
                     },
                     isRowSelected = index == selectedItemIndex,
                     onRowSelected = { tableRowItem ->
@@ -152,7 +152,7 @@ fun BasicTable(
 @Composable
 fun TableRow(
     modifier: Modifier = Modifier,
-    tableItem : TableRowItem,
+    tableRowItem : TableRowItem,
     columnTypes: List<TableColumnType>,
     columnWeights: List<Float>,
     isRowChecked :Boolean,
@@ -160,7 +160,6 @@ fun TableRow(
     isRowSelected : Boolean,
     onRowSelected : (TableRowItem) -> Unit
 ) {
-
     Row(
         modifier = modifier
             .height(50.dp)
@@ -168,7 +167,7 @@ fun TableRow(
                 interactionSource = MutableInteractionSource(),
                 indication = null
             ) {
-                onRowSelected(tableItem)
+                onRowSelected(tableRowItem)
             }
             .background(if (isRowSelected) Color.LightGray.copy(alpha = .3f) else Color.Transparent)
     ) {
@@ -180,11 +179,12 @@ fun TableRow(
                 onCheckedChange = onRowChecked
             )
         }
-        repeat(tableItem.columnTypes.size){ idx->
+        Timber.d("tableRowItem ${tableRowItem.cells}" )                     // tableRowId는 정상적으로 바뀌지만 cells는 업데이트 되지 않음 // 확인결과 여기 문제 아님
+        repeat(tableRowItem.columnTypes.size){ idx->
             TableCellLayout(modifier, weight = columnWeights[idx]) {
-                when(tableItem.columnTypes[idx]){
-                    is TableColumnType.Text -> TextCell(cell = tableItem.cells[idx])
-                    is TableColumnType.ColorBox-> ColorBoxCell(cell = tableItem.cells[idx])
+                when(tableRowItem.columnTypes[idx]){
+                    is TableColumnType.Text -> TextCell(cell = tableRowItem.cells[idx])
+                    is TableColumnType.ColorBox-> ColorBoxCell(cell = tableRowItem.cells[idx])
                     is TableColumnType.CheckBox ->{}
                 }
             }

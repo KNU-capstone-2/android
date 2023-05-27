@@ -10,8 +10,10 @@ import androidx.lifecycle.viewModelScope
 import com.knu.cloud.model.dialog.CreateInstanceState
 import com.knu.cloud.model.home.dashboard.DashboardData
 import com.knu.cloud.model.instanceCreate.*
+import com.knu.cloud.model.keypair.KeypairCreateRequest
 import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.home.dashboard.DashboardRepository
+import com.knu.cloud.repository.home.keypair.KeypairRepository
 import com.knu.cloud.repository.instanceCreate.InstanceCreateRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -27,6 +29,7 @@ import javax.inject.Inject
 class InstanceCreateViewModel @Inject constructor(
     private val instanceCreateRepository: InstanceCreateRepository,
     private val dashboardRepository: DashboardRepository
+    private val keypairRepository: KeypairRepository
 ): ViewModel() {
 
     private val _instanceState = mutableStateOf<DashboardData>(DashboardData("",0,10))
@@ -39,6 +42,9 @@ class InstanceCreateViewModel @Inject constructor(
     private val _openResourceDialog = MutableStateFlow<CreateInstanceState>(CreateInstanceState(showProgressDialog = false))
     val openResourceDialog: StateFlow<CreateInstanceState>
         get() = _openResourceDialog.asStateFlow()
+
+    private val _showCreateKeypairDialog = mutableStateOf(false)
+    val showCreateKeypiarDialog :State<Boolean> = _showCreateKeypairDialog
 
     private val _uploadFlavor = mutableStateOf<List<FlavorResponse>>(emptyList())
     val uploadFlavor: State<List<FlavorResponse>> = _uploadFlavor
@@ -55,10 +61,10 @@ class InstanceCreateViewModel @Inject constructor(
     private val _possibleNetwork = mutableStateOf<List<NetworkResponse>>(emptyList())
     val possibleNetwork: State<List<NetworkResponse>> = _possibleNetwork
 
-    private val _uploadKeypair = mutableStateOf<List<KeypairData>>(emptyList())
-    val uploadKeypair: State<List<KeypairData>> = _uploadKeypair
-    private val _possibleKeypair = mutableStateOf<List<KeypairData>>(emptyList())
-    val possibleKeypair: State<List<KeypairData>> = _possibleKeypair
+    private val _uploadKeypair = MutableStateFlow<List<KeypairData>>(emptyList())
+    val uploadKeypair: StateFlow<List<KeypairData>> = _uploadKeypair
+    private val _possibleKeypair = MutableStateFlow<List<KeypairData>>(emptyList())
+    val possibleKeypair: StateFlow<List<KeypairData>> = _possibleKeypair
 
     private val keyName = MutableStateFlow("")
     private val keyType = MutableStateFlow("")
@@ -137,6 +143,20 @@ class InstanceCreateViewModel @Inject constructor(
         _possibleKeypair.value = possibleKeypairDataSet.toMutableStateList()
     }
 
+    fun createKeypair(keypairCreateRequest: KeypairCreateRequest) {
+        viewModelScope.launch {
+            keypairRepository.createKeypair(keypairCreateRequest)
+                .onSuccess {
+                    Timber.d("onSuccess KeypairCreateResponse : $it")
+                    getAllKeypairData()
+                }
+                .onFailure {
+                    Timber.d("onFailure : ${it.message}")
+                }
+            _showCreateKeypairDialog.value = false
+        }
+    }
+
     /* KeyPairScreen */
     fun setKeyName(name: String) {
         keyName.value = name
@@ -193,6 +213,14 @@ class InstanceCreateViewModel @Inject constructor(
 //        }
         Toast.makeText(context, "리소스 프로지버닝 완료!", Toast.LENGTH_SHORT).show()
     }
+
+    fun showCreateKeypairDialog(){
+        _showCreateKeypairDialog.value = true
+    }
+    fun closeCreateKeypairDialog(){
+        _showCreateKeypairDialog.value = false
+    }
+
 
     private fun getAllFlavorData(){
         viewModelScope.launch {
