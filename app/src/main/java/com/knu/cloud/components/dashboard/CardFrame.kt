@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun CardFrame(
     title: String,
-    count: Int,
+    count: String,
     cardColor: Int,
     textColor1: Int = 0,
     textColor2: Int = 0
@@ -33,7 +33,7 @@ fun CardFrame(
             )
             Spacer(modifier = Modifier.height(50.dp))
             Text(
-                text = "$count",
+                text = count,
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 color = colorResource(id = textColor2)

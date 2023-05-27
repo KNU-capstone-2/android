@@ -8,9 +8,11 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.knu.cloud.model.dialog.CreateInstanceState
+import com.knu.cloud.model.home.dashboard.DashboardData
 import com.knu.cloud.model.instanceCreate.*
 import com.knu.cloud.model.keypair.KeypairCreateRequest
 import com.knu.cloud.network.RetrofitFailureStateException
+import com.knu.cloud.repository.home.dashboard.DashboardRepository
 import com.knu.cloud.repository.home.keypair.KeypairRepository
 import com.knu.cloud.repository.instanceCreate.InstanceCreateRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,8 +28,12 @@ import javax.inject.Inject
 @HiltViewModel
 class InstanceCreateViewModel @Inject constructor(
     private val instanceCreateRepository: InstanceCreateRepository,
+    private val dashboardRepository: DashboardRepository
     private val keypairRepository: KeypairRepository
 ): ViewModel() {
+
+    private val _instanceState = mutableStateOf<DashboardData>(DashboardData("",0,10))
+    val instanceState :State<DashboardData> = _instanceState
 
     private val _isDialogOpen = mutableStateOf(false)
     val isDialogOpen :State<Boolean> = _isDialogOpen
@@ -74,6 +80,7 @@ class InstanceCreateViewModel @Inject constructor(
     private var possibleSourceDataSet: MutableList<ImageData> = mutableListOf()
 
     init {
+        getInstanceData()
         getAllFlavorData()
         getAllKeypairData()
         getAllNetworkData()
@@ -290,5 +297,17 @@ class InstanceCreateViewModel @Inject constructor(
             _possibleSource.value = possibleSourceDataSet
         }
     }
+    private fun getInstanceData() {
+        viewModelScope.launch {
+            dashboardRepository.getDashboardData()
+                .onSuccess {
+                    val total = it!!.dashboardDataClass
+                    _instanceState.value = DashboardData("인스턴스", total.instanceCount,10-total.instanceCount)
+                }.onFailure {
+                    _instanceState.value = DashboardData("", 0, 10)
+                }
+        }
+    }
+
 }
 

@@ -32,6 +32,7 @@ import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
 import com.knu.cloud.components.text_input.addFocusCleaner
 import com.knu.cloud.screens.instanceCreate.InstanceCreateViewModel
+import timber.log.Timber
 
 @ExperimentalComposeUiApi
 @Composable
@@ -138,10 +139,12 @@ fun Detail(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val data = viewModel.instanceState.value
+            Timber.tag("TEST").e("$data")
             DonutChartComponent(
                 // 인스턴스 현황
                 // Current Usage, Added, Remaining 순
-                chartValues = listOf(0, 1, 9)
+                chartValues = listOf(0, data.assignedData, data.remainingData)
             )
         } // Column End
     }
