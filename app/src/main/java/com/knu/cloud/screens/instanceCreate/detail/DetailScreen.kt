@@ -1,5 +1,6 @@
 package com.knu.cloud.screens.instanceCreate.detail
 
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.toSize
@@ -64,7 +66,11 @@ fun DetailScreen(
 fun Detail(
     viewModel: InstanceCreateViewModel = hiltViewModel(),
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val detailsUiState by viewModel.detailUiState.collectAsState()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -88,6 +94,9 @@ fun Detail(
             ProjectTextInput(
                 type = TextInputType.FIELD,
                 keyboardController = keyboardController,
+                onValueChangeListener = {
+                    viewModel.updateDetailsUiState(detailsUiState.copy(projectName = it))
+                }
             )
             Text(
                 text = stringResource(id = R.string.IC_Detail_Header_InstanceName),
@@ -98,8 +107,10 @@ fun Detail(
             ProjectTextInput(
                 type = TextInputType.FIELD,
                 keyboardController = keyboardController,
+                onValueChangeListener = {
+                    viewModel.updateDetailsUiState(detailsUiState.copy(instanceName = it))
+                }
             )
-
             Text(
                 text = stringResource(id = R.string.IC_Detail_Header_Info),
                 fontWeight = FontWeight.Bold,
@@ -109,6 +120,9 @@ fun Detail(
             ProjectTextInput(
                 type = TextInputType.FIELD,
                 keyboardController = keyboardController,
+                onValueChangeListener = {
+                    viewModel.updateDetailsUiState(detailsUiState.copy(description = it))
+                }
             )
 
             Text(
@@ -117,7 +131,11 @@ fun Detail(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 10.dp)
             )
-            DropdownCompute() // 가용구역 선택
+            DropdownCompute(   // 가용구역 선택
+                onItemClicked = {
+                    viewModel.updateDetailsUiState(detailsUiState.copy(availabilityZone = it))
+                }
+            )
 
             Text(
                 text = stringResource(id = R.string.IC_Detail_Header_Count),
@@ -128,6 +146,13 @@ fun Detail(
             ProjectTextInput(
                 type = TextInputType.FIELD,
                 keyboardController = keyboardController,
+                onValueChangeListener = {
+                    try {
+                        viewModel.updateDetailsUiState(detailsUiState.copy(addCount = it.toInt()))
+                    }catch (e : NumberFormatException){
+                        Toast.makeText(context,"정수를 입력하세요",Toast.LENGTH_SHORT)
+                    }
+                }
             )
         } // Column End
 
@@ -139,19 +164,23 @@ fun Detail(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val data = viewModel.instanceState.value
-            Timber.tag("TEST").e("$data")
             DonutChartComponent(
                 // 인스턴스 현황
                 // Current Usage, Added, Remaining 순
-                chartValues = listOf(0, data.assignedData, data.remainingData)
+                chartValues = listOf(
+                    detailsUiState.currentCount,
+                    detailsUiState.addCount,
+                    detailsUiState.totalCount - detailsUiState.addCount -detailsUiState.currentCount    // remaining 계산
+                )
             )
         } // Column End
     }
 }
 
 @Composable
-fun DropdownCompute() {
+fun DropdownCompute(
+    onItemClicked : (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     val items = listOf("Nova") // Nova 하나로 고정
     var selectedIndex by remember { mutableStateOf(0) }
@@ -193,13 +222,15 @@ fun DropdownCompute() {
                 .width(with(LocalDensity.current) { fieldSize.width.toDp() })
                 .height(60.dp),
         ) {
-            items.forEachIndexed { index, s ->
-                DropdownMenuItem(onClick = {
-                    selectedIndex = index
-                    expanded = false
+            items.forEachIndexed { index, item ->
+                DropdownMenuItem(
+                    onClick = {
+                        selectedIndex = index
+                        expanded = false
+                        onItemClicked(item)
                 }) {
                     Text(
-                        text = s,
+                        text = item,
                     )
                 }
             }
@@ -227,8 +258,12 @@ fun CustomDonutChart() {
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Preview
 @Composable
 fun DetailScreenPreview() {
+    Surface() {
+        DetailScreen()
 
+    }
 }
