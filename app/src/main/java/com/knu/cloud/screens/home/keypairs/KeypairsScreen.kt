@@ -19,6 +19,7 @@ import com.knu.cloud.components.DeleteConfirmDialog
 import com.knu.cloud.components.DeleteResultDialog
 import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.model.instanceCreate.KeypairData
+import com.knu.cloud.screens.instanceCreate.keypair.CreateKeyPairDialog
 import timber.log.Timber
 
 val KEYPAIR_COLUMN_HEADERS  = listOf("Key Pair Name", "Type","FingerPrint")
@@ -31,7 +32,6 @@ val KEYPAIR_COLUMN_WEIGHTS  = listOf(.2f,.1f,.4f)
 
 @Composable
 fun KeypairsScreen(
-    onKeypairCreateClicked: () -> Unit,
     onKeypairDetailClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel : KeypairsViewModel  = hiltViewModel()
@@ -51,6 +51,16 @@ fun KeypairsScreen(
             },
             onCloseBtnClicked =  {
                 isDeleteConfirmDialogOpen = false
+            }
+        )
+    }
+    if(uiState.showCreateKeyPairDialog){
+        CreateKeyPairDialog(
+            onCreateClicked = {
+                viewModel.createKeypair(it)
+            },
+            onCloseClicked = {
+                viewModel.closeCreateKeypairDialog()
             }
         )
     }
@@ -74,7 +84,9 @@ fun KeypairsScreen(
                     .height(50.dp),
                 totalCnt = uiState.keypairs.size,
                 checkedCnt = uiState.checkedKeypairIds.size,
-                onLaunchBtnClicked = onKeypairCreateClicked,
+                onCreateBtnClicked = {
+                    viewModel.showCreateKeypairDialog()
+                },
                 onDeleteBtnClicked = {
                     isDeleteConfirmDialogOpen = true
                 }
@@ -119,7 +131,7 @@ fun KeypairBar(
     modifier: Modifier = Modifier,
     totalCnt : Int,
     checkedCnt : Int,
-    onLaunchBtnClicked : () -> Unit,
+    onCreateBtnClicked : () -> Unit,
     onDeleteBtnClicked : () -> Unit
 ) {
     Row(modifier = modifier
@@ -142,7 +154,7 @@ fun KeypairBar(
         }
         OutlinedButton(
             modifier = Modifier.weight(0.1f),
-            onClick = onLaunchBtnClicked
+            onClick = onCreateBtnClicked
         ) {
             Text(text = "Create Key Pair")
         }

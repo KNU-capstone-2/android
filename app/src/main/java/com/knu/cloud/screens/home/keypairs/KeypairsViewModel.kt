@@ -3,6 +3,7 @@ package com.knu.cloud.screens.home.keypairs
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.knu.cloud.model.instanceCreate.KeypairData
+import com.knu.cloud.model.keypair.KeypairCreateRequest
 import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.home.keypair.KeypairRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,8 @@ data class KeypairsUiState(
     val keypairs : List<KeypairData> = emptyList(),
     val checkedKeypairIds : List<String> = emptyList(),
     val deleteComplete : Boolean = false,
-    val deleteResult : List<Pair<String,Boolean>> = emptyList()
+    val deleteResult : List<Pair<String,Boolean>> = emptyList(),
+    val showCreateKeyPairDialog : Boolean = false
 )
 
 
@@ -53,6 +55,22 @@ class KeypairsViewModel @Inject constructor (
                     it as RetrofitFailureStateException
                     Timber.e("message :${it.message} , code :${it.code}")
                 }
+        }
+    }
+
+    fun createKeypair(keypairCreateRequest: KeypairCreateRequest) {
+        viewModelScope.launch {
+            keypairRepository.createKeypair(keypairCreateRequest)
+                .onSuccess {
+                    Timber.d("onSuccess KeypairCreateResponse : $it")
+                    getAllKeypairs()
+                }
+                .onFailure {
+                    Timber.d("onFailure : ${it.message}")
+                }
+            _uiState.update { state ->
+                state.copy(showCreateKeyPairDialog = false)
+            }
         }
     }
 
@@ -108,6 +126,16 @@ class KeypairsViewModel @Inject constructor (
     fun closeDeleteResultDialog() {
         _uiState.update {
             it.copy(deleteComplete = false, checkedKeypairIds = emptyList())
+        }
+    }
+    fun showCreateKeypairDialog(){
+        _uiState.update {
+            it.copy(showCreateKeyPairDialog = true)
+        }
+    }
+    fun closeCreateKeypairDialog(){
+        _uiState.update {
+            it.copy(showCreateKeyPairDialog = false)
         }
     }
 
