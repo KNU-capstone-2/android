@@ -2,26 +2,23 @@ package com.knu.cloud.screens.home.dashboard
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
 import com.knu.cloud.components.LottieImage
-import com.knu.cloud.components.chart.PieChartComponent
 import com.knu.cloud.components.dashboard.CardFrame
 import com.knu.cloud.components.dashboard.CategoryRow
 import com.knu.cloud.model.home.dashboard.DashboardDataSet
 import com.knu.cloud.model.home.dashboard.DashboardData
+import com.knu.cloud.model.home.dashboard.DashboardUsageData
+import com.knu.cloud.model.home.dashboard.DashboardUsageResponse
 
 @Composable
 fun DashboardScreen(
@@ -43,7 +40,7 @@ fun Content(
     ) {
         when (state) {
             is DashboardState.Loading -> LoadingScreen()
-            is DashboardState.Success -> ReadyScreen(dataSet = state.dataSet)
+            is DashboardState.Success -> ReadyScreen(dataSet = state.dataSet, usageDataSet = state.usageDataSet)
             is DashboardState.Error -> LoadingScreen()
         }
     }
@@ -66,7 +63,8 @@ fun LoadingScreen() {
 
 @Composable
 fun ReadyScreen(
-    dataSet: DashboardDataSet
+    dataSet: DashboardDataSet,
+    usageDataSet: DashboardUsageData
 ) {
     Row(
         modifier = Modifier
@@ -76,7 +74,9 @@ fun ReadyScreen(
         Column(
             modifier = Modifier.weight(.2f)
         ) {
-            Usage()
+            Usage(
+                usageDataSet= usageDataSet
+            )
         }
         Column(
             modifier = Modifier.weight(.3f)
@@ -117,7 +117,9 @@ fun ChartData(
 }
 
 @Composable
-fun Usage() {
+fun Usage(
+    usageDataSet: DashboardUsageData
+) {
     Column(
         modifier = Modifier.padding(12.dp)
     ) {
@@ -129,23 +131,23 @@ fun Usage() {
 
         Test(
             title1 = "활성화된 인스턴스",
-            count1 = 3,
+            count1 = usageDataSet.activeInstance,
             title2 = "사용 중인 RAM",
-            count2 = 1
+            count2 = usageDataSet.RAMTime
         )
 
         Test(
             title1 = "VCPU 사용시간",
-            count1 = 2,
+            count1 = usageDataSet.VCPUTime,
             title2 = "GB 사용 시간",
-            count2 = 1
+            count2 = usageDataSet.GBTime
         )
 
         Test(
             title1 = "RAM 사용시간",
-            count1 = 2,
+            count1 = usageDataSet.RAMTime,
             title2 = "GB 사용 시간",
-            count2 = 1
+            count2 = usageDataSet.GBTime
         )
     }
 }
@@ -159,9 +161,9 @@ val cardTheme = listOf(
 @Composable
 fun Test(
     title1: String,
-    count1: Int,
+    count1: String,
     title2: String,
-    count2: Int
+    count2: String
 ) {
     Row(
         modifier = Modifier.padding(5.dp)
