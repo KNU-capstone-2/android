@@ -1,10 +1,12 @@
 package com.knu.cloud.screens.instanceCreate
 
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -18,9 +20,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -57,15 +57,15 @@ fun SourceScreen(
 fun Source(
     viewModel: InstanceCreateViewModel,
 ) {
-    var selectedTitle by remember { mutableStateOf("Image") }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    var volumnSizeExpanded by remember { mutableStateOf(true)}
+    val uiState by viewModel.sourceUiState.collectAsState()
 
-    var uploadExpanded by remember { mutableStateOf(false) }
+    var volumnSizeExpanded by remember { mutableStateOf(true)}
+    var uploadExpanded by remember { mutableStateOf(true) }
     var possibleExpanded by remember { mutableStateOf(true) }
 
-    val uploadList = viewModel.uploadSource.value
-    val possibleList = viewModel.possibleSource.value
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
 
     LazyColumn(
         modifier = Modifier
@@ -85,23 +85,32 @@ fun Source(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 BootingSource() {
-                    selectedTitle = it
+                    viewModel.updateSourceUiState(uiState.copy(selectedTitle = it))
                 }
-                VolumeSwitchButton(bootSourceType = selectedTitle) {
+                VolumeSwitchButton(bootSourceType = uiState.selectedTitle) {
                     volumnSizeExpanded = !it // <- ! 붙여준거 주의
                 }
             }
-            if (volumnSizeExpanded && (selectedTitle == "Image" || selectedTitle == "인스턴스 스냅샷")) {
+            if (volumnSizeExpanded && (uiState.selectedTitle == "Image" || uiState.selectedTitle == "인스턴스 스냅샷")) {
                 Row(
                     modifier = Modifier.padding(10.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     VolumeSize(
-                        keyboardController = keyboardController
-                    ) {
+                        volumnSize = uiState.volumeSize,
+                        keyboardController = keyboardController,
+                        onSelected = {
+                            try {
+                                viewModel.updateSourceUiState(uiState.copy(volumeSize = it.toInt()))
+                            }catch (e : NumberFormatException){
+                                Toast.makeText(context,"정수를 입력하세요", Toast.LENGTH_SHORT).show()
+                                viewModel.updateSourceUiState(uiState.copy(volumeSize = 1))
+                            }
+                            focusManager.clearFocus()
+                        }
+                    )
                         /*  */
-                    }
                     VolumeSizeSwitchButton()
                 }
             }
@@ -111,22 +120,24 @@ fun Source(
         item {
             DataGridBar(
                 type = "할당됨",
-                numbers = viewModel.uploadSource.value.size,
+                numbers = if (uiState.uploadSource== null) 0 else 1,
                 expanded = uploadExpanded
             ) {
                 uploadExpanded = it
             }
         }
         if (uploadExpanded) {
-            itemsIndexed(uploadList) { index, item ->
-                if (index == 0) DataGridHeader(screenType = "Source")
-                DataGridElementList<ImageData>(
-                    item = item,
-                    index = index,
-                    type = "할당됨",
-                    screenType = "Source"
-                ) { it, idx ->
-                    viewModel.deleteSource(it, idx)
+            if(uiState.uploadSource != null){
+                itemsIndexed(listOf(uiState.uploadSource!!)) { index, item ->
+                    if (index == 0) DataGridHeader(screenType = "Source")
+                    DataGridElementList<ImageData>(
+                        item = item,
+                        index = index,
+                        type = "할당됨",
+                        screenType = "Source"
+                    ) { it, idx ->
+                        viewModel.deleteSource(it)
+                    }
                 }
             }
         }
@@ -135,14 +146,14 @@ fun Source(
         item {
             DataGridBar(
                 type = "사용 가능",
-                numbers = viewModel.possibleSource.value.size,
+                numbers = uiState.possibleSources.size,
                 expanded = possibleExpanded,
             ) {
                 possibleExpanded = it
             }
         }
         if (possibleExpanded) {
-            itemsIndexed(possibleList) { index, item ->
+            itemsIndexed(uiState.possibleSources) { index, item ->
                 if (index == 0) DataGridHeader(screenType = "Source")
                 DataGridElementList<ImageData>(
                     item = item,
@@ -150,7 +161,8 @@ fun Source(
                     type = "사용 가능",
                     screenType = "Source"
                 ) { it, idx ->
-                    viewModel.uploadSource(it, idx)
+                    if(uiState.uploadSource != null) viewModel.updateSource(it,idx)
+                    else viewModel.uploadSource(it,idx)
                 }
             }
         }
@@ -187,12 +199,17 @@ fun RowScope.VolumeSwitchButton(
             modifier = Modifier.padding(10.dp)
         )
         Row(
-            modifier = Modifier.padding(start = 5.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(start = 5.dp)
+                .fillMaxWidth(),
         ) {
             var buttonState by remember { mutableStateOf(false) }
             TextButton(
                 modifier = Modifier
-                    .border(BorderStroke(1.dp, Color.Gray), shape= RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp))
+                    .border(
+                        BorderStroke(1.dp, Color.Gray),
+                        shape = RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp)
+                    )
                     .height(55.dp),
                 shape = RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
@@ -212,7 +229,10 @@ fun RowScope.VolumeSwitchButton(
             }
             TextButton(
                 modifier = Modifier
-                    .border(BorderStroke(1.dp, Color.Gray), shape= RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp))
+                    .border(
+                        BorderStroke(1.dp, Color.Gray),
+                        shape = RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp)
+                    )
                     .height(55.dp),
                 shape = RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
@@ -318,6 +338,7 @@ fun DropdownBootingSource(
 @ExperimentalComposeUiApi
 @Composable
 fun RowScope.VolumeSize(
+    volumnSize :Int,
     keyboardController: SoftwareKeyboardController? = null,
     onSelected: (String) -> Unit,
 ) {
@@ -332,9 +353,17 @@ fun RowScope.VolumeSize(
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 5.dp, start = 10.dp, end = 10.dp)
         )
-        ProjectTextInput(
-            type = TextInputType.FIELD,
-            keyboardController = keyboardController,
+        var volumeSizeString by remember { mutableStateOf(volumnSize.toString()) }
+        TextInput(
+            text = volumeSizeString,
+            inputType = InputType.FIELD,
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    onSelected(volumeSizeString)
+                }
+            ),
+            onValueChangeListener = { volumeSizeString = it}
         )
     }
 }
@@ -354,13 +383,18 @@ fun RowScope.VolumeSizeSwitchButton(
             modifier = Modifier.padding(10.dp)
         )
         Row(
-            modifier = Modifier.padding(start = 5.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(start = 5.dp)
+                .fillMaxWidth(),
         ) {
             var buttonState by remember { mutableStateOf(false) }
 
             TextButton(
                 modifier = Modifier
-                    .border(BorderStroke(1.dp, Color.Gray), shape= RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp))
+                    .border(
+                        BorderStroke(1.dp, Color.Gray),
+                        shape = RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp)
+                    )
                     .height(55.dp),
                 shape = RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
@@ -379,7 +413,10 @@ fun RowScope.VolumeSizeSwitchButton(
             }
             TextButton(
                 modifier = Modifier
-                    .border(BorderStroke(1.dp, Color.Gray), shape= RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp))
+                    .border(
+                        BorderStroke(1.dp, Color.Gray),
+                        shape = RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp)
+                    )
                     .height(55.dp),
                 shape = RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp),
                 colors = ButtonDefaults.outlinedButtonColors(

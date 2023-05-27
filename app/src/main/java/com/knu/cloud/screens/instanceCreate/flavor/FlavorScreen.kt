@@ -18,7 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
 import com.knu.cloud.components.data_grid.*
 import com.knu.cloud.components.text_input.addFocusCleaner
-import com.knu.cloud.model.instanceCreate.FlavorResponse
+import com.knu.cloud.model.instanceCreate.FlavorData
 
 @ExperimentalComposeUiApi
 @Composable
@@ -48,11 +48,10 @@ fun Flavor(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    var uploadExpanded by remember { mutableStateOf(false) }
+    var uploadExpanded by remember { mutableStateOf(true) }
     var possibleExpanded by remember { mutableStateOf(true) }
 
-    val uploadList = viewModel.uploadFlavor.value
-    val possibleList = viewModel.possibleFlavor.value
+    val uiState by viewModel.flavorUiState.collectAsState()
 
     LazyColumn(
         modifier = Modifier
@@ -72,22 +71,24 @@ fun Flavor(
         item {
             DataGridBar(
                 type = "할당됨",
-                numbers = viewModel.uploadFlavor.value.size,
+                numbers = if (uiState.uploadFlavor== null) 0 else 1,
                 expanded = uploadExpanded
             ) {
                 uploadExpanded = it
             }
         }
         if (uploadExpanded) {
-            itemsIndexed(uploadList) { index, item ->
-                if (index == 0) DataGridHeader(screenType = "Flavor")
-                DataGridElementList<FlavorResponse>(
-                    item = item,
-                    index = index,
-                    type = "할당됨",
-                    screenType = "Flavor"
-                ) { it, idx ->
-                    viewModel.deleteFlavor(it, idx)
+            if(uiState.uploadFlavor != null){
+                itemsIndexed(listOf(uiState.uploadFlavor!!)) { index, item ->
+                    if (index == 0) DataGridHeader(screenType = "Flavor")
+                    DataGridElementList<FlavorData>(
+                        item = item,
+                        index = index,
+                        type = "할당됨",
+                        screenType = "Flavor"
+                    ) { it, idx ->
+                        viewModel.deleteFlavor(it)
+                    }
                 }
             }
         }
@@ -96,22 +97,23 @@ fun Flavor(
         item {
             DataGridBar(
                 type = "사용 가능",
-                numbers = viewModel.possibleFlavor.value.size,
+                numbers = uiState.possibleFlavors.size,
                 expanded = possibleExpanded,
             ) {
                 possibleExpanded = it
             }
         }
         if (possibleExpanded) {
-            itemsIndexed(possibleList) { index, item ->
+            itemsIndexed(uiState.possibleFlavors) { index, item ->
                 if (index == 0) DataGridHeader(screenType = "Flavor")
-                DataGridElementList<FlavorResponse>(
+                DataGridElementList<FlavorData>(
                     item = item,
                     index = index,
                     type = "사용 가능",
                     screenType = "Flavor"
                 ) { it, idx ->
-                    viewModel.uploadFlavor(it, idx)
+                    if(uiState.uploadFlavor != null) viewModel.updateFlavor(it,idx)
+                    else viewModel.uploadFlavor(it,idx)
                 }
             }
         }

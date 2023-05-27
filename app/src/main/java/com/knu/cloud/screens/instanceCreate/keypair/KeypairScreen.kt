@@ -63,11 +63,10 @@ fun Keypair(
 ) {
     val showCreateKeypairDialog by viewModel.showCreateKeypiarDialog   // AlertDialog 띄우기 위한 State 정의
 
-    var uploadExpanded by remember { mutableStateOf(false) }
+    var uploadExpanded by remember { mutableStateOf(true) }
     var possibleExpanded by remember { mutableStateOf(true) }
 
-    val uploadList by viewModel.uploadKeypair.collectAsState()
-    val possibleList by viewModel.possibleKeypair.collectAsState()
+    val uiState by viewModel.keypairUiState.collectAsState()
 
     LazyColumn(
         modifier = Modifier
@@ -101,23 +100,26 @@ fun Keypair(
         item {
             DataGridBar(
                 type = "할당됨",
-                numbers = uploadList.size,
+                numbers = if (uiState.uploadKeypair== null) 0 else 1,
                 expanded = uploadExpanded
             ) {
                 uploadExpanded = it
             }
         }
         if (uploadExpanded) {
-            itemsIndexed(uploadList) { index, item ->
-                if (index == 0) DataGridHeader(screenType = "Keypair")
-                DataGridElementList<KeypairData>(
-                    item = item,
-                    index = index,
-                    type = "할당됨",
-                    screenType = "Keypair"
-                ) { it, idx ->
-                    viewModel.deleteKeypair(it, idx)
+            if(uiState.uploadKeypair != null){
+                itemsIndexed(listOf(uiState.uploadKeypair!!)) { index, item ->
+                    if (index == 0) DataGridHeader(screenType = "Keypair")
+                    DataGridElementList<KeypairData>(
+                        item = item,
+                        index = index,
+                        type = "할당됨",
+                        screenType = "Keypair"
+                    ) { it, idx ->
+                        viewModel.deleteKeypair(it)
+                    }
                 }
+
             }
         }
 
@@ -125,14 +127,14 @@ fun Keypair(
         item {
             DataGridBar(
                 type = "사용 가능",
-                numbers = possibleList.size,
+                numbers = uiState.possibleKeypairs.size,
                 expanded = possibleExpanded,
             ) {
                 possibleExpanded = it
             }
         }
         if (possibleExpanded) {
-            itemsIndexed(possibleList) { index, item ->
+            itemsIndexed(uiState.possibleKeypairs) { index, item ->
                 if (index == 0) DataGridHeader(screenType = "Keypair")
                 DataGridElementList<KeypairData>(
                     item = item,
@@ -140,7 +142,8 @@ fun Keypair(
                     type = "사용 가능",
                     screenType = "Keypair"
                 ) { it, idx ->
-                    viewModel.uploadKeypair(it, idx)
+                    if(uiState.uploadKeypair != null) viewModel.updateKeypair(it,idx)
+                    else viewModel.uploadKeypair(it,idx)
                 }
             }
         }

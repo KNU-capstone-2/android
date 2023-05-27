@@ -4,7 +4,6 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.knu.cloud.model.dialog.CreateInstanceState
@@ -24,15 +23,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-data class InstanceCreateDetailUiState(
-    val projectName :String = "demo",
-    val instanceName : String = "",
-    val description : String = "",
-    val availabilityZone : String = "Nova",
-    val addCount : Int = 1,                                     // 개수, 값이 바뀔때마다 Total Instances차트의 Added도 업데이트 된다
-    val currentCount : Int = 0,
-    val totalCount : Int = 10                                             // remaining을 구하기 위함
-)
 
 @HiltViewModel
 class InstanceCreateViewModel @Inject constructor(
@@ -47,6 +37,18 @@ class InstanceCreateViewModel @Inject constructor(
     private val _detailUiState = MutableStateFlow(InstanceCreateDetailUiState())
     val detailUiState : StateFlow<InstanceCreateDetailUiState> = _detailUiState.asStateFlow()
 
+    private val _flavorUiState = MutableStateFlow(InstanceCreateFlavorUiState())
+    val flavorUiState :StateFlow<InstanceCreateFlavorUiState> = _flavorUiState.asStateFlow()
+
+    private val _sourceUiState = MutableStateFlow(InstanceCreateSourceUiState())
+    val sourceUiState :StateFlow<InstanceCreateSourceUiState> = _sourceUiState.asStateFlow()
+
+    private val _networkUiState = MutableStateFlow(InstanceCreateNetworkUiState())
+    val networkUiState :StateFlow<InstanceCreateNetworkUiState> = _networkUiState.asStateFlow()
+
+    private val _keypairUiState = MutableStateFlow(InstanceCreateKeypairUiState())
+    val keypairUiState :StateFlow<InstanceCreateKeypairUiState> = _keypairUiState.asStateFlow()
+
     /* 리소스 프로비저닝 Dialog box */
     private val _openResourceDialog = MutableStateFlow<CreateInstanceState>(CreateInstanceState(showProgressDialog = false))
     val openResourceDialog: StateFlow<CreateInstanceState>
@@ -54,36 +56,6 @@ class InstanceCreateViewModel @Inject constructor(
 
     private val _showCreateKeypairDialog = mutableStateOf(false)
     val showCreateKeypiarDialog :State<Boolean> = _showCreateKeypairDialog
-
-    private val _uploadFlavor = mutableStateOf<List<FlavorResponse>>(emptyList())
-    val uploadFlavor: State<List<FlavorResponse>> = _uploadFlavor
-    private val _possibleFlavor = mutableStateOf<List<FlavorResponse>>(emptyList())
-    val possibleFlavor: State<List<FlavorResponse>> = _possibleFlavor
-
-    private val _uploadSource = mutableStateOf<List<ImageData>>(emptyList())
-    val uploadSource: State<List<ImageData>> = _uploadSource
-    private val _possibleSource = mutableStateOf<List<ImageData>>(emptyList())
-    val possibleSource: State<List<ImageData>> = _possibleSource
-
-    private val _uploadNetwork = mutableStateOf<List<NetworkResponse>>(emptyList())
-    val uploadNetwork: State<List<NetworkResponse>> = _uploadNetwork
-    private val _possibleNetwork = mutableStateOf<List<NetworkResponse>>(emptyList())
-    val possibleNetwork: State<List<NetworkResponse>> = _possibleNetwork
-
-    private val _uploadKeypair = MutableStateFlow<List<KeypairData>>(emptyList())
-    val uploadKeypair: StateFlow<List<KeypairData>> = _uploadKeypair
-    private val _possibleKeypair = MutableStateFlow<List<KeypairData>>(emptyList())
-    val possibleKeypair: StateFlow<List<KeypairData>> = _possibleKeypair
-
-    var uploadFlavorDataSet = mutableListOf<FlavorResponse>()
-    var uploadSourceDataSet = mutableListOf<ImageData>()
-    var uploadNetworkDataSet = mutableListOf<NetworkResponse>()
-    var uploadKeypairDataSet = mutableListOf<KeypairData>()
-
-    private var possibleFlavorDataSet: MutableList<FlavorResponse> = mutableListOf()
-    private var possibleKeypairDataSet: MutableList<KeypairData> = mutableListOf()
-    private var possibleNetworkDataSet: MutableList<NetworkResponse> = mutableListOf()
-    private var possibleSourceDataSet: MutableList<ImageData> = mutableListOf()
 
     init {
         getInstanceData()
@@ -104,13 +76,6 @@ class InstanceCreateViewModel @Inject constructor(
                 }
             _showCreateKeypairDialog.value = false
         }
-    }
-
-    fun deleteKeypair(keypairData: KeypairData, position: Int) {
-        uploadKeypairDataSet.removeAt(position)
-        _uploadKeypair.value = uploadKeypairDataSet.toMutableStateList()
-        possibleKeypairDataSet.add(keypairData)
-        _possibleKeypair.value = possibleKeypairDataSet.toMutableStateList()
     }
 
     fun openDialog() {
@@ -172,57 +137,152 @@ class InstanceCreateViewModel @Inject constructor(
         _showCreateKeypairDialog.value = false
     }
 
-    fun uploadFlavor(flavor: FlavorResponse, position: Int) {
-        uploadFlavorDataSet.add(flavor)
-        _uploadFlavor.value = uploadFlavorDataSet.toMutableStateList()
-        possibleFlavorDataSet.removeAt(position)
-        _possibleFlavor.value = possibleFlavorDataSet.toMutableStateList()
+    fun uploadFlavor(flavor: FlavorData, index : Int){
+        _flavorUiState.update { state ->
+             state.copy(
+                 uploadFlavor = flavor,
+                 uploadFlavorIndex = index,
+                 possibleFlavors = state.possibleFlavors.filterIndexed { idx, _->  idx != index }
+             )
+        }
+        Timber.d("index : $index")
+        Timber.d("upload possibleFlavors : ${_flavorUiState.value.possibleFlavors.map { it.name }}")
+    }
+    fun updateFlavor(flavor: FlavorData, index : Int){
+        val temp = _flavorUiState.value.uploadFlavor!!
+        _flavorUiState.update { state ->
+            val updatePossibleFlavors = state.possibleFlavors.toMutableList()
+            updatePossibleFlavors.add(state.uploadFlavorIndex,temp)
+            state.copy(
+                uploadFlavor = flavor,
+                uploadFlavorIndex = if(index>=state.uploadFlavorIndex) index+1 else index,
+                possibleFlavors = updatePossibleFlavors.filterNot { it == flavor }
+            )
+        }
+    }
+    fun deleteFlavor(flavor: FlavorData) {
+        _flavorUiState.update { state ->
+            val updatePossibleFlavors = state.possibleFlavors.toMutableList()
+            updatePossibleFlavors.add(state.uploadFlavorIndex,flavor)
+            state.copy(
+                uploadFlavor = null,
+                possibleFlavors = updatePossibleFlavors
+            )
+        }
+        Timber.d("delete possibleFlavors : ${_flavorUiState.value.possibleFlavors.map { it.name }}")
     }
 
-    fun deleteFlavor(flavor: FlavorResponse, position: Int) {
-        uploadFlavorDataSet.removeAt(position)
-        _uploadFlavor.value = uploadFlavorDataSet.toMutableStateList()
-        possibleFlavorDataSet.add(flavor)
-        _possibleFlavor.value = possibleFlavorDataSet.toMutableStateList()
+    fun uploadSource(source: ImageData, index : Int){
+        _sourceUiState.update { state ->
+            state.copy(
+                uploadSource = source,
+                uploadSourceIndex = index,
+                possibleSources = state.possibleSources.filterIndexed { idx, _->  idx != index }
+            )
+        }
+        Timber.d("index : $index")
+        Timber.d("upload possibleFlavors : ${_flavorUiState.value.possibleFlavors.map { it.name }}")
+    }
+    fun updateSource(source: ImageData, index : Int){
+        val temp = _sourceUiState.value.uploadSource!!
+        _sourceUiState.update { state ->
+            val updatePossibleSources = state.possibleSources.toMutableList()
+            updatePossibleSources.add(state.uploadSourceIndex,temp)
+            state.copy(
+                uploadSource = source,
+                uploadSourceIndex = if(index>=state.uploadSourceIndex) index+1 else index,
+                possibleSources = updatePossibleSources.filterNot { it == source }
+            )
+        }
+    }
+    fun deleteSource(source: ImageData) {
+        _sourceUiState.update { state ->
+            val updatePossibleSources = state.possibleSources.toMutableList()
+            updatePossibleSources.add(state.uploadSourceIndex,source)
+            state.copy(
+                uploadSource = null,
+                possibleSources = updatePossibleSources
+            )
+        }
+        Timber.d("delete possibleSources : ${_sourceUiState.value.possibleSources.map { it.name }}")
     }
 
-    fun uploadSource(imageData: ImageData, position: Int) {
-        uploadSourceDataSet.add(imageData)
-        _uploadSource.value = uploadSourceDataSet.toMutableStateList()
-        possibleSourceDataSet.removeAt(position)
-        _possibleSource.value = possibleSourceDataSet.toMutableStateList()
+    fun uploadNetwork(network: NetworkData, index : Int){
+        _networkUiState.update { state ->
+            state.copy(
+                uploadNetwork = network,
+                uploadNetworkIndex = index,
+                possibleNetworks = state.possibleNetworks.filterIndexed { idx, _->  idx != index }
+            )
+        }
+        Timber.d("index : $index")
+        Timber.d("upload possibleNetworks : ${_networkUiState.value.possibleNetworks.map { it.network }}")
+    }
+    fun updateNetwork(network: NetworkData, index : Int){
+        val temp = _networkUiState.value.uploadNetwork!!
+        _networkUiState.update { state ->
+            val updatePossibleNetworks = state.possibleNetworks.toMutableList()
+            updatePossibleNetworks.add(state.uploadNetworkIndex,temp)
+            state.copy(
+                uploadNetwork = network,
+                uploadNetworkIndex = if(index>=state.uploadNetworkIndex) index+1 else index,
+                possibleNetworks = updatePossibleNetworks.filterNot { it == network }
+            )
+        }
+    }
+    fun deleteNetwork(network: NetworkData) {
+        _networkUiState.update { state ->
+            val updatePossibleNetworks = state.possibleNetworks.toMutableList()
+            updatePossibleNetworks.add(state.uploadNetworkIndex,network)
+            state.copy(
+                uploadNetwork = null,
+                possibleNetworks = updatePossibleNetworks
+            )
+        }
+        Timber.d("delete possibleNetworks : ${_networkUiState.value.possibleNetworks.map { it.network }}")
     }
 
-    fun deleteSource(imageData: ImageData, position: Int) {
-        uploadSourceDataSet.removeAt(position)
-        _uploadSource.value = uploadSourceDataSet.toMutableStateList()
-        possibleSourceDataSet.add(imageData)
-        _possibleSource.value = possibleSourceDataSet.toMutableStateList()
+    fun uploadKeypair(keypair: KeypairData, index : Int){
+        _keypairUiState.update { state ->
+            state.copy(
+                uploadKeypair = keypair,
+                uploadKeypairIndex = index,
+                possibleKeypairs = state.possibleKeypairs.filterIndexed { idx, _->  idx != index }
+            )
+        }
+        Timber.d("index : $index")
+        Timber.d("upload possibleKeypairs : ${_keypairUiState.value.possibleKeypairs.map { it.name }}")
+    }
+    fun updateKeypair(keypair: KeypairData, index : Int){
+        val temp = _keypairUiState.value.uploadKeypair!!
+        _keypairUiState.update { state ->
+            val updatePossibleKeypairs = state.possibleKeypairs.toMutableList()
+            updatePossibleKeypairs.add(state.uploadKeypairIndex,temp)
+            state.copy(
+                uploadKeypair = keypair,
+                uploadKeypairIndex = if(index>=state.uploadKeypairIndex) index+1 else index,
+                possibleKeypairs = updatePossibleKeypairs.filterNot { it == keypair }
+            )
+        }
+    }
+    fun deleteKeypair(keypair: KeypairData) {
+        _keypairUiState.update { state ->
+            val updatePossibleKeypairs = state.possibleKeypairs.toMutableList()
+            updatePossibleKeypairs.add(state.uploadKeypairIndex,keypair)
+            state.copy(
+                uploadKeypair = null,
+                possibleKeypairs = updatePossibleKeypairs
+            )
+        }
+        Timber.d("delete possibleKeypairs : ${_keypairUiState.value.possibleKeypairs.map { it.name }}")
     }
 
-    fun uploadNetwork(network: NetworkResponse, position: Int) {
-        uploadNetworkDataSet.add(network)
-        _uploadNetwork.value = uploadNetworkDataSet.toMutableStateList()
-        possibleNetworkDataSet.removeAt(position)
-        _possibleNetwork.value = possibleNetworkDataSet.toMutableStateList()
+    fun updateDetailsUiState(detailUiState: InstanceCreateDetailUiState){
+        _detailUiState.update { detailUiState}
     }
 
-    fun deleteNetwork(network: NetworkResponse, position: Int) {
-        uploadNetworkDataSet.removeAt(position)
-        _uploadNetwork.value = uploadNetworkDataSet.toMutableStateList()
-        possibleNetworkDataSet.add(network)
-        _possibleNetwork.value = possibleNetworkDataSet.toMutableStateList()
-    }
-
-    fun uploadKeypair(keypairData: KeypairData, position: Int) {
-        uploadKeypairDataSet.add(keypairData)
-        _uploadKeypair.value = uploadKeypairDataSet.toMutableStateList()
-        possibleKeypairDataSet.removeAt(position)
-        _possibleKeypair.value = possibleKeypairDataSet.toMutableStateList()
-    }
-
-    fun updateDetailsUiState(instanceCreateDetailUiState: InstanceCreateDetailUiState){
-        _detailUiState.update { instanceCreateDetailUiState}
+    fun updateSourceUiState(sourceUiState: InstanceCreateSourceUiState){
+        _sourceUiState.update { sourceUiState }
     }
 
     private fun getAllFlavorData(){
@@ -230,17 +290,16 @@ class InstanceCreateViewModel @Inject constructor(
             instanceCreateRepository.getAllFlavorData()
                 .onSuccess { it ->
                     if (it != null) {
-                        possibleFlavorDataSet = it.flavors.toMutableList()
+                        _flavorUiState.update { state ->
+                            state.copy(possibleFlavors = it)
+                        }
                     }else{
                        //_instances.value = testInstanceDataList
                     }
                 }.onFailure {
                     it as RetrofitFailureStateException
-                    Timber.tag("${this.javaClass.name}_getAllInstances")
-                        .e("message :${it.message} , code :${it.code}")
+                    Timber.e("message :${it.message} , code :${it.code}")
                 }
-            _uploadFlavor.value = uploadFlavorDataSet
-            _possibleFlavor.value = possibleFlavorDataSet
         }
     }
 
@@ -249,17 +308,16 @@ class InstanceCreateViewModel @Inject constructor(
             instanceCreateRepository.getAllKeypairData()
                 .onSuccess { it ->
                     if (it != null) {
-                        possibleKeypairDataSet = it.keypairs.toMutableList()
+                        _keypairUiState.update { state ->
+                            state.copy(possibleKeypairs = it)
+                        }
                     }else{
                         //_instances.value = testInstanceDataList
                     }
                 }.onFailure {
                     it as RetrofitFailureStateException
-                    Timber.tag("${this.javaClass.name}_getAllInstances")
-                        .e("message :${it.message} , code :${it.code}")
+                    Timber.e("message :${it.message} , code :${it.code}")
                 }
-            _uploadKeypair.value = uploadKeypairDataSet
-            _possibleKeypair.value = possibleKeypairDataSet
         }
     }
 
@@ -268,17 +326,16 @@ class InstanceCreateViewModel @Inject constructor(
             instanceCreateRepository.getAllNetworkData()
                 .onSuccess { it ->
                     if (it != null) {
-                        possibleNetworkDataSet = it.networks.toMutableList()
+                        _networkUiState.update { state ->
+                            state.copy(possibleNetworks = it)
+                        }
                     }else{
                         //_instances.value = testInstanceDataList
                     }
                 }.onFailure {
                     it as RetrofitFailureStateException
-                    Timber.tag("${this.javaClass.name}_getAllInstances")
-                        .e("message :${it.message} , code :${it.code}")
+                    Timber.e("message :${it.message} , code :${it.code}")
                 }
-            _uploadNetwork.value = uploadNetworkDataSet
-            _possibleNetwork.value = possibleNetworkDataSet
         }
     }
 
@@ -287,17 +344,16 @@ class InstanceCreateViewModel @Inject constructor(
             instanceCreateRepository.getAllSourceData()
                 .onSuccess { it ->
                     if (it != null) {
-                        possibleSourceDataSet = it.images.toMutableList()
+                        _sourceUiState.update { state ->
+                            state.copy(possibleSources = it)
+                        }
                     }else{
                         //_instances.value = testInstanceDataList
                     }
                 }.onFailure {
                     it as RetrofitFailureStateException
-                    Timber.tag("${this.javaClass.name}_getAllInstances")
-                        .e("message :${it.message} , code :${it.code}")
+                    Timber.e("message :${it.message} , code :${it.code}")
                 }
-            _uploadSource.value = uploadSourceDataSet
-            _possibleSource.value = possibleSourceDataSet
         }
     }
     private fun getInstanceData() {
