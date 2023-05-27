@@ -4,6 +4,7 @@ import com.knu.cloud.data.instanceCreate.InstanceCreateRemoteDataSource
 import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.model.instanceCreate.*
 import com.knu.cloud.network.openstackResponseToResult
+import com.knu.cloud.network.responseToResult
 import com.knu.cloud.utils.instanceCreateResponseToResult
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,24 +19,24 @@ class InstanceCreateRepositoryImpl @Inject constructor(
         return instanceCreateResponseToResult(instanceCreateResponse)
     }
 
-    override suspend fun getAllFlavorData(): Result<FlavorsResponse?> {
+    override suspend fun getAllFlavorData(): Result<List<FlavorData>?> {
         val flavorResponse = remoteDataSource.getFlavorData()
-        return openstackResponseToResult(flavorResponse)
+        return responseToResult(flavorResponse)
     }
 
-    override suspend fun getAllKeypairData(): Result<KeypairsResponse?> {
+    override suspend fun getAllKeypairData(): Result<List<KeypairData>?> {
         val keypairResponse = remoteDataSource.getKeypairData()
-        return openstackResponseToResult(keypairResponse)
+        return responseToResult(keypairResponse)
     }
 
-    override suspend fun getAllNetworkData(): Result<NetworksResponse?> {
+    override suspend fun getAllNetworkData(): Result<List<NetworkData>?> {
         val networkResponse = remoteDataSource.getNetworkData()
-        return openstackResponseToResult(networkResponse)
+        return responseToResult(networkResponse)
     }
 
-    override suspend fun getAllSourceData(): Result<ImagesResponse?> {
+    override suspend fun getAllSourceData(): Result<List<ImageData>?> {
         val sourceResponse = remoteDataSource.getImages()
-        return openstackResponseToResult(sourceResponse)
+        return responseToResult(sourceResponse)
     }
 
 }

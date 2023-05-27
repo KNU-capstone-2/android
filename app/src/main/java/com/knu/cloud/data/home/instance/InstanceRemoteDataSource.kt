@@ -14,7 +14,7 @@ import javax.inject.Inject
 class InstanceRemoteDataSource @Inject constructor (
     private val instanceApiService : InstanceApiService
 ) {
-    suspend fun getAllInstances(): NetworkResult<OpenstackResponse<InstancesResponse>> {
+    suspend fun getAllInstances(): NetworkResult<List<InstanceData>> {
         Timber.tag("network").d("InstanceRemoteDataSource getAllInstances() 호출")
         return instanceApiService.getAllInstances()
     }
@@ -23,7 +23,7 @@ class InstanceRemoteDataSource @Inject constructor (
         return instanceApiService.getInstance(instanceId)
     }
 
-    suspend fun deleteInstance(instanceId: String): NetworkResult<OpenstackResponse<String>> {
+    suspend fun deleteInstance(instanceId: String): NetworkResult<String> {
         Timber.tag("network").d("InstanceRemoteDataSource deleteInstance($instanceId) 호출")
         return instanceApiService.deleteInstance(instanceId)
     }

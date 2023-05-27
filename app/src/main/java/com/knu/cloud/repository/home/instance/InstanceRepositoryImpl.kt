@@ -19,12 +19,12 @@ class InstanceRepositoryImpl @Inject constructor(
      * NetworkResult를 받아와서 Result로 Mapping해준다
      * Result로 처리해주는 이유는 viewModel에서 Success/Failure 처리 용이하도록 하기 위함
      */
-    override suspend fun getAllInstances(): Result<InstancesResponse?> =
-        openstackResponseToResult(remoteDataSource.getAllInstances())
+    override suspend fun getAllInstances(): Result<List<InstanceData>?> =
+        responseToResult(remoteDataSource.getAllInstances())
 
     override suspend fun getInstance(instanceId: String): Result<InstanceData?> =
         responseToResult(remoteDataSource.getInstance(instanceId))
 
     override suspend fun deleteInstance(instanceId: String): Result<String?> =
-        openstackResponseToResult(remoteDataSource.deleteInstance(instanceId))
+        responseToResult(remoteDataSource.deleteInstance(instanceId))
 }

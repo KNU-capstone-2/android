@@ -19,6 +19,6 @@ data class InstanceData(
 ): Parcelable
 
 data class InstancesResponse(
-    @SerializedName("servers")
+    @SerializedName("instances")
     val instances : List<InstanceData>
 )

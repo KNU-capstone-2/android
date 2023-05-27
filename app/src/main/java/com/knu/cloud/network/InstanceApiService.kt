@@ -12,17 +12,17 @@ import retrofit2.http.*
 
 interface InstanceApiService {
 
-    @GET("/servers")
-    suspend fun getAllInstances() : NetworkResult<OpenstackResponse<InstancesResponse>>
+    @GET("/instances")
+    suspend fun getAllInstances() : NetworkResult<List<InstanceData>>
 
-    @GET("/servers/{id}")
+    @GET("/instances/{id}")
     suspend fun getInstance(
         @Path("id") instanceId : String
     ) : NetworkResult<InstanceData>
 
-    @DELETE("/servers/{id}")
+    @DELETE("/instances/{id}")
     suspend fun deleteInstance(
         @Path("id") instanceId: String
-    ): NetworkResult<OpenstackResponse<String>>
+    ): NetworkResult<String>
 
 }

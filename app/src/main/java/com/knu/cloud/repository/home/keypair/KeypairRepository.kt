@@ -7,7 +7,7 @@ import com.knu.cloud.model.keypair.KeypairCreateResponse
 
 interface KeypairRepository {
 
-    suspend fun getKeypairs() : Result<KeypairsResponse?>
+    suspend fun getKeypairs() : Result<List<KeypairData>?>
 
     suspend fun getKeypair(keypairName : String) : Result<KeypairData?>
 
