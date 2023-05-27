@@ -27,4 +27,13 @@ class InstanceRepositoryImpl @Inject constructor(
 
     override suspend fun deleteInstance(instanceId: String): Result<String?> =
         responseToResult(remoteDataSource.deleteInstance(instanceId))
+    override suspend fun startInstance(instanceId: String): Result<String?> =
+        openstackResponseToResult(remoteDataSource.startInstance(instanceId))
+
+    override suspend fun reStartInstance(instanceId: String): Result<String?> =
+        openstackResponseToResult(remoteDataSource.reStartInstance(instanceId))
+
+    override suspend fun stopInstance(instanceId: String): Result<String?> =
+        openstackResponseToResult(remoteDataSource.stopInstance(instanceId))
+
 }

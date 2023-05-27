@@ -121,9 +121,15 @@ fun InstanceScreen (
                         InstanceSummary(
                             context = context,
                             instance = selectedInstance,
-                            StartClicked = { /*TODO*/ },
-                            ReStartClicked = { /*TODO*/ },
-                            StopClicked = { /*TODO*/ },
+                            StartClicked = {
+                                // TODO: viewModel.startInstance(selectedInstance!!.instancesId)
+                            },
+                            ReStartClicked = {
+                                // TODO: viewModel.reStartInstance(selectedInstance!!.instancesId)
+                            },
+                            StopClicked = {
+                                // TODO: viewModel.stopInstance(selectedInstance!!.instancesId)
+                            },
                             onInstanceDetailClicked = {
                                 onInstanceDetailClicked(it)
                             }

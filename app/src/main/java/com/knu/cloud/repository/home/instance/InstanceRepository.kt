@@ -12,4 +12,8 @@ interface InstanceRepository {
 
     suspend fun deleteInstance(instanceId: String) : Result<String?>
 
+    suspend fun startInstance(instanceId: String) : Result<String?>
+    suspend fun reStartInstance(instanceId: String) : Result<String?>
+    suspend fun stopInstance(instanceId: String) : Result<String?>
+
 }

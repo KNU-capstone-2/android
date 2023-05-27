@@ -25,4 +25,21 @@ interface InstanceApiService {
         @Path("id") instanceId: String
     ): NetworkResult<String>
 
+    @POST("/TEST/{id}")
+    suspend fun startInstance(
+        @Path("id") instanceId: String
+    ): NetworkResult<OpenstackResponse<String>>
+
+
+    @POST("/TEST/{id}")
+    suspend fun reStartInstance(
+        @Path("id") instanceId: String
+    ): NetworkResult<OpenstackResponse<String>>
+
+
+    @POST("/TEST/{id}")
+    suspend fun stopInstance(
+        @Path("id") instanceId: String
+    ): NetworkResult<OpenstackResponse<String>>
+
 }
