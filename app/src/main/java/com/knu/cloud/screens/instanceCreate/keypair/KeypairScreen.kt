@@ -31,6 +31,7 @@ import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
 import com.knu.cloud.components.text_input.addFocusCleaner
 import com.knu.cloud.model.instanceCreate.KeypairData
+import com.knu.cloud.model.keypair.KeypairCreateRequest
 import com.knu.cloud.screens.instanceCreate.InstanceCreateViewModel
 import timber.log.Timber
 
@@ -60,13 +61,13 @@ fun KeypairScreen(
 fun Keypair(
     viewModel: InstanceCreateViewModel,
 ) {
-    val showCreateKeyPairDialog = remember { mutableStateOf(false) }    // AlertDialog 띄우기 위한 State 정의
+    val showCreateKeypairDialog by viewModel.showCreateKeypiarDialog   // AlertDialog 띄우기 위한 State 정의
 
     var uploadExpanded by remember { mutableStateOf(false) }
     var possibleExpanded by remember { mutableStateOf(true) }
 
-    val uploadList = viewModel.uploadKeypair.value
-    val possibleList = viewModel.possibleKeypair.value
+    val uploadList by viewModel.uploadKeypair.collectAsState()
+    val possibleList by viewModel.possibleKeypair.collectAsState()
 
     LazyColumn(
         modifier = Modifier
@@ -81,15 +82,18 @@ fun Keypair(
                 modifier = Modifier.padding(20.dp)
             )
             CreateKeyPairButton(
-                showCreateKeyPairDialog = showCreateKeyPairDialog
+                onCreateClocked = {
+                    viewModel.showCreateKeypairDialog()
+                }
             )
-            if (showCreateKeyPairDialog.value) {
-                Test(
-                    value = "",
-                    setShowDialog = { it ->
-                        showCreateKeyPairDialog.value = it
+            if (showCreateKeypairDialog) {
+                CreateKeyPairDialog(
+                    onCreateClicked = {
+                        viewModel.createKeypair(it)
                     },
-                    viewModel = viewModel
+                    onCloseClicked = {
+                        viewModel.closeCreateKeypairDialog()
+                    }
                 )
             }
         }
@@ -97,7 +101,7 @@ fun Keypair(
         item {
             DataGridBar(
                 type = "할당됨",
-                numbers = viewModel.uploadKeypair.value.size,
+                numbers = uploadList.size,
                 expanded = uploadExpanded
             ) {
                 uploadExpanded = it
@@ -121,7 +125,7 @@ fun Keypair(
         item {
             DataGridBar(
                 type = "사용 가능",
-                numbers = viewModel.possibleKeypair.value.size,
+                numbers = possibleList.size,
                 expanded = possibleExpanded,
             ) {
                 possibleExpanded = it
@@ -150,12 +154,10 @@ fun Keypair(
 
 @Composable
 fun CreateKeyPairButton(
-    showCreateKeyPairDialog: MutableState<Boolean>
+    onCreateClocked : () -> Unit
 ) {
     OutlinedButton(
-        onClick = {
-            showCreateKeyPairDialog.value = true
-        },
+        onClick = onCreateClocked,
         shape = RoundedCornerShape(percent = 30), // 모서리를 둥글게 처리
         modifier = Modifier
             .padding(10.dp)
@@ -179,17 +181,16 @@ fun CreateKeyPairButton(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun Test(
-    value: String,
-    setShowDialog: (Boolean) -> Unit,
-    viewModel: InstanceCreateViewModel
+fun CreateKeyPairDialog(
+    onCreateClicked:(KeypairCreateRequest) -> Unit,
+    onCloseClicked : () -> Unit,
 ) {
     val txtFieldError = remember { mutableStateOf("") }
-    val keyNameTxtField = remember { mutableStateOf(value) }
-    val keyTypeTxtField = remember { mutableStateOf(value) }
+    val keyNameTxtField = remember { mutableStateOf("") }
+    val keyTypeTxtField = remember { mutableStateOf("") }
 
     Dialog(
-        onDismissRequest = { setShowDialog(true) },
+        onDismissRequest = { },
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         val keyboardController = LocalSoftwareKeyboardController.current
@@ -197,7 +198,7 @@ fun Test(
         Surface(
             modifier = Modifier
                 .width(700.dp)
-                .verticalScroll(rememberScrollState()), /*TODO 여기서부터 스크롤 테스트해보고 시작하면 됨!!!*/
+                .verticalScroll(rememberScrollState()),
             shape = RoundedCornerShape(16.dp),
             color = Color.White
         ) {
@@ -228,7 +229,7 @@ fun Test(
                                 .width(30.dp)
                                 .height(30.dp)
                                 .clickable {
-                                    setShowDialog(false)
+                                    onCloseClicked()
                                 }
                         )
                     }
@@ -283,9 +284,7 @@ fun Test(
                                     Timber.tag("KeyPairScreen").e("Field can not be empty")
                                     return@Button
                                 }
-                                viewModel.setKeyName(keyNameTxtField.value)
-                                viewModel.setKeyType(keyTypeTxtField.value)
-                                setShowDialog(false)
+                                onCreateClicked(KeypairCreateRequest(name = keyNameTxtField.value,type = keyTypeTxtField.value))
                             },
                             shape = RoundedCornerShape(percent = 20),
                             modifier = Modifier
@@ -293,25 +292,6 @@ fun Test(
                                 .height(40.dp)
                         ) {
                             Text(text = "Create Keypair")
-                        }
-                        Spacer(modifier = Modifier.width(20.dp))
-                        Button(
-                            onClick = {
-                                if (keyNameTxtField.value.isEmpty() || keyTypeTxtField.value.isEmpty()) {
-                                    txtFieldError.value = "Field can not be empty"
-                                    Timber.tag("KeyPairScreen").e("Field can not be empty")
-                                    return@Button
-                                }
-                                viewModel.setKeyName(keyNameTxtField.value)
-                                viewModel.setKeyType(keyTypeTxtField.value)
-                                setShowDialog(false)
-                            },
-                            shape = RoundedCornerShape(percent = 20),
-                            modifier = Modifier
-                                .width(80.dp)
-                                .height(40.dp)
-                        ) {
-                            Text(text = "Done")
                         }
                     }
                 }
