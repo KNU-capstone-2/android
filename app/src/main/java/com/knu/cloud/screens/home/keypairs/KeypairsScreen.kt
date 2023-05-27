@@ -19,6 +19,7 @@ import com.knu.cloud.components.DeleteConfirmDialog
 import com.knu.cloud.components.DeleteResultDialog
 import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.model.instanceCreate.KeypairData
+import com.knu.cloud.screens.instanceCreate.keypair.CreateKeyPairDialog
 import timber.log.Timber
 
 val KEYPAIR_COLUMN_HEADERS  = listOf("Key Pair Name", "Type","FingerPrint")
@@ -31,7 +32,6 @@ val KEYPAIR_COLUMN_WEIGHTS  = listOf(.2f,.1f,.4f)
 
 @Composable
 fun KeypairsScreen(
-    onKeypairCreateClicked: () -> Unit,
     onKeypairDetailClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel : KeypairsViewModel  = hiltViewModel()
@@ -43,6 +43,7 @@ fun KeypairsScreen(
     }
     var isDeleteConfirmDialogOpen by remember { mutableStateOf(false) }
 
+//    Timber.d("uiState.keypairs : ${uiState.keypairs}")
     if (isDeleteConfirmDialogOpen) {
         DeleteConfirmDialog(
             data = "키페어",
@@ -51,6 +52,16 @@ fun KeypairsScreen(
             },
             onCloseBtnClicked =  {
                 isDeleteConfirmDialogOpen = false
+            }
+        )
+    }
+    if(uiState.showCreateKeyPairDialog){
+        CreateKeyPairDialog(
+            onCreateClicked = {
+                viewModel.createKeypair(it)
+            },
+            onCloseClicked = {
+                viewModel.closeCreateKeypairDialog()
             }
         )
     }
@@ -74,7 +85,9 @@ fun KeypairsScreen(
                     .height(50.dp),
                 totalCnt = uiState.keypairs.size,
                 checkedCnt = uiState.checkedKeypairIds.size,
-                onLaunchBtnClicked = onKeypairCreateClicked,
+                onCreateBtnClicked = {
+                    viewModel.showCreateKeypairDialog()
+                },
                 onDeleteBtnClicked = {
                     isDeleteConfirmDialogOpen = true
                 }
@@ -96,6 +109,7 @@ fun KeypairsScreen(
                             viewModel.allKeypairsCheck(it)
                         },
                         onRowChecked = { checked, keypairName ->
+                            Timber.d("keypairName $keypairName")
                             if (checked) {
                                 viewModel.keypairCheck(keypairName)
                             } else {
@@ -119,7 +133,7 @@ fun KeypairBar(
     modifier: Modifier = Modifier,
     totalCnt : Int,
     checkedCnt : Int,
-    onLaunchBtnClicked : () -> Unit,
+    onCreateBtnClicked : () -> Unit,
     onDeleteBtnClicked : () -> Unit
 ) {
     Row(modifier = modifier
@@ -142,7 +156,7 @@ fun KeypairBar(
         }
         OutlinedButton(
             modifier = Modifier.weight(0.1f),
-            onClick = onLaunchBtnClicked
+            onClick = onCreateBtnClicked
         ) {
             Text(text = "Create Key Pair")
         }
@@ -170,6 +184,7 @@ fun KeypairTable(
     var columnTypes by remember{ mutableStateOf(KEYPAIR_COLUMN_TYPES )}
     var columnWeights by rememberSaveable{ mutableStateOf( KEYPAIR_COLUMN_WEIGHTS)}
     var rowItems by remember { mutableStateOf(emptyList<TableRowItem>()) }
+    Timber.d("rowItems : $rowItems")
 
     LaunchedEffect(checkedKeypairIds) {
         Timber.d("checkedKeypairIds : $checkedKeypairIds")
@@ -180,20 +195,42 @@ fun KeypairTable(
         }
     }
 
+//    LaunchedEffect(dataList){
+////        Timber.d("launchedEffect :dataList rowItems : ${rowItems.size}")
+////        rowItems.forEach {
+////            Timber.d("launchedEffect :dataList rowItem : ${it.rowID}")
+////        }
+//        val updateRowItems = rowItems.toMutableList()
+//        updateRowItems.forEachIndexed { rowIdx, rowItem ->
+//            val updateCellItems = rowItem.cells.toMutableList()
+//            updateCellItems[0] = updateCellItems[0].copy(text = dataList[rowIdx].name)
+//            updateCellItems[1] = updateCellItems[1].copy(text = dataList[rowIdx].type)
+//            updateCellItems[2] = updateCellItems[2].copy(text = dataList[rowIdx].fingerprint)
+//            updateRowItems[rowIdx] = rowItem.copy(
+//                cells = updateCellItems.toList()
+//            )
+//        }
+//        Timber.d("launchedEffect :dataList updateRowItems : $updateRowItems")
+//        rowItems = updateRowItems
+////        Timber.d("launchedEffect :dataList")
+//    }
+
     rowItems = dataList.map { keypairData ->
+        Timber.tag("test").d("keypiarData : $keypairData")
         val keypairNameCell by mutableStateOf( TableCell(keypairData.name ))
         val keypairTypeCell by mutableStateOf( TableCell(keypairData.type))
         val keypairFingerprintCell by mutableStateOf( TableCell("${keypairData.fingerprint}"))
-        val cellItems = remember { mutableListOf(
-            keypairNameCell,keypairTypeCell,keypairFingerprintCell
-        ) }
-        TableRowItem(
+        val cellItems by mutableStateOf(
+            listOf(keypairNameCell,keypairTypeCell,keypairFingerprintCell)
+        )
+//        val tableRowItem by mutableStateOf(
+            TableRowItem(
             rowID = keypairData.name,
             columnTypes = columnTypes,
             isChecked = keypairData.name in checkedKeypairIds,
             isSelected = false,
-            cells = cellItems.toList()
-        )
+            cells = cellItems.toList())
+//        )tableRowItem
     }
 
 
@@ -224,4 +261,8 @@ fun KeypairTable(
         },
         onRowSelected = onRowSelected,
     )
+}
+
+fun updateAllRowItems(){
+
 }
