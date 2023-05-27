@@ -8,7 +8,6 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.knu.cloud.model.dialog.CreateInstanceState
-import com.knu.cloud.model.home.dashboard.DashboardData
 import com.knu.cloud.model.instanceCreate.*
 import com.knu.cloud.model.keypair.KeypairCreateRequest
 import com.knu.cloud.network.RetrofitFailureStateException
@@ -25,18 +24,28 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+data class InstanceCreateDetailUiState(
+    val projectName :String = "demo",
+    val instanceName : String = "",
+    val description : String = "",
+    val availabilityZone : String = "Nova",
+    val addCount : Int = 1,                                     // 개수, 값이 바뀔때마다 Total Instances차트의 Added도 업데이트 된다
+    val currentCount : Int = 0,
+    val totalCount : Int = 10                                             // remaining을 구하기 위함
+)
+
 @HiltViewModel
 class InstanceCreateViewModel @Inject constructor(
     private val instanceCreateRepository: InstanceCreateRepository,
-    private val dashboardRepository: DashboardRepository
+    private val dashboardRepository: DashboardRepository,
     private val keypairRepository: KeypairRepository
 ): ViewModel() {
 
-    private val _instanceState = mutableStateOf<DashboardData>(DashboardData("",0,10))
-    val instanceState :State<DashboardData> = _instanceState
-
     private val _isDialogOpen = mutableStateOf(false)
     val isDialogOpen :State<Boolean> = _isDialogOpen
+
+    private val _detailUiState = MutableStateFlow(InstanceCreateDetailUiState())
+    val detailUiState : StateFlow<InstanceCreateDetailUiState> = _detailUiState.asStateFlow()
 
     /* 리소스 프로비저닝 Dialog box */
     private val _openResourceDialog = MutableStateFlow<CreateInstanceState>(CreateInstanceState(showProgressDialog = false))
@@ -66,9 +75,6 @@ class InstanceCreateViewModel @Inject constructor(
     private val _possibleKeypair = MutableStateFlow<List<KeypairData>>(emptyList())
     val possibleKeypair: StateFlow<List<KeypairData>> = _possibleKeypair
 
-    private val keyName = MutableStateFlow("")
-    private val keyType = MutableStateFlow("")
-
     var uploadFlavorDataSet = mutableListOf<FlavorResponse>()
     var uploadSourceDataSet = mutableListOf<ImageData>()
     var uploadNetworkDataSet = mutableListOf<NetworkResponse>()
@@ -85,6 +91,85 @@ class InstanceCreateViewModel @Inject constructor(
         getAllKeypairData()
         getAllNetworkData()
         getAllSourceData()
+    }
+    fun createKeypair(keypairCreateRequest: KeypairCreateRequest) {
+        viewModelScope.launch {
+            keypairRepository.createKeypair(keypairCreateRequest)
+                .onSuccess {
+                    Timber.d("onSuccess KeypairCreateResponse : $it")
+                    getAllKeypairData()
+                }
+                .onFailure {
+                    Timber.d("onFailure : ${it.message}")
+                }
+            _showCreateKeypairDialog.value = false
+        }
+    }
+
+    fun deleteKeypair(keypairData: KeypairData, position: Int) {
+        uploadKeypairDataSet.removeAt(position)
+        _uploadKeypair.value = uploadKeypairDataSet.toMutableStateList()
+        possibleKeypairDataSet.add(keypairData)
+        _possibleKeypair.value = possibleKeypairDataSet.toMutableStateList()
+    }
+
+    fun openDialog() {
+        _isDialogOpen.value = true
+        Timber.tag("dialog").d("_isDialogOpen : ${_isDialogOpen.value}")
+//        viewModelScope.launch {
+//            _openResourceDialog.update { state ->
+//                state.copy(showProgressDialog = true)
+//            }
+//        }
+    }
+
+    fun createInstance(
+        context: Context
+    ) {
+        viewModelScope.launch {
+            // Do the background work here
+            delay(3000)
+            instanceCreateRepository.createInstance(
+                createRequest = CreateRequest(
+                    serverName = "",
+                    imageName = "",
+                    flavorName = "",
+                    networkName = "",
+                    keypairName = "",
+                )
+            ).onSuccess {
+                Timber.tag("instanceCreate").d("Success instanceData : $it")
+            }.onFailure {
+                Timber.tag("instanceCreate").d("Failure : $it")
+            }
+            closeDialog(context)
+        }
+    }
+    fun updateOpenResourceDialog(openResourceDialog: CreateInstanceState) {
+        Timber.tag("update").e("${openResourceDialog.showProgressDialog}")
+        viewModelScope.launch {
+            _openResourceDialog.update {
+                it.copy(showProgressDialog = openResourceDialog.showProgressDialog)
+            }
+        }
+    }
+    private fun closeDialog(
+        context: Context
+    ) {
+        _isDialogOpen.value = false
+//        viewModelScope.launch {
+//            _openResourceDialog.update { state ->
+//                state.copy(showProgressDialog = false)
+//            }
+//        }
+        Toast.makeText(context, "리소스 프로지버닝 완료!", Toast.LENGTH_SHORT).show()
+    }
+
+    fun showCreateKeypairDialog(){
+        _showCreateKeypairDialog.value = true
+    }
+    fun closeCreateKeypairDialog(){
+        _showCreateKeypairDialog.value = false
     }
 
     fun uploadFlavor(flavor: FlavorResponse, position: Int) {
@@ -136,91 +221,9 @@ class InstanceCreateViewModel @Inject constructor(
         _possibleKeypair.value = possibleKeypairDataSet.toMutableStateList()
     }
 
-    fun deleteKeypair(keypairData: KeypairData, position: Int) {
-        uploadKeypairDataSet.removeAt(position)
-        _uploadKeypair.value = uploadKeypairDataSet.toMutableStateList()
-        possibleKeypairDataSet.add(keypairData)
-        _possibleKeypair.value = possibleKeypairDataSet.toMutableStateList()
+    fun updateDetailsUiState(instanceCreateDetailUiState: InstanceCreateDetailUiState){
+        _detailUiState.update { instanceCreateDetailUiState}
     }
-
-    fun createKeypair(keypairCreateRequest: KeypairCreateRequest) {
-        viewModelScope.launch {
-            keypairRepository.createKeypair(keypairCreateRequest)
-                .onSuccess {
-                    Timber.d("onSuccess KeypairCreateResponse : $it")
-                    getAllKeypairData()
-                }
-                .onFailure {
-                    Timber.d("onFailure : ${it.message}")
-                }
-            _showCreateKeypairDialog.value = false
-        }
-    }
-
-    /* KeyPairScreen */
-    fun setKeyName(name: String) {
-        keyName.value = name
-        Timber.tag("viewModel_KeypairScreen").e(keyName.value)
-    }
-
-    fun setKeyType(type: String) {
-        keyType.value = type
-        Timber.tag("viewModel_KeypairScreen").e(keyType.value)
-    }
-
-    fun openDialog() {
-        _isDialogOpen.value = true
-        Timber.tag("dialog").d("_isDialogOpen : ${_isDialogOpen.value}")
-//        viewModelScope.launch {
-//            _openResourceDialog.update { state ->
-//                state.copy(showProgressDialog = true)
-//            }
-//        }
-    }
-
-    fun startCoroutine(
-        context: Context
-    ) {
-        viewModelScope.launch {
-            // Do the background work here
-            delay(3000)
-            instanceCreateRepository.createInstance(
-                createRequest = CreateRequest()
-            ).onSuccess {
-                Timber.tag("instanceCreate").d("Success instanceData : $it")
-            }.onFailure {
-                Timber.tag("instanceCreate").d("Failure : $it")
-            }
-            closeDialog(context)
-        }
-    }
-    fun updateOpenResourceDialog(openResourceDialog: CreateInstanceState) {
-        Timber.tag("update").e("${openResourceDialog.showProgressDialog}")
-        viewModelScope.launch {
-            _openResourceDialog.update {
-                it.copy(showProgressDialog = openResourceDialog.showProgressDialog)
-            }
-        }
-    }
-    private fun closeDialog(
-        context: Context
-    ) {
-        _isDialogOpen.value = false
-//        viewModelScope.launch {
-//            _openResourceDialog.update { state ->
-//                state.copy(showProgressDialog = false)
-//            }
-//        }
-        Toast.makeText(context, "리소스 프로지버닝 완료!", Toast.LENGTH_SHORT).show()
-    }
-
-    fun showCreateKeypairDialog(){
-        _showCreateKeypairDialog.value = true
-    }
-    fun closeCreateKeypairDialog(){
-        _showCreateKeypairDialog.value = false
-    }
-
 
     private fun getAllFlavorData(){
         viewModelScope.launch {
@@ -299,13 +302,16 @@ class InstanceCreateViewModel @Inject constructor(
     }
     private fun getInstanceData() {
         viewModelScope.launch {
+            var instanceCount = 0
             dashboardRepository.getDashboardData()
-                .onSuccess {
-                    val total = it!!.dashboardDataClass
-                    _instanceState.value = DashboardData("인스턴스", total.instanceCount,10-total.instanceCount)
+                .onSuccess { it ->
+                    instanceCount = it?.dashboardDataClass?.instanceCount ?: 0
                 }.onFailure {
-                    _instanceState.value = DashboardData("", 0, 10)
+                    Timber.e(it.message)
                 }
+            _detailUiState.update { state ->
+                state.copy(currentCount = instanceCount)
+            }
         }
     }
 

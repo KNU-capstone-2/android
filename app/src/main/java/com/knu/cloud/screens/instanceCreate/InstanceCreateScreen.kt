@@ -3,12 +3,10 @@ package com.knu.cloud.screens.instanceCreate
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -49,7 +47,7 @@ fun InstanceCreateScreen(
     Timber.tag("dialog").d("isDialogOpen : ${isDialogOpen}")
     if(isDialogOpen){
         CreateLoadingDialog()
-        instanceCreateViewModel.startCoroutine(context)
+        instanceCreateViewModel.createInstance(context)
     }
 
     Row(modifier = Modifier.fillMaxSize()) {
