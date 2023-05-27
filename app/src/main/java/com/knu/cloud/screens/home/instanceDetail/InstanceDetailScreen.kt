@@ -112,12 +112,15 @@ fun InstanceDetailScreen (
                     ) {
                         InstanceActionButtons(
                             StartClicked = {
+                                // TODO: viewModel.startInstance(instanceId)
                                 Toast.makeText(context, "Start!", Toast.LENGTH_SHORT).show()
                             },
                             ReStartClicked = {
+                                // TODO: viewModel.reStartInstance(instanceId)
                                 Toast.makeText(context, "ReStart!", Toast.LENGTH_SHORT).show()
                             },
                             StopClicked = {
+                                // /TODO: viewModel.stopInstance(instanceId)
                                 Toast.makeText(context, "Stop!", Toast.LENGTH_SHORT).show()
                             }
                         )

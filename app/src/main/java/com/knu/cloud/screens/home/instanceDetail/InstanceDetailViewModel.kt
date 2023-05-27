@@ -47,4 +47,40 @@ class InstanceDetailViewModel @Inject constructor (
                 }
         }
     }
+
+    fun startInstance(instanceId : String) {
+        Timber.tag("startInstance").d("START")
+        viewModelScope.launch {
+            instanceRepository.startInstance(instanceId)
+                .onSuccess {
+                    /*TODO*/
+                }.onFailure {
+                    /*TODO*/
+                }
+        }
+    }
+
+    fun reStartInstance(instanceId : String) {
+        Timber.tag("reStartInstance").d("RE_START")
+        viewModelScope.launch {
+            instanceRepository.reStartInstance(instanceId)
+                .onSuccess {
+                    /*TODO*/
+                }.onFailure {
+                    /*TODO*/
+                }
+        }
+    }
+
+    fun stopInstance(instanceId : String) {
+        Timber.tag("stopInstance").d("STOP")
+        viewModelScope.launch {
+            instanceRepository.stopInstance(instanceId)
+                .onSuccess {
+                    /*TODO*/
+                }.onFailure {
+                    /*TODO*/
+                }
+        }
+    }
 }
