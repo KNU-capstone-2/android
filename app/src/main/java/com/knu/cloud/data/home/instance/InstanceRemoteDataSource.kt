@@ -27,4 +27,17 @@ class InstanceRemoteDataSource @Inject constructor (
         Timber.tag("network").d("InstanceRemoteDataSource deleteInstance($instanceId) 호출")
         return instanceApiService.deleteInstance(instanceId)
     }
+
+    suspend fun startInstance(instanceId: String): NetworkResult<OpenstackResponse<String>> {
+        Timber.tag("network").d("InstanceRemoteDataSource startInstance($instanceId) 호출")
+        return instanceApiService.startInstance(instanceId)
+    }
+    suspend fun reStartInstance(instanceId: String): NetworkResult<OpenstackResponse<String>> {
+        Timber.tag("network").d("InstanceRemoteDataSource reStartInstance($instanceId) 호출")
+        return instanceApiService.reStartInstance(instanceId)
+    }
+    suspend fun stopInstance(instanceId: String): NetworkResult<OpenstackResponse<String>> {
+        Timber.tag("network").d("InstanceRemoteDataSource stopInstance($instanceId) 호출")
+        return instanceApiService.stopInstance(instanceId)
+    }
 }
