@@ -1,5 +1,7 @@
 package com.knu.cloud.di
 
+import com.knu.cloud.network.AuthInterceptor
+import com.knu.cloud.network.SessionManager
 import com.knu.cloud.network.networkResultCallAdapter.NetworkResultCallAdapterFactory
 import com.knu.cloud.network.nullOrEmptyConverter.NullOrEmptyConverterFactory
 import com.knu.cloud.utils.Constants
@@ -25,8 +27,8 @@ object ConfigModule {
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(NullOrEmptyConverterFactory)
             .client(okHttpClient)
+            .addConverterFactory(NullOrEmptyConverterFactory)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(NetworkResultCallAdapterFactory.create())
             .build()
@@ -51,7 +53,7 @@ object ConfigModule {
 
     @Singleton
     @Provides
-    fun provideSessionManager() :SessionManager{
+    fun provideSessionManager() : SessionManager {
         return SessionManager()
     }
 }

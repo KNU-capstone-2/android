@@ -1,14 +1,10 @@
 package com.knu.cloud.data.home.keypair
 
 import com.knu.cloud.model.NetworkResult
-import com.knu.cloud.model.OpenstackResponse
-import com.knu.cloud.model.instanceCreate.ImagesResponse
 import com.knu.cloud.model.instanceCreate.KeypairData
-import com.knu.cloud.model.instanceCreate.KeypairsResponse
 import com.knu.cloud.model.keypair.KeypairCreateRequest
 import com.knu.cloud.model.keypair.KeypairCreateResponse
-import com.knu.cloud.network.ImageApiService
-import com.knu.cloud.network.KeypairApiService
+import com.knu.cloud.network.apiService.KeypairApiService
 import javax.inject.Inject
 
 class KeypairRemoteDataSource @Inject constructor(

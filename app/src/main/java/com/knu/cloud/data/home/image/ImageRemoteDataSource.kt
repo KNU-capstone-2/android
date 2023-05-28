@@ -1,10 +1,8 @@
 package com.knu.cloud.data.home.image
 
 import com.knu.cloud.model.NetworkResult
-import com.knu.cloud.model.OpenstackResponse
 import com.knu.cloud.model.instanceCreate.ImageData
-import com.knu.cloud.model.instanceCreate.ImagesResponse
-import com.knu.cloud.network.ImageApiService
+import com.knu.cloud.network.apiService.ImageApiService
 import javax.inject.Inject
 
 

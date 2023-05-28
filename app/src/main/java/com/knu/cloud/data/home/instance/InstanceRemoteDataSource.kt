@@ -2,12 +2,8 @@ package com.knu.cloud.data.home.instance
 
 import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.OpenstackResponse
-import com.knu.cloud.model.auth.AuthResponse
-import com.knu.cloud.model.auth.SignUpRequest
-import com.knu.cloud.model.auth.Token
 import com.knu.cloud.model.home.instance.InstanceData
-import com.knu.cloud.model.home.instance.InstancesResponse
-import com.knu.cloud.network.InstanceApiService
+import com.knu.cloud.network.apiService.InstanceApiService
 import timber.log.Timber
 import javax.inject.Inject
 

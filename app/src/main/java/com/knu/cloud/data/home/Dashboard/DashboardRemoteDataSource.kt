@@ -4,7 +4,7 @@ import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.OpenstackResponse
 import com.knu.cloud.model.home.dashboard.DashboardResponse
 import com.knu.cloud.model.home.dashboard.DashboardUsageResponse
-import com.knu.cloud.network.DashboardApiService
+import com.knu.cloud.network.apiService.DashboardApiService
 import timber.log.Timber
 import javax.inject.Inject
 

@@ -1,11 +1,10 @@
 package com.knu.cloud.data.instanceCreate
 
 import com.knu.cloud.model.NetworkResult
-import com.knu.cloud.model.OpenstackResponse
 import com.knu.cloud.model.auth.AuthResponse
 import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.model.instanceCreate.*
-import com.knu.cloud.network.InstanceCreateApiService
+import com.knu.cloud.network.apiService.InstanceCreateApiService
 import javax.inject.Inject
 
 class InstanceCreateRemoteDataSource @Inject constructor(

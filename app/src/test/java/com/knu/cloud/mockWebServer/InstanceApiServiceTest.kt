@@ -1,14 +1,8 @@
 package com.knu.cloud.mockWebServer
 
 import com.knu.cloud.di.AuthInterceptor
-import com.knu.cloud.di.SessionManager
-import com.knu.cloud.model.NetworkResult
-import com.knu.cloud.model.auth.LoginRequest
-import com.knu.cloud.model.onSuccess
-import com.knu.cloud.network.AuthApiService
-import com.knu.cloud.network.InstanceApiService
-import com.knu.cloud.network.RetrofitFailureStateException
-import com.knu.cloud.network.authResponseToResult
+import com.knu.cloud.network.SessionManager
+import com.knu.cloud.network.apiService.InstanceApiService
 import com.knu.cloud.network.networkResultCallAdapter.NetworkResultCallAdapterFactory
 import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl
@@ -22,7 +16,6 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import timber.log.Timber
 
 class InstanceApiServiceTest {
 

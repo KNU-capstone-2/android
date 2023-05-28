@@ -7,8 +7,8 @@ import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.auth.LoginRequest
 import com.knu.cloud.model.auth.SignUpRequest
 import com.knu.cloud.network.RetrofitFailureStateException
+import com.knu.cloud.network.SessionManager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(

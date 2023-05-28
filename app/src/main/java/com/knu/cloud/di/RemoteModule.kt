@@ -1,6 +1,7 @@
 package com.knu.cloud.di
 
 import com.knu.cloud.network.*
+import com.knu.cloud.network.apiService.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

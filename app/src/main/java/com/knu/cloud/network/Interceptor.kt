@@ -1,4 +1,4 @@
-package com.knu.cloud.di
+package com.knu.cloud.network
 
 import dagger.Module
 import dagger.Provides

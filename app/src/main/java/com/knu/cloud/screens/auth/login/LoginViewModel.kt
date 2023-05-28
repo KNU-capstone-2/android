@@ -3,7 +3,7 @@ package com.knu.cloud.screens.auth.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.knu.cloud.R
-import com.knu.cloud.di.SessionManager
+import com.knu.cloud.network.SessionManager
 import com.knu.cloud.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
