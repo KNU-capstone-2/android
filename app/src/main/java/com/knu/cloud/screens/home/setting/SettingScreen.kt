@@ -20,7 +20,9 @@ fun SettingScreen(
         topBar = {
             ProjectAppBar(
                 title = "POCKET",
-                path = "프로젝트 / Setting"
+                path = "프로젝트 / Setting",
+                onLogOutClicked = {},
+                onBackArrowClicked = {}
             )
         }
     ) {

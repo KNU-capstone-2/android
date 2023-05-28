@@ -25,8 +25,8 @@ import timber.log.Timber
 
 @Composable
 fun ImageScreen(
-    onImageCreateClicked: () -> Unit,
-    onImageDetailClicked: (String) -> Unit,
+    onImageCreateClicked: () -> Unit = {},
+    onImageDetailClicked: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel : ImageViewModel  = hiltViewModel()
 ) {
