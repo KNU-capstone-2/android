@@ -6,8 +6,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,9 +16,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.knu.cloud.R
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.knu.cloud.navigation.ComputeSections
 
 @Composable
 fun LoginLogo() {
@@ -44,6 +39,88 @@ fun LoginLogo() {
         )
     }
 }
+
+@Composable
+fun FABContent(onTap: () -> Unit) {
+    FloatingActionButton(
+        onClick = { onTap() },
+        shape = RoundedCornerShape(50.dp),
+        backgroundColor = Color(0xFF92CBDF)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = "Add a Book",
+            tint = Color.White
+        )
+    }
+}
+
+@Composable
+fun MessageDialog(
+    title : String,
+    message : String,
+    onConfirmClicked : () -> Unit,
+    onCancelClicked : () -> Unit
+){
+    AlertDialog(
+        onDismissRequest = onCancelClicked,
+        title = {
+            Text(text = title)
+        },
+        text = {
+            Text(text = message)
+        },
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .width(350.dp)
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = onCancelClicked) {
+                    Text("취소")
+                }
+                TextButton(onClick = onConfirmClicked) {
+                    Text("확인")
+                }
+            }
+        },
+        shape = RoundedCornerShape(24.dp)
+    )
+}
+
+@Composable
+fun CenterCircularProgressIndicator() {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(4.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun CenterLottieLoadingIndicator(){
+    Column(
+        modifier = Modifier.fillMaxSize().padding(4.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LottieImage(
+            modifier = Modifier
+                .size(150.dp),
+            rawAnimation = R.raw.loading
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BottomNavigationBarPreview() {
+//    BottomNavigationBar()
+}
+
 
 //@Composable
 //fun BottomNavigationBar(navController: NavController) {
@@ -94,71 +171,25 @@ fun LoginLogo() {
 //    }
 //}
 
-@Composable
-fun ProjectBottomBar(
-    sections: Array<ComputeSections>,
-//    onTabSelected : (HomeNavItems) -> Unit,
-    currentRoute: String,
-    navigateToRoute: (String) -> Unit
-){
-    BottomNavigation() {
-//        val routes = remember { sections.map{it.route} }
-        val currentSection = sections.first{ it.route == currentRoute}
-
-        sections.forEach { section ->
-            val selected = section == currentSection
-            BottomNavigationItem(
-                icon = { Icon(section.icon, contentDescription = null) } ,
-                label = { Text(section.title) },
-                selected = selected,
-                onClick = { navigateToRoute(section.route) }
-            )
-        }
-    }
-}
-
-@Composable
-fun FABContent(onTap: () -> Unit) {
-    FloatingActionButton(
-        onClick = { onTap() },
-        shape = RoundedCornerShape(50.dp),
-        backgroundColor = Color(0xFF92CBDF)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = "Add a Book",
-            tint = Color.White
-        )
-    }
-}
-@Composable
-fun CenterCircularProgressIndicator() {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(4.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-fun CenterLottieLoadingIndicator(){
-    Column(
-        modifier = Modifier.fillMaxSize().padding(4.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        LottieImage(
-            modifier = Modifier
-                .size(150.dp),
-            rawAnimation = R.raw.loading
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BottomNavigationBarPreview() {
-//    BottomNavigationBar()
-}
+//@Composable
+//fun ProjectBottomBar(
+//    sections: Array<ComputeSections>,
+////    onTabSelected : (HomeNavItems) -> Unit,
+//    currentRoute: String,
+//    navigateToRoute: (String) -> Unit
+//){
+//    BottomNavigation() {
+////        val routes = remember { sections.map{it.route} }
+//        val currentSection = sections.first{ it.route == currentRoute}
+//
+//        sections.forEach { section ->
+//            val selected = section == currentSection
+//            BottomNavigationItem(
+//                icon = { Icon(section.icon, contentDescription = null) } ,
+//                label = { Text(section.title) },
+//                selected = selected,
+//                onClick = { navigateToRoute(section.route) }
+//            )
+//        }
+//    }
+//}
