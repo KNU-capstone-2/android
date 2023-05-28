@@ -91,23 +91,27 @@ class InstanceCreateViewModel @Inject constructor(
     fun createInstance(
         context: Context
     ) {
-        viewModelScope.launch {
-            // Do the background work here
-            delay(3000)
-            instanceCreateRepository.createInstance(
-                createRequest = CreateRequest(
-                    serverName = "",
-                    imageName = "",
-                    flavorName = "",
-                    networkName = "",
-                    keypairName = "",
-                )
-            ).onSuccess {
-                Timber.tag("instanceCreate").d("Success instanceData : $it")
-            }.onFailure {
-                Timber.tag("instanceCreate").d("Failure : $it")
+        try{
+            val createRequest = CreateRequest(
+                serverName = detailUiState.value.instanceName,
+                imageName = sourceUiState.value.uploadSource!!.name,
+                flavorName = flavorUiState.value.uploadFlavor!!.name,
+                networkName = networkUiState.value.uploadNetwork!!.network,
+                keypairName = keypairUiState.value.uploadKeypair!!.name,
+            )
+            viewModelScope.launch {
+                // Do the background work here
+                delay(3000)
+                instanceCreateRepository.createInstance(createRequest)
+                    .onSuccess {
+                        Timber.tag("instanceCreate").d("Success instanceData : $it")
+                    }.onFailure {
+                        Timber.tag("instanceCreate").d("Failure : $it")
+                    }
+                closeDialogWithToast(context,"리소스 프로지버닝 완료!")
             }
-            closeDialog(context)
+        }catch(e : Exception){
+            showToast(context,"인스턴스 생성에 필요한 요소를 전부 선택하세요")
         }
     }
     fun updateOpenResourceDialog(openResourceDialog: CreateInstanceState) {
@@ -118,8 +122,14 @@ class InstanceCreateViewModel @Inject constructor(
             }
         }
     }
-    private fun closeDialog(
-        context: Context
+
+    private fun showToast( context: Context,text : String){
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun closeDialogWithToast(
+        context: Context,
+        text : String
     ) {
         _isDialogOpen.value = false
 //        viewModelScope.launch {
@@ -127,7 +137,7 @@ class InstanceCreateViewModel @Inject constructor(
 //                state.copy(showProgressDialog = false)
 //            }
 //        }
-        Toast.makeText(context, "리소스 프로지버닝 완료!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 
     fun showCreateKeypairDialog(){
