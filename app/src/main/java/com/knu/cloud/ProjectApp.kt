@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -38,6 +35,7 @@ fun ProjectApp(
     sessionManager: SessionManager = SessionManager()
 ) {
     val authState by sessionManager.authState.collectAsState()
+    var firstRendering by remember { mutableStateOf(true) }
     if(appState.showLogOutDialog.value){
         MessageDialog(
             title = "로그아웃",
@@ -53,9 +51,10 @@ fun ProjectApp(
     }
     LaunchedEffect(authState.isLoggedIn,appState.showLogOutDialog.value){
         Timber.d("authState.isLoggedId : ${authState.isLoggedIn}")
-        if(!authState.isLoggedIn && !appState.showLogOutDialog.value){
+        if(!firstRendering && !authState.isLoggedIn && !appState.showLogOutDialog.value){
             appState.navActions.navigateToLogin(null)
         }
+        firstRendering = false
     }
     CloudTheme {
         Scaffold(
