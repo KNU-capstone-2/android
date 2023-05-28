@@ -2,7 +2,6 @@ package com.knu.cloud.screens.home.instance
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -11,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,8 +21,20 @@ import com.knu.cloud.components.DeleteResultDialog
 import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.components.summary.InstanceSummary
 import com.knu.cloud.model.home.instance.InstanceData
+import com.knu.cloud.utils.convertDateFormat
 import timber.log.Timber
 
+val INSTANCE_COLUMN_HEADERS = listOf(
+    "Instance Name", "Instance ID","Instance State", "Instance Type", "Created Date"
+)
+val INSTANCE_COLUMN_TYPES  = listOf(
+    TableColumnType.Text,
+    TableColumnType.Text,
+    TableColumnType.ColorBox,
+    TableColumnType.ColorBox,
+    TableColumnType.ColorBox
+)
+val INSTANCE_COLUMN_WEIGHTS  = listOf(.4f,.7f,.2f,.2f,.4f)
 
 @Composable
 fun InstanceScreen (
@@ -103,7 +113,7 @@ fun InstanceScreen (
                         },
                         onRowSelected = { instanceId ->
                             val selectedData =
-                                uiState.instances.find { it.instancesId == instanceId }
+                                uiState.instances.find { it.instanceId == instanceId }
                             selectedInstance =
                                 if (selectedInstance == selectedData) null else selectedData
                         }
@@ -150,12 +160,8 @@ fun InstanceTable(
     onRowChecked : (Boolean, String) -> Unit,
     onRowSelected : (String) -> Unit
 ) {
-    var columnTypes by remember{ mutableStateOf(
-        listOf(TableColumnType.Text,TableColumnType.Text,TableColumnType.ColorBox,TableColumnType.ColorBox,TableColumnType.ColorBox)
-    )}
-    var columnWeights by rememberSaveable{ mutableStateOf(
-        listOf(.2f,.25f,.125f,.125f,.2f)
-    )}
+    var columnTypes by remember{ mutableStateOf(INSTANCE_COLUMN_TYPES)}
+    var columnWeights by rememberSaveable{ mutableStateOf(INSTANCE_COLUMN_WEIGHTS)}
     var isAllSelected by rememberSaveable { mutableStateOf(false) }
     var isHeaderChecked by rememberSaveable { mutableStateOf(false) }
 
@@ -174,22 +180,22 @@ fun InstanceTable(
 //    val rowItems = remember { mutableStateListOf<TableRowItem>() }
     var rowItems by remember { mutableStateOf(emptyList<TableRowItem>())}
     rowItems = dataList.map { instanceData ->
-        val instanceNameCell by mutableStateOf(TableCell(instanceData.instancesName))
-        val instanceIdCell by mutableStateOf(TableCell(instanceData.instancesId))
+        val instanceNameCell by mutableStateOf(TableCell(instanceData.instanceName))
+        val instanceIdCell by mutableStateOf(TableCell(instanceData.instanceId))
         val instanceStateCell by mutableStateOf(
-            TableCell(instanceData.instanceState, colorResource(id = R.color.instance_state_running))
+            TableCell(instanceData.instanceStatus, colorResource(id = R.color.instance_state_running))
         )
         val instanceTypeCell by mutableStateOf(TableCell(instanceData.instanceType))
         val statusCheckCell by mutableStateOf(
-            TableCell(instanceData.statusCheck,colorResource(id = R.color.instance_state_running))
+            TableCell(convertDateFormat(instanceData.createdDate),colorResource(id = R.color.instance_state_running))
         )
         val cellItems by remember { mutableStateOf(
             listOf(instanceNameCell,instanceIdCell,instanceStateCell,instanceTypeCell,statusCheckCell)
         ) }
         TableRowItem(
-                rowID = instanceData.instancesId,
+                rowID = instanceData.instanceId,
                 columnTypes = columnTypes,
-                isChecked = instanceData.instancesId in checkedInstanceIds,
+                isChecked = instanceData.instanceId in checkedInstanceIds,
                 isSelected = false,
                 cells = cellItems.toList()
         )
@@ -197,7 +203,7 @@ fun InstanceTable(
     BasicTable(
         modifier = modifier,
         tableHeaderItem = TableHeaderItem(
-            textList = listOf("Instance Name", "Instance ID","Instance State", "Instance Type", "Status Check"),
+            textList = INSTANCE_COLUMN_HEADERS,
             weightList = columnWeights
         ),
         tableRowItems = rowItems,

@@ -15,29 +15,29 @@ interface InstanceApiService {
     @GET("/instances")
     suspend fun getAllInstances() : NetworkResult<List<InstanceData>>
 
-    @GET("/instances/{id}")
+    @GET("/instance/{id}")
     suspend fun getInstance(
         @Path("id") instanceId : String
     ) : NetworkResult<InstanceData>
 
-    @DELETE("/instances/{id}")
+    @DELETE("/instance/{id}")
     suspend fun deleteInstance(
         @Path("id") instanceId: String
     ): NetworkResult<String>
 
-    @POST("/TEST/{id}")
+    @POST("/instance/start/{id}")
     suspend fun startInstance(
         @Path("id") instanceId: String
     ): NetworkResult<OpenstackResponse<String>>
 
 
-    @POST("/TEST/{id}")
+    @POST("/instance/reboot/{id}")
     suspend fun reStartInstance(
         @Path("id") instanceId: String
     ): NetworkResult<OpenstackResponse<String>>
 
 
-    @POST("/TEST/{id}")
+    @POST("/instance/stop/{id}")
     suspend fun stopInstance(
         @Path("id") instanceId: String
     ): NetworkResult<OpenstackResponse<String>>

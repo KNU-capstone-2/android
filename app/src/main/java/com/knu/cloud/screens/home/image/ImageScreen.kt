@@ -23,6 +23,16 @@ import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.model.instanceCreate.ImageData
 import timber.log.Timber
 
+val IMAGE_COLUMN_HEADERS =  listOf("Image Name", "Status","Size", "Create Date", "Update Date")
+val IMAGE_COLUMN_TYPES  = listOf(
+    TableColumnType.Text,
+    TableColumnType.ColorBox,
+    TableColumnType.ColorBox,
+    TableColumnType.ColorBox,
+    TableColumnType.ColorBox
+)
+val IMAGE_COLUMN_WEIGHTS  =  listOf(.2f,.1f,.1f,.1f,.1f)
+
 @Composable
 fun ImageScreen(
     onImageCreateClicked: () -> Unit = {},
@@ -170,18 +180,10 @@ fun ImageTable(
         }
     }
 
-    val columnHeaders =  listOf("Image Name", "Status","Size", "Create Date", "Update Date")
+    val columnHeaders = IMAGE_COLUMN_HEADERS
 
-    var columnTypes by remember{ mutableStateOf( listOf(
-        TableColumnType.Text,
-        TableColumnType.ColorBox,
-        TableColumnType.ColorBox,
-        TableColumnType.ColorBox,
-        TableColumnType.ColorBox
-    ))}
-    var columnWeights by rememberSaveable{ mutableStateOf(
-        listOf(.2f,.1f,.1f,.1f,.1f)
-    )}
+    var columnTypes by remember{ mutableStateOf(IMAGE_COLUMN_TYPES)}
+    var columnWeights by rememberSaveable{ mutableStateOf(IMAGE_COLUMN_WEIGHTS)}
     /**
     *  || Name || Status || Size || CreateDate || UpdateDate
     * */

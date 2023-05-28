@@ -80,7 +80,7 @@ class InstanceViewModel @Inject constructor (
             }
             _uiState.update { state ->
                 state.copy(
-                    instances = state.instances.filterNot { it.instancesId in deleteSuccessList },                              // 삭제 성공한  리스트에 없는 instances
+                    instances = state.instances.filterNot { it.instanceId in deleteSuccessList },                              // 삭제 성공한  리스트에 없는 instances
                     deleteResult = state.checkedInstanceIds.map { id ->
                         Pair(id, id in deleteSuccessList)
                     },
@@ -145,7 +145,7 @@ class InstanceViewModel @Inject constructor (
     fun allInstanceCheck(allChecked: Boolean) {
         if(allChecked) {
             _uiState.update { state ->
-                state.copy( checkedInstanceIds = state.instances.map { it.instancesId })
+                state.copy( checkedInstanceIds = state.instances.map { it.instanceId })
             }
         }else initializeCheckInstanceIds()
         Timber.tag("vm_test").d("allInstanceCheck : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
@@ -175,54 +175,54 @@ var testTableRowData = mutableListOf(
         isRowSelected = false
     )
 )
-val testInstanceDataList = mutableListOf(
-    InstanceData(
-        instancesId = "i-0f204053ab80b5cc8",
-        instancesName = "ec2-test",
-        publicIPv4Address = "52.83.423.531",
-        privateIPv4Address = "172.31.5.206",
-        instanceState = "Running",
-        publicIPv4DNS = "ec2-52-78-233-109 ap",
-        hostNameType = "ip-173-31-92-94.31.ec2",
-        privateIpDnsName = "IPv4(A)",
-        instanceType = "t2.micro",
-        statusCheck = "2/2 check passe",
-    ),
-    InstanceData(
-        instancesId = "k-fwe31431jtj34442dcc",
-        instancesName = "server-test",
-        publicIPv4Address = "52.83.423.522",
-        privateIPv4Address = "172.31.5.111",
-        instanceState = "Running",
-        publicIPv4DNS = "ec2-52-78-233-109 ap",
-        hostNameType = "ip-173-31-92-94.31.ec2",
-        privateIpDnsName = "IPv4(A)",
-        instanceType = "t2.micro",
-        statusCheck = "2/2 check passe",
-    ),
-    InstanceData(
-        instancesId = "i-ac3199341fk33140f3",
-        instancesName = "ec2-pocket-server",
-        publicIPv4Address = "52.83.423.511",
-        privateIPv4Address = "172.31.5.204",
-        instanceState = "Stop",
-        publicIPv4DNS = "ec2-52-78-233-109 ap",
-        hostNameType = "ip-173-31-92-94.31.ec2",
-        privateIpDnsName = "IPv4(A)",
-        instanceType = "t2.micro",
-        statusCheck = "2/2 check passe",
-    )
-)
-
-val testInstanceData = InstanceData(
-    instancesId = "i-0f204053ab80b5cc8",
-    instancesName = "ec2-test",
-    publicIPv4Address = "52.83.423.531",
-    privateIPv4Address = "172.31.5.206",
-    instanceState = "Running",
-    publicIPv4DNS = "ec2-52-78-233-109 ap",
-    hostNameType = "ip-173-31-92-94.31.ec2",
-    privateIpDnsName = "ip-172-31-92.42.ec2.internal",
-    instanceType = "t2.micro",
-    statusCheck = "2/2 check passe"
-)
+//val testInstanceDataList = mutableListOf(
+//    InstanceData(
+//        instancesId = "i-0f204053ab80b5cc8",
+//        instancesName = "ec2-test",
+//        publicIPv4Address = "52.83.423.531",
+//        privateIPv4Address = "172.31.5.206",
+//        instanceStatus = "Running",
+//        publicIPv4DNS = "ec2-52-78-233-109 ap",
+//        hostNameType = "ip-173-31-92-94.31.ec2",
+//        privateIpDnsName = "IPv4(A)",
+//        instanceType = "t2.micro",
+//        statusCheck = "2/2 check passe",
+//    ),
+//    InstanceData(
+//        instancesId = "k-fwe31431jtj34442dcc",
+//        instancesName = "server-test",
+//        publicIPv4Address = "52.83.423.522",
+//        privateIPv4Address = "172.31.5.111",
+//        instanceStatus = "Running",
+//        publicIPv4DNS = "ec2-52-78-233-109 ap",
+//        hostNameType = "ip-173-31-92-94.31.ec2",
+//        privateIpDnsName = "IPv4(A)",
+//        instanceType = "t2.micro",
+//        statusCheck = "2/2 check passe",
+//    ),
+//    InstanceData(
+//        instancesId = "i-ac3199341fk33140f3",
+//        instancesName = "ec2-pocket-server",
+//        publicIPv4Address = "52.83.423.511",
+//        privateIPv4Address = "172.31.5.204",
+//        instanceStatus = "Stop",
+//        publicIPv4DNS = "ec2-52-78-233-109 ap",
+//        hostNameType = "ip-173-31-92-94.31.ec2",
+//        privateIpDnsName = "IPv4(A)",
+//        instanceType = "t2.micro",
+//        statusCheck = "2/2 check passe",
+//    )
+//)
+//
+//val testInstanceData = InstanceData(
+//    instancesId = "i-0f204053ab80b5cc8",
+//    instancesName = "ec2-test",
+//    publicIPv4Address = "52.83.423.531",
+//    privateIPv4Address = "172.31.5.206",
+//    instanceStatus = "Running",
+//    publicIPv4DNS = "ec2-52-78-233-109 ap",
+//    hostNameType = "ip-173-31-92-94.31.ec2",
+//    privateIpDnsName = "ip-172-31-92.42.ec2.internal",
+//    instanceType = "t2.micro",
+//    statusCheck = "2/2 check passe"
+//)

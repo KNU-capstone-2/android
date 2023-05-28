@@ -4,8 +4,6 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,11 +23,9 @@ import com.knu.cloud.R
 import com.knu.cloud.components.CenterCircularProgressIndicator
 import com.knu.cloud.components.InstanceActionButtons
 import com.knu.cloud.components.LineChartComponent
-import com.knu.cloud.components.ProjectAppBar
 import com.knu.cloud.components.summary.CopyIncludedText
 import com.knu.cloud.components.summary.StateWithText
-import com.knu.cloud.model.home.instance.InstanceData
-import com.knu.cloud.screens.home.instance.InstanceViewModel
+import com.knu.cloud.utils.convertDateFormat
 
 val data = listOf(
     Pair(1, 111.45),
@@ -89,7 +85,7 @@ fun InstanceDetailScreen (
                             horizontalArrangement = Arrangement.Start
                         ) {
                             Text(
-                                text = "${uiState.instance!!.instancesId}(${uiState.instance!!.instancesName})에 대한 인스턴스 요약",
+                                text = "${uiState.instance!!.instanceId}(${uiState.instance!!.instanceName})에 대한 인스턴스 요약",
                                 fontSize = 35.sp,
                                 fontWeight = FontWeight.Bold,
                             )
@@ -102,7 +98,7 @@ fun InstanceDetailScreen (
                             )
                         }
                         Text(
-                            text = "더미 less than a minute 전에 업데이트됨",
+                            text = "6분 전에 업데이트됨",
                             fontSize = 20.sp
                         )
                     }
@@ -144,12 +140,12 @@ fun InstanceDetailScreen (
                         CopyIncludedText(
                             context = context,
                             title = stringResource(R.string.IS_id),
-                            content = uiState.instance!!.instancesId
+                            content = uiState.instance!!.instanceId
                         )
                         CopyIncludedText(
                             context = context,
-                            title = "IPv6 Address",
-                            content = "더미 "
+                            title = "네트워크 이름",
+                            content = uiState.instance!!.networkName
                         )
                         Box(
                             modifier = Modifier.padding(100.dp)
@@ -161,14 +157,14 @@ fun InstanceDetailScreen (
                         )
                         CopyIncludedText(
                             context = context,
-                            title = "프라이빗 리소스 DNS 이름 응답",
-                            content = uiState.instance!!.privateIpDnsName
+                            title = "이미지 이름",
+                            content = uiState.instance?.imageName ?: "null"
                         )
                         CopyIncludedText(
                             context = context,
-                            title = "자동 할당된 IP 주소",
+                            title = "네트워크 주소",
 //                            content = "54.209.252.119 [퍼블릭 IP]"
-                            content = uiState.instance!!.publicIPv4Address
+                            content = uiState.instance!!.networkAddresses
                         )
                     }
                     Divider(
@@ -190,18 +186,18 @@ fun InstanceDetailScreen (
                                 CopyIncludedText(
                                     context = context,
                                     title = "자동 할당된 IP 주소",
-                                    content = uiState.instance!!.publicIPv4Address
+                                    content = uiState.instance!!.networkAddresses
                                 )
                                 StateWithText(
                                     title = "인스턴스 상태",
                                     stateIcon = R.drawable.instance_running,
                                     contentColor = R.color.instance_running_text,
-                                    content = uiState.instance!!.instanceState
+                                    content = uiState.instance!!.instanceStatus
                                 )
                                 CopyIncludedText(
                                     context = context,
-                                    title = "프라이빗 IP DNS 이름(IPv4만 해당)",
-                                    content = uiState.instance!!.privateIpDnsName
+                                    title = "보안 그룹",
+                                    content = uiState.instance!!.securityGroups
                                 )
                                 CopyIncludedText(
                                     context = context,
@@ -216,23 +212,23 @@ fun InstanceDetailScreen (
                             ) {
                                 CopyIncludedText(
                                     context = context,
-                                    title = "프라이빗 IPv4 주소",
-                                    content = uiState.instance!!.privateIPv4Address
+                                    title = "생성 날짜",
+                                    content = convertDateFormat(uiState.instance!!.createdDate)
                                 )
                                 CopyIncludedText(
                                     context = context,
-                                    title = "퍼블릿 IPv4 DNS",
-                                    content = uiState.instance!!.publicIPv4DNS
+                                    title = "키페어",
+                                    content = uiState.instance!!.keypairName
                                 )
                                 CopyIncludedText(
                                     context = context,
-                                    title = "VPC ID",
-                                    content = "더미 vpc-0e7bf769e09f3210e "
+                                    title = "전력 상태",
+                                    content = uiState.instance!!.powerState,
                                 )
                                 CopyIncludedText(
                                     context = context,
-                                    title = "서브넷 ID",
-                                    content = "더미 subnet-09ae1985405edbb0b"
+                                    title = "작업 상태",
+                                    content = uiState.instance!!.taskState
                                 )
                             }
                         }

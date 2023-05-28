@@ -55,7 +55,7 @@ fun InstanceSummary(
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = instance.instancesName,
+                text = instance.instanceName,
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp,
             )
@@ -85,31 +85,31 @@ fun InstanceSummary(
             CopyIncludedText(
                 context = context,
                 title = stringResource(id = R.string.IS_id),
-                content = instance.instancesId
+                content = instance.instanceId
             )
             CopyIncludedText(
                 context = context,
-                title = stringResource(id = R.string.IS_public_IPv4_address),
-                content = instance.publicIPv4Address
+                title = "네트워크 이름",
+                content = instance.networkName
             )
             CopyIncludedText(
                 context = context,
-                title = stringResource(id = R.string.IS_private_IPv4_address),
-                content = instance.privateIPv4Address
+                title = "네트워크 주소",
+                content = instance.networkAddresses
             )
             StateWithText(
                 title = stringResource(id = R.string.IS_state),
                 stateIcon = R.drawable.instance_running,
                 contentColor = R.color.instance_running_text,
-                content = instance.instanceState
+                content = instance.instanceStatus
             )
             CopyIncludedText(
                 context = context,
-                title = stringResource(id = R.string.IS_IPv4_DNS),
-                content = instance.publicIPv4DNS
+                title = "호스트 이름 유형",
+                content = instance.hostNameType
             )
 
-            Button(onClick = { onInstanceDetailClicked(instance.instancesId) }) {
+            Button(onClick = { onInstanceDetailClicked(instance.instanceId) }) {
                 Text(text = "Instance Detail")
             }
         }
