@@ -20,16 +20,18 @@ fun rememberProjectAppState(
     navActions : NavActions = remember(navController) {
         NavActions(navController)
     },
+    showMessageDialog :  MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
     enabledTopAppBar: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
     enabledNavDrawer: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
-) = remember(navController,scaffoldState, navActions,enabledTopAppBar,enabledNavDrawer){
-    ProjectAppState(navController,scaffoldState,navActions,enabledTopAppBar,enabledNavDrawer)
+) = remember(navController,scaffoldState, navActions,showMessageDialog,enabledTopAppBar,enabledNavDrawer){
+    ProjectAppState(navController,scaffoldState,navActions,showMessageDialog,enabledTopAppBar,enabledNavDrawer)
 }
 
 class ProjectAppState(
     val navController: NavHostController,
     val scaffoldState: ScaffoldState,
     val navActions: NavActions,
+    val showLogOutDialog: MutableState<Boolean>,
     val enabledTopAppBar : MutableState<Boolean>,
     val enabledNavDrawer : MutableState<Boolean>
 ) {
@@ -49,6 +51,9 @@ class ProjectAppState(
                     Timber.tag("navigation").d("HomeSectionState true로 변경")
                 }
             }else if (destination.route?.contains("detail") == true){
+                enabledNavDrawer.value = false
+            }else if (destination.route?.contains("auth") == true){
+                enabledTopAppBar.value = false
                 enabledNavDrawer.value = false
             }
         }

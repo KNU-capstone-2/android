@@ -25,7 +25,7 @@ class NavActions(private val navController: NavController) {
         navController.navigate(MainDestination.INSTANCE_CREATE_ROUTE)
 //        }
     }
-    fun navigateToHome(from: NavBackStackEntry){
+    fun navigateToHome(from: NavBackStackEntry?){
         navController.navigate(MainDestination.HOME_ROUTE) {
             popUpTo(MainDestination.SPlASH_ROUTE) {
                 inclusive = true
@@ -37,8 +37,13 @@ class NavActions(private val navController: NavController) {
         navController.navigate(MainDestination.SIGNUP_ROUTE)
     }
 
-    fun navigateToLogin(from: NavBackStackEntry){
-        navController.navigate(MainDestination.LOGIN_ROUTE)
+    fun navigateToLogin(from: NavBackStackEntry?){
+        navController.navigate(
+            MainDestination.LOGIN_ROUTE,
+            navOptions {
+                popUpTo(MainDestination.HOME_ROUTE){inclusive = true}
+            }
+        )
     }
 
     fun navigateToInstanceDetail(instanceId : String){

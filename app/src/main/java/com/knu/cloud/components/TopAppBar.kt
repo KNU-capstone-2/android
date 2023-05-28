@@ -28,6 +28,7 @@ import com.knu.cloud.R
 fun ProjectAppBar(
     title: String,
     path: String,
+    onLogOutClicked : () -> Unit,
     onBackArrowClicked:() -> Unit = {}
 ) {
     var menuExpanded by remember {
@@ -145,15 +146,15 @@ fun ProjectAppBar(
                     }
                     Divider()
                     DropdownMenuItem(
-                        onClick = { /*TODO*/ }
+                        onClick = onLogOutClicked
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_exit_to_app_24),
-                            contentDescription = "sign out",
+                            contentDescription = "logout",
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(5.dp))
-                        Text(text = "Sign Out")
+                        Text(text = "LogOut")
                     }
                 }
             }
