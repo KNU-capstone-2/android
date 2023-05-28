@@ -213,7 +213,7 @@ fun UserForm(
         ProjectTextInput(
             type = TextInputType.Email,
             keyboardController = keyboardController,
-            passwordFocusRequester = passwordFocusRequester
+            focusRequester = passwordFocusRequester
         ) { email ->
             viewModel.updateUserEmail(email)
         }
@@ -221,7 +221,7 @@ fun UserForm(
         ProjectTextInput(
             type = TextInputType.PASSWORD,
             keyboardController = keyboardController,
-            passwordFocusRequester = passwordFocusRequester
+            focusRequester = passwordFocusRequester
         ) { password ->
             viewModel.updateUserPassword(password)
         }

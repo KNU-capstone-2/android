@@ -15,9 +15,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.knu.cloud.R
-import com.knu.cloud.model.instanceCreate.FlavorResponse
+import com.knu.cloud.model.instanceCreate.FlavorData
 import com.knu.cloud.model.instanceCreate.KeypairData
-import com.knu.cloud.model.instanceCreate.NetworkResponse
+import com.knu.cloud.model.instanceCreate.NetworkData
 import com.knu.cloud.model.instanceCreate.ImageData
 
 object FlavorUtils{
@@ -91,7 +91,7 @@ fun FlavorHeaderTableCell() {
 }
 
 @Composable
-fun FlavorDataTableCell(item: FlavorResponse, index: Int, type: String, onClickButton: (FlavorResponse, Int) -> Unit) {
+fun FlavorDataTableCell(item: FlavorData, index: Int, type: String, onClickButton: (FlavorData, Int) -> Unit) {
     var backGcolor = Color.White
     if (index % 2 == 0) {
         backGcolor = Color.LightGray
@@ -207,7 +207,7 @@ fun NetworkHeaderTableCell() {
 }
 
 @Composable
-fun NetworkDataTableCell(item: NetworkResponse, index: Int, type: String, onClickButton: (NetworkResponse, Int) -> Unit) {
+fun NetworkDataTableCell(item: NetworkData, index: Int, type: String, onClickButton: (NetworkData, Int) -> Unit) {
     var backGcolor = Color.White
     if (index % 2 == 0) {
         backGcolor = Color.LightGray

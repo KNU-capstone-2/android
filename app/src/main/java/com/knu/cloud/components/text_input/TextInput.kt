@@ -40,14 +40,16 @@ fun ProjectTextInput(
     text: String = "",
     hint: String = "",
     label: String = "",
+    enabled: Boolean = true,
     trailingImage: Painter? = null,
     maxLines: Int = 1,
     singleLine: Boolean = false,
     keyboardController: SoftwareKeyboardController? = null,
-    passwordFocusRequester: FocusRequester = FocusRequester(),
+    focusRequester: FocusRequester = FocusRequester(),
     isError: State<Boolean> = remember { mutableStateOf(false) },
     errorMsg: State<String> = remember { mutableStateOf("") },
     onValueChangeListener: (String) -> Unit = {},
+    onDoneClicked : (String) -> Unit = {}
 ) {
 
     when (type) {
@@ -58,11 +60,12 @@ fun ProjectTextInput(
                 leadingIcon = leadingIconType(InputType.Email),
                 keyboardActions = KeyboardActions(
                     onNext = {
-                        passwordFocusRequester.requestFocus()
+                        focusRequester.requestFocus()
                     }
                 ),
                 isError = isError,
                 errorMsg = errorMsg,
+                enabled = enabled,
                 onValueChangeListener = onValueChangeListener
             )
         }
@@ -76,9 +79,10 @@ fun ProjectTextInput(
                         keyboardController?.hide()
                     }
                 ),
-                focusRequester = passwordFocusRequester,
+                focusRequester = focusRequester,
                 isError = isError,
                 errorMsg = errorMsg,
+                enabled = enabled,
                 onValueChangeListener = onValueChangeListener
             )
         }
@@ -106,18 +110,19 @@ fun TextInput(
     modifier: Modifier = Modifier,
     leadingIcon: @Composable (() -> Unit)? = null,
     label: String = "",
+    enabled : Boolean = true,
     focusRequester: FocusRequester? = null,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     isError: State<Boolean> = remember { mutableStateOf(false) },
     errorMsg: State<String> = remember { mutableStateOf("") },
     onValueChangeListener: (value: String) -> Unit = {},
 ) {
-    val textValue = rememberSaveable { mutableStateOf("") }
+    var textValue by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
-        value = textValue.value,
+        value = textValue,
         onValueChange = {
-            textValue.value = it
+            textValue = it
             onValueChangeListener(it)
         },
         modifier = modifier
@@ -139,9 +144,56 @@ fun TextInput(
         keyboardOptions = inputType.keyboardOptions,
         visualTransformation = inputType.visualTransformation,
         keyboardActions = keyboardActions,
-        isError = isError.value
+        isError = isError.value,
+        enabled = enabled
     )
 }
+
+@ExperimentalComposeUiApi
+@Composable
+fun TextInput(
+    text : String,
+    inputType: InputType,
+    modifier: Modifier = Modifier,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    label: String = "",
+    enabled: Boolean = true,
+    focusRequester: FocusRequester? = null,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isError: State<Boolean> = remember { mutableStateOf(false) },
+    errorMsg: State<String> = remember { mutableStateOf("") },
+    onValueChangeListener: (value: String) -> Unit = {},
+) {
+
+    OutlinedTextField(
+        value = text,
+        onValueChange = {
+            onValueChangeListener(it)
+        },
+        modifier = modifier
+            .then(if(focusRequester!= null) modifier.focusRequester(focusRequester) else modifier)
+            .fillMaxWidth(),
+        leadingIcon = leadingIcon,
+        label = {
+            if (inputType != InputType.FIELD) {
+                Text(text = inputType.label, color = Color.Black)
+            }else {
+                Text(text = label, color = Color.Black)
+            }
+        },
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = Color.Black,
+            cursorColor = colorResource(id = R.color.Orange)
+        ),
+        shape = RoundedCornerShape(15.dp),
+        keyboardOptions = inputType.keyboardOptions,
+        visualTransformation = inputType.visualTransformation,
+        keyboardActions = keyboardActions,
+        isError = isError.value,
+        enabled = enabled
+    )
+}
+
 
 sealed class InputType(
     val label: String = "",

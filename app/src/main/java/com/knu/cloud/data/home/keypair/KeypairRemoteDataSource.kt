@@ -15,7 +15,7 @@ class KeypairRemoteDataSource @Inject constructor(
     private val keypairApiService: KeypairApiService
 ) {
 
-    suspend fun getKeypairs() : NetworkResult<OpenstackResponse<KeypairsResponse>> {
+    suspend fun getKeypairs() : NetworkResult<List<KeypairData>> {
         return keypairApiService.getKeypairs()
     }
 

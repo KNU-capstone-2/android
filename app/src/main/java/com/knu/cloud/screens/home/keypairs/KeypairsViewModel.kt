@@ -44,7 +44,7 @@ class KeypairsViewModel @Inject constructor (
                 .onSuccess { keypairs ->
                     if (keypairs != null) {
                         Timber.d("keypairs : $keypairs")
-                        _uiState.update { it.copy(keypairs = keypairs.keypairs, isLoading = false) }
+                        _uiState.update { it.copy(keypairs = keypairs, isLoading = false) }
                     } else {
                         _uiState.update { it.copy(keypairs = emptyList(), isLoading = false) }
                     }

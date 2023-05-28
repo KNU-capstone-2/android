@@ -2,7 +2,7 @@ package com.knu.cloud.model.instanceCreate
 
 import com.google.gson.annotations.SerializedName
 
-data class NetworkResponse(
+data class NetworkData(
     @SerializedName("name") // 이름
     val network: String,
     @SerializedName("subnets") // 서브넷
@@ -17,5 +17,5 @@ data class NetworkResponse(
 
 data class NetworksResponse(
     @SerializedName("networks")
-    val networks : List<NetworkResponse>
+    val networks : List<NetworkData>
 )

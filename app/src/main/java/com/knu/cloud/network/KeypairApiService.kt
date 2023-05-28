@@ -14,7 +14,7 @@ import retrofit2.http.*
 interface KeypairApiService {
 
     @GET("/keypairs")
-    suspend fun getKeypairs(): NetworkResult<OpenstackResponse<KeypairsResponse>>
+    suspend fun getKeypairs(): NetworkResult<List<KeypairData>>
 
     @GET("/keypairs/{id}")
     suspend fun getKeypair(

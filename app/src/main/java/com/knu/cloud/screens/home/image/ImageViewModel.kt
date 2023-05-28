@@ -45,7 +45,7 @@ class ImageViewModel @Inject constructor (
                 .onSuccess { images ->
                     if (images != null) {
                         Timber.d("images :  $images")
-                        _uiState.update { it.copy(images = convertImageData(images.images), isLoading = false) }
+                        _uiState.update { it.copy(images = convertImageData(images), isLoading = false) }
                     }else{
                         _uiState.update { it.copy(images = emptyList(), isLoading = false) }
                     }

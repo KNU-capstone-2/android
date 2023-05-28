@@ -6,7 +6,7 @@ import com.knu.cloud.model.instanceCreate.*
 
 interface InstanceRepository {
 
-    suspend fun getAllInstances() : Result<InstancesResponse?>
+    suspend fun getAllInstances() : Result<List<InstanceData>?>
 
     suspend fun getInstance(instanceId : String) : Result<InstanceData?>
 

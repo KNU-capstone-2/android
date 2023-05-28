@@ -44,7 +44,7 @@ class InstanceViewModel @Inject constructor (
             instanceRepository.getAllInstances()
                 .onSuccess { instanceList ->
                     if (instanceList != null) {
-                        _uiState.update { it.copy(instances = instanceList.instances, isLoading = false) }
+                        _uiState.update { it.copy(instances = instanceList, isLoading = false) }
                     }else{
                         _uiState.update { it.copy(instances = emptyList(), isLoading = false) }
                     }

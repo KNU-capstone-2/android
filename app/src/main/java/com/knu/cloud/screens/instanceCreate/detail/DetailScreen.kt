@@ -1,8 +1,10 @@
 package com.knu.cloud.screens.instanceCreate.detail
 
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -12,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -21,16 +24,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
 import com.knu.cloud.components.DonutChart
 import com.knu.cloud.components.DonutChartComponent
-import com.knu.cloud.components.text_input.ProjectTextInput
-import com.knu.cloud.components.text_input.TextInputType
-import com.knu.cloud.components.text_input.addFocusCleaner
+import com.knu.cloud.components.text_input.*
 import com.knu.cloud.screens.instanceCreate.InstanceCreateViewModel
 import timber.log.Timber
 
@@ -64,7 +68,12 @@ fun DetailScreen(
 fun Detail(
     viewModel: InstanceCreateViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val detailsUiState by viewModel.detailUiState.collectAsState()
+
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -85,9 +94,19 @@ fun Detail(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 15.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
             )
-            ProjectTextInput(
-                type = TextInputType.FIELD,
-                keyboardController = keyboardController,
+            TextInput(
+                text = detailsUiState.projectName,
+                inputType = InputType.FIELD,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController.hide()
+                        focusManager.clearFocus()
+                    }
+                ),
+                enabled = false,
+                onValueChangeListener = {
+                    viewModel.updateDetailsUiState(detailsUiState.copy(projectName = it))
+                }
             )
             Text(
                 text = stringResource(id = R.string.IC_Detail_Header_InstanceName),
@@ -95,29 +114,51 @@ fun Detail(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
             )
-            ProjectTextInput(
-                type = TextInputType.FIELD,
-                keyboardController = keyboardController,
+            TextInput(
+                text = detailsUiState.instanceName,
+                inputType = InputType.FIELD,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController.hide()
+                        focusManager.clearFocus()
+                    }
+                ),
+                onValueChangeListener = {
+                    viewModel.updateDetailsUiState(detailsUiState.copy(instanceName = it))
+                }
             )
-
             Text(
                 text = stringResource(id = R.string.IC_Detail_Header_Info),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
             )
-            ProjectTextInput(
-                type = TextInputType.FIELD,
-                keyboardController = keyboardController,
+            TextInput(
+                text = detailsUiState.description,
+                inputType = InputType.FIELD,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController.hide()
+                        focusManager.clearFocus()
+                    }
+                ),
+                onValueChangeListener = {
+                    viewModel.updateDetailsUiState(detailsUiState.copy(description = it))
+                }
             )
-
             Text(
                 text = stringResource(id = R.string.IC_Detail_Header_Area),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 10.dp)
             )
-            DropdownCompute() // 가용구역 선택
+            DropdownCompute(   // 가용구역 선택
+                items = listOf("Nova"),
+                selectedItem = detailsUiState.availabilityZone,
+                onItemClicked = {
+                    viewModel.updateDetailsUiState(detailsUiState.copy(availabilityZone = it))
+                }
+            )
 
             Text(
                 text = stringResource(id = R.string.IC_Detail_Header_Count),
@@ -125,9 +166,22 @@ fun Detail(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 25.dp, start = 8.dp, end = 15.dp, bottom = 5.dp)
             )
-            ProjectTextInput(
-                type = TextInputType.FIELD,
-                keyboardController = keyboardController,
+            var addCountString by remember { mutableStateOf(detailsUiState.addCount.toString()) }
+            TextInput(
+                text = addCountString,
+                inputType = InputType.FIELD,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController.hide()
+                        try {
+                            viewModel.updateDetailsUiState(detailsUiState.copy(addCount = addCountString.toInt()))
+                        }catch (e : NumberFormatException){
+                            Toast.makeText(context,"정수를 입력하세요",Toast.LENGTH_SHORT).show()
+                        }
+                        focusManager.clearFocus()
+                    }
+                ),
+                onValueChangeListener = { addCountString = it}
             )
         } // Column End
 
@@ -139,22 +193,24 @@ fun Detail(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val data = viewModel.instanceState.value
-            Timber.tag("TEST").e("$data")
-            DonutChartComponent(
-                // 인스턴스 현황
-                // Current Usage, Added, Remaining 순
-                chartValues = listOf(0, data.assignedData, data.remainingData)
+            DonutChartComponent(                                         // 인스턴스 현황 Current Usage, Added, Remaining 순
+                chartValues = listOf(
+                    detailsUiState.currentCount,
+                    detailsUiState.addCount,
+                    detailsUiState.totalCount - detailsUiState.addCount -detailsUiState.currentCount    // remaining 계산
+                )
             )
         } // Column End
     }
 }
 
 @Composable
-fun DropdownCompute() {
+fun DropdownCompute(
+    items : List<String> = listOf("Nova"),
+    selectedItem : String = remember { mutableStateOf(items[0])}.value,
+    onItemClicked : (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
-    val items = listOf("Nova") // Nova 하나로 고정
-    var selectedIndex by remember { mutableStateOf(0) }
     var fieldSize by remember { mutableStateOf(Size.Zero)}
 
     Box (
@@ -178,7 +234,7 @@ fun DropdownCompute() {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text (
-                text = items[selectedIndex],
+                text = selectedItem,
             )
             Icon(
                 imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -193,13 +249,14 @@ fun DropdownCompute() {
                 .width(with(LocalDensity.current) { fieldSize.width.toDp() })
                 .height(60.dp),
         ) {
-            items.forEachIndexed { index, s ->
-                DropdownMenuItem(onClick = {
-                    selectedIndex = index
-                    expanded = false
+            items.forEach {item ->
+                DropdownMenuItem(
+                    onClick = {
+                        expanded = false
+                        onItemClicked(item)
                 }) {
                     Text(
-                        text = s,
+                        text = item,
                     )
                 }
             }
@@ -208,7 +265,7 @@ fun DropdownCompute() {
 }
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = Devices.TABLET)
 @Composable
 fun CustomDonutChart() {
 
@@ -227,8 +284,12 @@ fun CustomDonutChart() {
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Preview
 @Composable
 fun DetailScreenPreview() {
+    Surface() {
+        DetailScreen()
 
+    }
 }

@@ -12,16 +12,16 @@ import retrofit2.http.POST
 interface InstanceCreateApiService {
 
     @GET("/flavors")
-    suspend fun getFlavorData(): NetworkResult<OpenstackResponse<FlavorsResponse>>
+    suspend fun getFlavorData(): NetworkResult<List<FlavorData>>
 
     @GET("/keypairs")
-    suspend fun getKeypairData(): NetworkResult<OpenstackResponse<KeypairsResponse>>
+    suspend fun getKeypairData(): NetworkResult<List<KeypairData>>
 
     @GET("/networks")
-    suspend fun getNetworkData(): NetworkResult<OpenstackResponse<NetworksResponse>>
+    suspend fun getNetworkData(): NetworkResult<List<NetworkData>>
 
     @GET("/images")
-    suspend fun getImages(): NetworkResult<OpenstackResponse<ImagesResponse>>
+    suspend fun getImages(): NetworkResult<List<ImageData>>
 
     @POST("/api/v1/create")
     suspend fun instanceCreate(

@@ -17,7 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
 import com.knu.cloud.components.data_grid.*
 import com.knu.cloud.components.text_input.addFocusCleaner
-import com.knu.cloud.model.instanceCreate.NetworkResponse
+import com.knu.cloud.model.instanceCreate.NetworkData
 
 @ExperimentalComposeUiApi
 @Composable
@@ -46,11 +46,10 @@ fun Network(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    var uploadExpanded by remember { mutableStateOf(false) }
+    var uploadExpanded by remember { mutableStateOf(true) }
     var possibleExpanded by remember { mutableStateOf(true) }
 
-    val uploadList = viewModel.uploadNetwork.value
-    val possibleList = viewModel.possibleNetwork.value
+    val uiState by viewModel.networkUiState.collectAsState()
 
     LazyColumn(
         modifier = Modifier
@@ -70,22 +69,24 @@ fun Network(
         item {
             DataGridBar(
                 type = "할당됨",
-                numbers = viewModel.uploadNetwork.value.size,
+                numbers = if (uiState.uploadNetwork== null) 0 else 1,
                 expanded = uploadExpanded
             ) {
                 uploadExpanded = it
             }
         }
         if (uploadExpanded) {
-            itemsIndexed(uploadList) { index, item ->
-                if (index == 0) DataGridHeader(screenType = "Network")
-                DataGridElementList<NetworkResponse>(
-                    item = item,
-                    index = index,
-                    type = "할당됨",
-                    screenType = "Network"
-                ) { it, idx ->
-                    viewModel.deleteNetwork(it, idx)
+            if(uiState.uploadNetwork != null){
+                itemsIndexed(listOf(uiState.uploadNetwork!!)) { index, item ->
+                    if (index == 0) DataGridHeader(screenType = "Network")
+                    DataGridElementList<NetworkData>(
+                        item = item,
+                        index = index,
+                        type = "할당됨",
+                        screenType = "Network"
+                    ) { it, idx ->
+                        viewModel.deleteNetwork(it)
+                    }
                 }
             }
         }
@@ -94,22 +95,23 @@ fun Network(
         item {
             DataGridBar(
                 type = "사용 가능",
-                numbers = viewModel.possibleNetwork.value.size,
+                numbers = uiState.possibleNetworks.size,
                 expanded = possibleExpanded,
             ) {
                 possibleExpanded = it
             }
         }
         if (possibleExpanded) {
-            itemsIndexed(possibleList) { index, item ->
+            itemsIndexed(uiState.possibleNetworks) { index, item ->
                 if (index == 0) DataGridHeader(screenType = "Network")
-                DataGridElementList<NetworkResponse>(
+                DataGridElementList<NetworkData>(
                     item = item,
                     index = index,
                     type = "사용 가능",
                     screenType = "Network"
                 ) { it, idx ->
-                    viewModel.uploadNetwork(it, idx)
+                    if(uiState.uploadNetwork != null) viewModel.updateNetwork(it,idx)
+                    else viewModel.uploadNetwork(it,idx)
                 }
             }
         }

@@ -12,8 +12,8 @@ import javax.inject.Inject
 class KeypairRepositoryImpl @Inject constructor(
     private val remoteDataSource: KeypairRemoteDataSource
 ) : KeypairRepository{
-    override suspend fun getKeypairs(): Result<KeypairsResponse?> {
-        return openstackResponseToResult(remoteDataSource.getKeypairs())
+    override suspend fun getKeypairs(): Result<List<KeypairData>?> {
+        return responseToResult(remoteDataSource.getKeypairs())
     }
 
     override suspend fun getKeypair(keypairName: String): Result<KeypairData?> {

@@ -5,7 +5,7 @@ import com.knu.cloud.model.OpenstackResponse
 import com.knu.cloud.model.auth.AuthResponse
 import timber.log.Timber
 
-class RetrofitFailureStateException(error: String ?, val code: Int) : Exception(error)
+class RetrofitFailureStateException(error: String ?, val code: Int = 999) : Exception(error)
 
 fun <T:Any> authResponseToResult(networkResult: NetworkResult<AuthResponse<T>>) :Result<T?>{
     Timber.tag("network").d("AuthResponse ${networkResult.toString()}")
@@ -41,7 +41,11 @@ fun <T:Any> openstackResponseToResult(networkResult: NetworkResult<OpenstackResp
             }
         is NetworkResult.Exception -> {
             Timber.tag("network").d("OpenstackResponse Exception e : ${networkResult.e}")
-            Result.failure(networkResult.e)
+            Result.failure(
+                RetrofitFailureStateException(
+                    networkResult.e.message
+                )
+            )
         }
     }
 }
@@ -57,6 +61,10 @@ fun <T:Any> responseToResult(networkResult: NetworkResult<T>): Result<T?> {
                 networkResult.code
             )
         )
-        is NetworkResult.Exception -> Result.failure(networkResult.e)
+        is NetworkResult.Exception -> Result.failure(
+            RetrofitFailureStateException(
+                networkResult.e.message
+            )
+        )
     }
 }

@@ -11,9 +11,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.knu.cloud.model.instanceCreate.FlavorResponse
+import com.knu.cloud.model.instanceCreate.FlavorData
 import com.knu.cloud.model.instanceCreate.KeypairData
-import com.knu.cloud.model.instanceCreate.NetworkResponse
+import com.knu.cloud.model.instanceCreate.NetworkData
 import com.knu.cloud.model.instanceCreate.ImageData
 import com.knu.cloud.utils.*
 
@@ -94,7 +94,7 @@ fun <T> DataGridElementList(
         when(screenType) {
             "Flavor" ->
                 FlavorDataTableCell(
-                    item = item as FlavorResponse, // Flavor로 캐스팅
+                    item = item as FlavorData, // Flavor로 캐스팅
                     index = index,
                     type = type
                 ) { it, idx ->
@@ -110,7 +110,7 @@ fun <T> DataGridElementList(
                 }
             "Network" ->
                 NetworkDataTableCell(
-                    item = item as NetworkResponse, // Network로 캐스팅
+                    item = item as NetworkData, // Network로 캐스팅
                     index = index,
                     type = type
                 ) { it, idx ->
