@@ -2,6 +2,7 @@ package com.knu.cloud.screens.home.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.knu.cloud.model.home.dashboard.DashboardClass
 import com.knu.cloud.model.home.dashboard.DashboardDataSet
 import com.knu.cloud.model.home.dashboard.DashboardData
 import com.knu.cloud.model.home.dashboard.DashboardUsageData
@@ -31,7 +32,7 @@ class DashboardViewModel @Inject constructor(
             dashboardRepository.getDashboardData()
                 .onSuccess {
                     Timber.tag("TEST").e("$it")
-                    val total = it!!.dashboardDataClass
+                    val total = it?.dashboardDataClass ?:testDashboardClass
                     computeDataSet = mutableListOf(
                         DashboardData("인스턴스", total.instanceCount,10-total.instanceCount),
                         DashboardData("VCPUs",total.vcpuCount, 10-total.vcpuCount),
@@ -84,5 +85,17 @@ class DashboardViewModel @Inject constructor(
             delay(1000)
         }
     }
-
 }
+
+
+val testDashboardClass = DashboardClass(
+    instanceCount = 1,
+    vcpuCount = 1,
+    ramCount = 192,
+    volumeCount = 2,
+    snapshotCount = 0,
+    volumeStorageGB = 2,
+    floatingIpCount = 1,
+    securityGroupCount = 1,
+    networkCount = 1,
+)
