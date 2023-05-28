@@ -51,6 +51,11 @@ fun InstanceDetailScreen (
     LaunchedEffect(Unit){
         viewModel.getInstance(instanceId)
     }
+    LaunchedEffect(uiState.message){
+        if(uiState.message.isNotEmpty()){
+            Toast.makeText(context, uiState.message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     if(uiState.isLoading){
         CenterCircularProgressIndicator()
@@ -108,15 +113,15 @@ fun InstanceDetailScreen (
                     ) {
                         InstanceActionButtons(
                             StartClicked = {
-                                // TODO: viewModel.startInstance(instanceId)
+                                viewModel.startInstance(instanceId)
                                 Toast.makeText(context, "Start!", Toast.LENGTH_SHORT).show()
                             },
                             ReStartClicked = {
-                                // TODO: viewModel.reStartInstance(instanceId)
+                                 viewModel.reStartInstance(instanceId)
                                 Toast.makeText(context, "ReStart!", Toast.LENGTH_SHORT).show()
                             },
                             StopClicked = {
-                                // /TODO: viewModel.stopInstance(instanceId)
+                                viewModel.stopInstance(instanceId)
                                 Toast.makeText(context, "Stop!", Toast.LENGTH_SHORT).show()
                             }
                         )

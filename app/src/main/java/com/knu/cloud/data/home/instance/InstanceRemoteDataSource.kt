@@ -2,6 +2,7 @@ package com.knu.cloud.data.home.instance
 
 import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.OpenstackResponse
+import com.knu.cloud.model.home.instance.InstanceControlResponse
 import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.network.apiService.InstanceApiService
 import timber.log.Timber
@@ -24,15 +25,15 @@ class InstanceRemoteDataSource @Inject constructor (
         return instanceApiService.deleteInstance(instanceId)
     }
 
-    suspend fun startInstance(instanceId: String): NetworkResult<OpenstackResponse<String>> {
+    suspend fun startInstance(instanceId: String): NetworkResult<InstanceControlResponse> {
         Timber.tag("network").d("InstanceRemoteDataSource startInstance($instanceId) 호출")
         return instanceApiService.startInstance(instanceId)
     }
-    suspend fun reStartInstance(instanceId: String): NetworkResult<OpenstackResponse<String>> {
+    suspend fun reStartInstance(instanceId: String): NetworkResult<InstanceControlResponse> {
         Timber.tag("network").d("InstanceRemoteDataSource reStartInstance($instanceId) 호출")
         return instanceApiService.reStartInstance(instanceId)
     }
-    suspend fun stopInstance(instanceId: String): NetworkResult<OpenstackResponse<String>> {
+    suspend fun stopInstance(instanceId: String): NetworkResult<InstanceControlResponse> {
         Timber.tag("network").d("InstanceRemoteDataSource stopInstance($instanceId) 호출")
         return instanceApiService.stopInstance(instanceId)
     }

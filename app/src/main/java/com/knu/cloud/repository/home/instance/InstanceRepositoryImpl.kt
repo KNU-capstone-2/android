@@ -2,6 +2,7 @@ package com.knu.cloud.repository.home.instance
 
 import com.knu.cloud.data.home.instance.InstanceRemoteDataSource
 import com.knu.cloud.model.NetworkResult
+import com.knu.cloud.model.home.instance.InstanceControlResponse
 import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.model.home.instance.InstancesResponse
 import com.knu.cloud.model.onError
@@ -27,13 +28,13 @@ class InstanceRepositoryImpl @Inject constructor(
 
     override suspend fun deleteInstance(instanceId: String): Result<String?> =
         responseToResult(remoteDataSource.deleteInstance(instanceId))
-    override suspend fun startInstance(instanceId: String): Result<String?> =
-        openstackResponseToResult(remoteDataSource.startInstance(instanceId))
+    override suspend fun startInstance(instanceId: String): Result<InstanceControlResponse?> =
+        responseToResult(remoteDataSource.startInstance(instanceId))
 
-    override suspend fun reStartInstance(instanceId: String): Result<String?> =
-        openstackResponseToResult(remoteDataSource.reStartInstance(instanceId))
+    override suspend fun reStartInstance(instanceId: String): Result<InstanceControlResponse?> =
+        responseToResult(remoteDataSource.reStartInstance(instanceId))
 
-    override suspend fun stopInstance(instanceId: String): Result<String?> =
-        openstackResponseToResult(remoteDataSource.stopInstance(instanceId))
+    override suspend fun stopInstance(instanceId: String): Result<InstanceControlResponse?> =
+        responseToResult(remoteDataSource.stopInstance(instanceId))
 
 }
