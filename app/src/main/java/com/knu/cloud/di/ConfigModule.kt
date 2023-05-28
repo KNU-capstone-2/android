@@ -1,6 +1,7 @@
 package com.knu.cloud.di
 
 import com.knu.cloud.network.networkResultCallAdapter.NetworkResultCallAdapterFactory
+import com.knu.cloud.network.nullOrEmptyConverter.NullOrEmptyConverterFactory
 import com.knu.cloud.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -24,6 +25,7 @@ object ConfigModule {
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .addConverterFactory(NullOrEmptyConverterFactory)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(NetworkResultCallAdapterFactory.create())
