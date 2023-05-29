@@ -29,6 +29,7 @@ import com.knu.cloud.R
 import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
 import com.knu.cloud.components.text_input.addFocusCleaner
+import com.knu.cloud.utils.ToastSuccessMessage
 import timber.log.Timber
 
 @ExperimentalComposeUiApi
@@ -105,7 +106,11 @@ fun SignUp(
 
     LaunchedEffect(uiState.message){
         if(uiState.message.isNotEmpty()){
-            Toast.makeText(context, uiState.message, Toast.LENGTH_SHORT).show()
+            ToastSuccessMessage(
+                context = context,
+                message = uiState.message
+            )
+//            Toast.makeText(context, uiState.message, Toast.LENGTH_SHORT).show()
         }
     }
 
