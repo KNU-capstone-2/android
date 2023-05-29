@@ -4,6 +4,7 @@ import com.knu.cloud.data.home.Dashboard.DashboardRemoteDataSource
 import com.knu.cloud.model.home.dashboard.DashboardResponse
 import com.knu.cloud.model.home.dashboard.DashboardUsageResponse
 import com.knu.cloud.model.home.instance.InstancesResponse
+import com.knu.cloud.network.authResponseToResult
 import com.knu.cloud.network.openstackResponseToResult
 import javax.inject.Inject
 
@@ -12,9 +13,9 @@ class DashboardRepositoryImpl @Inject constructor(
 ): DashboardRepository {
 
     override suspend fun getDashboardData(): Result<DashboardResponse?> =
-        openstackResponseToResult(remoteDataSource.getDashboardData())
+        authResponseToResult(remoteDataSource.getDashboardData())
 
     override suspend fun getDashboardUsageData(): Result<DashboardUsageResponse?> =
-        openstackResponseToResult(remoteDataSource.getDashboardUsageData())
+        authResponseToResult(remoteDataSource.getDashboardUsageData())
 
 }

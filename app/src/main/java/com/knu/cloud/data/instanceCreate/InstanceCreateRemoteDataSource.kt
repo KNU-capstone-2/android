@@ -13,20 +13,20 @@ class InstanceCreateRemoteDataSource @Inject constructor(
     suspend fun createInstance(createRequest: CreateRequest) :NetworkResult<AuthResponse<InstanceData>>{
         return instanceCreateApiService.instanceCreate(createRequest)
     }
-    suspend fun getFlavorData() : NetworkResult<List<FlavorData>> {
+    suspend fun getFlavorData() : NetworkResult<AuthResponse<List<FlavorData>>> {
 
         return instanceCreateApiService.getFlavorData()
     }
 
-    suspend fun getKeypairData() : NetworkResult<List<KeypairData>> {
+    suspend fun getKeypairData() : NetworkResult<AuthResponse<List<KeypairData>>> {
         return instanceCreateApiService.getKeypairData()
     }
 
-    suspend fun getNetworkData() : NetworkResult<List<NetworkData>> {
+    suspend fun getNetworkData() : NetworkResult<AuthResponse<List<NetworkData>>> {
         return instanceCreateApiService.getNetworkData()
     }
 
-    suspend fun getImages() : NetworkResult<List<ImageData>> {
+    suspend fun getImages() : NetworkResult<AuthResponse<List<ImageData>>> {
         return instanceCreateApiService.getImages()
     }
 }

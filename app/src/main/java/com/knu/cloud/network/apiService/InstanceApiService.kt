@@ -14,33 +14,32 @@ import retrofit2.http.*
 interface InstanceApiService {
 
     @GET("/instances")
-    suspend fun getAllInstances() : NetworkResult<List<InstanceData>>
+    suspend fun getAllInstances() : NetworkResult<AuthResponse<List<InstanceData>>>
 
     @GET("/instance/{id}")
     suspend fun getInstance(
         @Path("id") instanceId : String
-    ) : NetworkResult<InstanceData>
+    ) : NetworkResult<AuthResponse<InstanceData>>
 
     @DELETE("/instance/{id}")
     suspend fun deleteInstance(
         @Path("id") instanceId: String
-    ): NetworkResult<String>
+    ): NetworkResult<AuthResponse<String>>
 
     @POST("/instance/start/{id}")
     suspend fun startInstance(
         @Path("id") instanceId: String
-    ): NetworkResult<InstanceControlResponse>
+    ): NetworkResult<AuthResponse<InstanceControlResponse>>
 
 
     @POST("/instance/reboot/{id}")
     suspend fun reStartInstance(
         @Path("id") instanceId: String
-    ): NetworkResult<InstanceControlResponse>
+    ): NetworkResult<AuthResponse<InstanceControlResponse>>
 
 
     @POST("/instance/stop/{id}")
     suspend fun stopInstance(
         @Path("id") instanceId: String
-    ): NetworkResult<InstanceControlResponse>
-
+    ): NetworkResult<AuthResponse<InstanceControlResponse>>
 }

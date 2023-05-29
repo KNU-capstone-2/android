@@ -9,6 +9,7 @@ import com.knu.cloud.model.onError
 import com.knu.cloud.model.onException
 import com.knu.cloud.model.onSuccess
 import com.knu.cloud.network.RetrofitFailureStateException
+import com.knu.cloud.network.authResponseToResult
 import com.knu.cloud.network.openstackResponseToResult
 import com.knu.cloud.network.responseToResult
 import javax.inject.Inject
@@ -21,20 +22,19 @@ class InstanceRepositoryImpl @Inject constructor(
      * Result로 처리해주는 이유는 viewModel에서 Success/Failure 처리 용이하도록 하기 위함
      */
     override suspend fun getAllInstances(): Result<List<InstanceData>?> =
-        responseToResult(remoteDataSource.getAllInstances())
+        authResponseToResult(remoteDataSource.getAllInstances())
 
     override suspend fun getInstance(instanceId: String): Result<InstanceData?> =
-        responseToResult(remoteDataSource.getInstance(instanceId))
+        authResponseToResult(remoteDataSource.getInstance(instanceId))
 
     override suspend fun deleteInstance(instanceId: String): Result<String?> =
-        responseToResult(remoteDataSource.deleteInstance(instanceId))
+    authResponseToResult(remoteDataSource.deleteInstance(instanceId))
     override suspend fun startInstance(instanceId: String): Result<InstanceControlResponse?> =
-        responseToResult(remoteDataSource.startInstance(instanceId))
+        authResponseToResult(remoteDataSource.startInstance(instanceId))
 
     override suspend fun reStartInstance(instanceId: String): Result<InstanceControlResponse?> =
-        responseToResult(remoteDataSource.reStartInstance(instanceId))
+        authResponseToResult(remoteDataSource.reStartInstance(instanceId))
 
     override suspend fun stopInstance(instanceId: String): Result<InstanceControlResponse?> =
-        responseToResult(remoteDataSource.stopInstance(instanceId))
-
+        authResponseToResult(remoteDataSource.stopInstance(instanceId))
 }
