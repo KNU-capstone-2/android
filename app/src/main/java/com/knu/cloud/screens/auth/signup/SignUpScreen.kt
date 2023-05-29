@@ -236,11 +236,11 @@ fun SignUp(
         // 회원가입 버튼
         Button(
             onClick ={
-                if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
                     viewModel.signUp()
                     Timber.tag("test").d("테스트 성공")
                     Toast.makeText(context, "회원가입 완료", Toast.LENGTH_SHORT).show()
                     onSignUpSubmitClick()
+                if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
                 }
             },
             modifier = Modifier

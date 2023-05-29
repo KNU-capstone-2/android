@@ -27,7 +27,7 @@ fun NavGraphBuilder.homeNavGraph(
 ) {
     navigation(
         route = MainDestination.HOME_ROUTE,
-        startDestination = ComputeSections.DashBoard.route
+        startDestination = ComputeSections.Instance.route
     ){
         composable(ComputeSections.DashBoard.route){ from ->
             DashboardScreen()

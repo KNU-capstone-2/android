@@ -20,6 +20,7 @@ import com.knu.cloud.components.MessageDialog
 import com.knu.cloud.components.FABContent
 import com.knu.cloud.components.NavDrawer
 import com.knu.cloud.components.ProjectAppBar
+import com.knu.cloud.di.ConfigModule.provideSessionManager
 import com.knu.cloud.navigation.*
 import com.knu.cloud.network.SessionManager
 import com.knu.cloud.screens.instanceCreate.InstanceCreateScreen
@@ -27,12 +28,13 @@ import com.knu.cloud.screens.splash.ProjectSplashScreen
 import com.knu.cloud.ui.theme.CloudTheme
 import com.knu.cloud.utils.reformatScreenPath
 import timber.log.Timber
+import javax.inject.Inject
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ProjectApp(
+fun ProjectApp (
     appState: ProjectAppState = rememberProjectAppState(),
-    sessionManager: SessionManager = SessionManager()
+    sessionManager: SessionManager = provideSessionManager()
 ) {
     val authState by sessionManager.authState.collectAsState()
     var firstRendering by remember { mutableStateOf(true) }
@@ -49,7 +51,7 @@ fun ProjectApp(
             }
         )
     }
-    LaunchedEffect(authState.isLoggedIn,appState.showLogOutDialog.value){
+    LaunchedEffect(authState.isLoggedIn,appState.showLogOutDialog.value,firstRendering){
         Timber.d("authState.isLoggedId : ${authState.isLoggedIn}")
         if(!firstRendering && !authState.isLoggedIn && !appState.showLogOutDialog.value){
             appState.navActions.navigateToLogin(null)
@@ -112,7 +114,7 @@ fun ProjectApp(
                     authNavGraph(
                         onLoginClicked = {
                             appState.navActions.navigateToHome(null)
-                            sessionManager.login("123")
+//                            sessionManager.login("123")
                         },
                         onSignUpClicked = appState.navActions::navigateToSignUp,
                         onSignUpSubmitClicked = appState.navActions::navigateToLogin

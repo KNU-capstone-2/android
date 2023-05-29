@@ -129,8 +129,8 @@ fun LoginScreen(
                     // 로그인 버튼
                     Button(
                         onClick = {
-                                  onLoginClick()
-//                            viewModel.login()
+//                                  onLoginClick()
+                            viewModel.login()
                         },
                         modifier = Modifier
                             .fillMaxWidth()
