@@ -3,18 +3,30 @@ package com.knu.cloud.screens.home.instance
 import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.knu.cloud.R
 import com.knu.cloud.components.CenterLottieLoadingIndicator
+import com.knu.cloud.components.CustomOutlinedButton
 import com.knu.cloud.components.DeleteConfirmDialog
 import com.knu.cloud.components.DeleteResultDialog
 import com.knu.cloud.components.basicTable.*
@@ -261,18 +273,20 @@ fun InstancesBar(
                 )
             }
         }
-        OutlinedButton(
-            modifier = Modifier.weight(0.1f),
-            onClick = onLaunchBtnClicked
-        ) {
-            Text(text = "Launch Instance")
-        }
-        OutlinedButton(
-            modifier = Modifier.weight(0.1f),
-            onClick =  onDeleteBtnClicked
-        ) {
-            Text(text = "Delete Instances")
-        }
+        CustomOutlinedButton(
+            modifier = Modifier.weight(0.06f),
+            onBtnClicked = { onLaunchBtnClicked() },
+            title = "Launch Instances",
+            icons = R.drawable.launch_24
+        )
+        Spacer(modifier = Modifier.width(5.dp))
+        CustomOutlinedButton(
+            modifier = Modifier.weight(0.06f),
+            onBtnClicked = { onDeleteBtnClicked() },
+            title = "Delete Instances",
+            icons = R.drawable.ic_baseline_delete_forever_24
+        )
+        Spacer(modifier = Modifier.width(5.dp))
     }
 }
 
@@ -284,4 +298,3 @@ fun InstanceScreenPrev() {
         onInstanceDetailClicked = {}
     )
 }
-

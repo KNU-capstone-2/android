@@ -11,8 +11,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.knu.cloud.R
 import com.knu.cloud.components.CreateLoadingDialog
-import com.knu.cloud.components.LaunchButton
+import com.knu.cloud.components.CustomOutlinedButton
 import com.knu.cloud.navigation.InstanceCreateSections
 import com.knu.cloud.navigation.findStartDestination
 import com.knu.cloud.navigation.instanceCreateNavGraph
@@ -90,9 +91,13 @@ fun InstanceCreateScreen(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Bottom
             ) {
-                LaunchButton {
-                    instanceCreateViewModel.openCreateInstanceDialog()
-                }
+                CustomOutlinedButton(
+                    onBtnClicked = {
+                        instanceCreateViewModel.openCreateInstanceDialog()
+                    },
+                    title = "Launch Button",
+                    icons = R.drawable.launch_24
+                )
             }
         }
     }

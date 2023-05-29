@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.knu.cloud.R
+import com.knu.cloud.components.CustomOutlinedButton
 import com.knu.cloud.components.InstanceActionButtons
 import com.knu.cloud.model.home.instance.InstanceData
 
@@ -44,7 +45,7 @@ fun InstanceSummary(
             Box(modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ){
-                Text(text = "Instance를 생성 또는 선택해 주세요")
+                Text(text = "Instance 생성 또는 선택해 주세요")
             }
         }else{
             Text(
@@ -108,10 +109,11 @@ fun InstanceSummary(
                 title = "호스트 이름 유형",
                 content = instance.hostNameType
             )
-
-            Button(onClick = { onInstanceDetailClicked(instance.id) }) {
-                Text(text = "Instance Detail")
-            }
+            CustomOutlinedButton(
+                onBtnClicked = { onInstanceDetailClicked(instance.id) },
+                title = "Instance Detail",
+                icons = R.drawable.ic_baseline_manage_search_24
+            )
         }
     }
 }

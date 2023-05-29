@@ -21,10 +21,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.knu.cloud.R
 import com.knu.cloud.extensions.toPercent
-import kotlin.math.cos
-import kotlin.math.min
-import kotlin.math.roundToInt
-import kotlin.math.sin
+import kotlin.math.*
 
 private val CARD_SIZE = 140 .dp
 
@@ -139,7 +136,7 @@ internal fun PieChart(
 
             angleProgress.forEachIndexed { index, angle ->
                 drawArc(
-                    color = colors[index],
+                    color = colors[index].copy(alpha = 0.4f),
                     startAngle = startAngle,
                     sweepAngle = angle * pathPortion.value,
                     useCenter = true,
