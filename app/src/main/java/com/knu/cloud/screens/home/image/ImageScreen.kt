@@ -12,21 +12,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.knu.cloud.R
 import com.knu.cloud.components.CenterLottieLoadingIndicator
 import com.knu.cloud.components.DeleteConfirmDialog
 import com.knu.cloud.components.DeleteResultDialog
 import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.model.instanceCreate.ImageData
+import com.knu.cloud.utils.convertStatusColor
 import timber.log.Timber
+
+val IMAGE_COLUMN_HEADERS =  listOf("Image Name", "Status","Size", "Create Date", "Update Date")
+val IMAGE_COLUMN_TYPES  = listOf(
+    TableColumnType.Text,
+    TableColumnType.ColorBox,
+    TableColumnType.ColorBox,
+    TableColumnType.ColorBox,
+    TableColumnType.ColorBox
+)
+val IMAGE_COLUMN_WEIGHTS  =  listOf(.2f,.1f,.1f,.1f,.1f)
 
 @Composable
 fun ImageScreen(
-    onImageCreateClicked: () -> Unit,
-    onImageDetailClicked: (String) -> Unit,
+    onImageCreateClicked: () -> Unit = {},
+    onImageDetailClicked: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel : ImageViewModel  = hiltViewModel()
 ) {
@@ -170,18 +179,10 @@ fun ImageTable(
         }
     }
 
-    val columnHeaders =  listOf("Image Name", "Status","Size", "Create Date", "Update Date")
+    val columnHeaders = IMAGE_COLUMN_HEADERS
 
-    var columnTypes by remember{ mutableStateOf( listOf(
-        TableColumnType.Text,
-        TableColumnType.ColorBox,
-        TableColumnType.ColorBox,
-        TableColumnType.ColorBox,
-        TableColumnType.ColorBox
-    ))}
-    var columnWeights by rememberSaveable{ mutableStateOf(
-        listOf(.2f,.1f,.1f,.1f,.1f)
-    )}
+    var columnTypes by remember{ mutableStateOf(IMAGE_COLUMN_TYPES)}
+    var columnWeights by rememberSaveable{ mutableStateOf(IMAGE_COLUMN_WEIGHTS)}
     /**
     *  || Name || Status || Size || CreateDate || UpdateDate
     * */
@@ -189,7 +190,9 @@ fun ImageTable(
     rowItems = dataList.map { imageData ->
         val imageNameCell by mutableStateOf( TableCell(imageData.name ))
         val imageStatusCell by mutableStateOf(
-            TableCell(imageData.status, colorResource(id = R.color.instance_state_running))
+            TableCell( text = imageData.status,
+                color = convertStatusColor(imageData.status)
+            )
         )
         val imageSizeCell by mutableStateOf( TableCell("${imageData.size} MB") )
         val createDateCell by mutableStateOf( TableCell( imageData.createdDate))

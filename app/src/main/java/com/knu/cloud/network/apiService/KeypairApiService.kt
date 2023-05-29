@@ -1,4 +1,4 @@
-package com.knu.cloud.network
+package com.knu.cloud.network.apiService
 
 import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.OpenstackResponse
@@ -14,21 +14,21 @@ import retrofit2.http.*
 interface KeypairApiService {
 
     @GET("/keypairs")
-    suspend fun getKeypairs(): NetworkResult<List<KeypairData>>
+    suspend fun getKeypairs(): NetworkResult<AuthResponse<List<KeypairData>>>
 
     @GET("/keypairs/{id}")
     suspend fun getKeypair(
         @Path("id") keypairName : String
-    ) : NetworkResult<KeypairData>
+    ) : NetworkResult<AuthResponse<KeypairData>>
 
     @POST("/keypairs")
     suspend fun createKeypair(
         @Body keypairCreateRequest: KeypairCreateRequest
-    ) : NetworkResult<KeypairCreateResponse>
+    ) : NetworkResult<AuthResponse<KeypairCreateResponse>>
 
     @DELETE("/keypairs/{id}")
     suspend fun deleteKeypair(
         @Path("id") keypairName: String
-    ): NetworkResult<String>
+    ): NetworkResult<AuthResponse<String>>
 
 }

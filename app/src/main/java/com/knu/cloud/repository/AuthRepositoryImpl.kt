@@ -7,20 +7,17 @@ import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.auth.LoginRequest
 import com.knu.cloud.model.auth.SignUpRequest
 import com.knu.cloud.network.RetrofitFailureStateException
+import com.knu.cloud.network.SessionManager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val remoteDataSource: AuthRemoteDataSource,
-    private val localDataSource: AuthLocalDataSource,
-    private val sessionManager: SessionManager,
-    @ApplicationScopeIO private val scopeIO: CoroutineScope
 ): AuthRepository {
     override suspend fun login(id : String, password : String) : Result<String>{
         return when(val authResponse = remoteDataSource.login(LoginRequest(id,password))){
             is NetworkResult.Success -> {
-                if(authResponse.data.status == 200){
+                if(authResponse.data.status == 200 || authResponse.data.status == 1000){
                     Result.success(authResponse.data.message)
                 }else{
                     Result.failure(

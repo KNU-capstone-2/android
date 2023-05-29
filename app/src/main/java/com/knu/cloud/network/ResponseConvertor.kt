@@ -3,6 +3,7 @@ package com.knu.cloud.network
 import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.OpenstackResponse
 import com.knu.cloud.model.auth.AuthResponse
+import com.knu.cloud.model.home.instance.InstanceControlResponse
 import timber.log.Timber
 
 class RetrofitFailureStateException(error: String ?, val code: Int = 999) : Exception(error)

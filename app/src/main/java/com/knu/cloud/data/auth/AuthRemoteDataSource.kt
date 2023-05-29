@@ -2,8 +2,7 @@ package com.knu.cloud.data.auth
 
 import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.auth.*
-import com.knu.cloud.network.AuthApiService
-import retrofit2.Response
+import com.knu.cloud.network.apiService.AuthApiService
 import timber.log.Timber
 import javax.inject.Inject
 

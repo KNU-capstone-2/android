@@ -32,7 +32,7 @@ val KEYPAIR_COLUMN_WEIGHTS  = listOf(.2f,.1f,.4f)
 
 @Composable
 fun KeypairsScreen(
-    onKeypairDetailClicked: (String) -> Unit,
+    onKeypairDetailClicked: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel : KeypairsViewModel  = hiltViewModel()
 ) {

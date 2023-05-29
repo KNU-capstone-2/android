@@ -2,8 +2,6 @@ package com.knu.cloud.di
 
 import com.knu.cloud.repository.AuthRepository
 import com.knu.cloud.repository.AuthRepositoryImpl
-import com.knu.cloud.repository.OpenStackRepository
-import com.knu.cloud.repository.OpenStackRepositoryImpl
 import com.knu.cloud.repository.home.dashboard.DashboardRepository
 import com.knu.cloud.repository.home.dashboard.DashboardRepositoryImpl
 import com.knu.cloud.repository.home.image.ImageRepository
@@ -33,12 +31,6 @@ abstract class RepositoryModule {
     abstract fun bindAuthRepository (
         AuthRepositoryImpl: AuthRepositoryImpl
     ): AuthRepository
-
-    @Singleton
-    @Binds
-    abstract fun bindOpenStackRepository (
-        OpenStackRepositoryImpl: OpenStackRepositoryImpl
-    ): OpenStackRepository
 
     @Singleton
     @Binds

@@ -19,3 +19,14 @@ class CustomTimberTree: Timber.DebugTree() {
         return "${element.className}_${element.methodName}"
     }
 }
+
+fun reformatScreenPath(currentRoute :String?) : String {
+    if(currentRoute == null) return "프로젝트"
+    return "프로젝트 ${ currentRoute
+        .split("/")
+        .drop(1)
+        .joinToString(" "){ route ->
+            "/ ${route.replaceFirstChar { it.uppercase() }}"
+        }
+    }"
+}

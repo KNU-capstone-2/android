@@ -34,8 +34,9 @@
     <color name="TopAppBar_path">#656262</color>
     <!-- Instance Table -->
     <color name="instance_state_running_background">#F5FFF8</color>
-    <color name="instance_state_running">#8ABB81</color>
-    <color name="instance_state_stop">#F66868</color>
+    <color name="instance_state_active">#8ABB81</color>
+    <color name="instance_state_reboot">#FCEA49</color>
+    <color name="instance_state_paused">#F66868</color>
 
     <!-- instance summary -->
     <color name="instance_Summary_background">#F6F6F6</color>

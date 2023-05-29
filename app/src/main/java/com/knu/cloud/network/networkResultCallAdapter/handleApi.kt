@@ -19,10 +19,10 @@ fun <T : Any> handleApi(
             NetworkResult.Error(code = response.code(), message = response.message())
         }
     } catch (e: HttpException) {
-        Timber.tag("network").d("handleApi : Error HttpException")
+        Timber.tag("network").e("handleApi : Error HttpException code : ${e.code()} message : ${e.message}")
         NetworkResult.Error(code = e.code(), message = e.message())
     } catch (e: Throwable) {
-        Timber.tag("network").d("handleApi : Exception")
+        Timber.tag("network").e("handleApi : Exception message :  ${e.message}")
         NetworkResult.Exception(e)
     }
 }

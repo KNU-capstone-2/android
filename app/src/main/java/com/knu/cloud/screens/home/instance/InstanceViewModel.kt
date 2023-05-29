@@ -3,6 +3,7 @@ package com.knu.cloud.screens.home.instance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.knu.cloud.components.basicTable.TableRowData
+import com.knu.cloud.model.home.instance.InstanceControlResponse
 import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.home.instance.InstanceRepository
@@ -20,7 +21,8 @@ data class InstanceUiState(
     val instances : List<InstanceData> = emptyList(),
     val checkedInstanceIds : List<String> = emptyList(),
     val deleteComplete : Boolean = false,
-    val deleteResult : List<Pair<String,Boolean>> = emptyList()
+    val deleteResult : List<Pair<String,Boolean>> = emptyList(),
+    val message : String = "",
 )
 
 @HiltViewModel
@@ -80,7 +82,7 @@ class InstanceViewModel @Inject constructor (
             }
             _uiState.update { state ->
                 state.copy(
-                    instances = state.instances.filterNot { it.instancesId in deleteSuccessList },                              // 삭제 성공한  리스트에 없는 instances
+                    instances = state.instances.filterNot { it.instanceId in deleteSuccessList },                              // 삭제 성공한  리스트에 없는 instances
                     deleteResult = state.checkedInstanceIds.map { id ->
                         Pair(id, id in deleteSuccessList)
                     },
@@ -96,9 +98,11 @@ class InstanceViewModel @Inject constructor (
         viewModelScope.launch {
             instanceRepository.startInstance(instanceId)
                 .onSuccess {
-                    /*TODO*/
+                    instanceControlSuccessHandling(it,"Start")
                 }.onFailure {
-                    /*TODO*/
+                    _uiState.update { state ->
+                        state.copy(message = "network error")
+                    }
                 }
         }
     }
@@ -108,9 +112,11 @@ class InstanceViewModel @Inject constructor (
         viewModelScope.launch {
             instanceRepository.reStartInstance(instanceId)
                 .onSuccess {
-                    /*TODO*/
+                    instanceControlSuccessHandling(it,"Reboot")
                 }.onFailure {
-                    /*TODO*/
+                    _uiState.update { state ->
+                        state.copy(message = "network error")
+                    }
                 }
         }
     }
@@ -120,13 +126,14 @@ class InstanceViewModel @Inject constructor (
         viewModelScope.launch {
             instanceRepository.stopInstance(instanceId)
                 .onSuccess {
-                    /*TODO*/
+                    instanceControlSuccessHandling(it,"Stop")
                 }.onFailure {
-                    /*TODO*/
+                    _uiState.update { state ->
+                        state.copy(message = "network error")
+                    }
                 }
         }
     }
-
     fun instanceCheck(instanceId : String) {
         if(instanceId !in _uiState.value.checkedInstanceIds){
             _uiState.update { it.copy(checkedInstanceIds = it.checkedInstanceIds + instanceId) }
@@ -145,7 +152,7 @@ class InstanceViewModel @Inject constructor (
     fun allInstanceCheck(allChecked: Boolean) {
         if(allChecked) {
             _uiState.update { state ->
-                state.copy( checkedInstanceIds = state.instances.map { it.instancesId })
+                state.copy( checkedInstanceIds = state.instances.map { it.instanceId })
             }
         }else initializeCheckInstanceIds()
         Timber.tag("vm_test").d("allInstanceCheck : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
@@ -162,6 +169,17 @@ class InstanceViewModel @Inject constructor (
         }
         Timber.tag("vm_test").d("initializeCheckInstanceIds : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
     }
+    private fun instanceControlSuccessHandling(response : InstanceControlResponse?, action : String){
+        _uiState.update { state ->
+            if(response != null){
+                if (response.isSuccess) state.copy(message = "Instance $action Success!")
+                else state.copy(message = response.message)
+            }else{
+                state.copy(message = "server error")
+            }
+        }
+        getAllInstances()                                                          // 화면 새로 초기화
+    }
 
 }
 
@@ -175,54 +193,54 @@ var testTableRowData = mutableListOf(
         isRowSelected = false
     )
 )
-val testInstanceDataList = mutableListOf(
-    InstanceData(
-        instancesId = "i-0f204053ab80b5cc8",
-        instancesName = "ec2-test",
-        publicIPv4Address = "52.83.423.531",
-        privateIPv4Address = "172.31.5.206",
-        instanceState = "Running",
-        publicIPv4DNS = "ec2-52-78-233-109 ap",
-        hostNameType = "ip-173-31-92-94.31.ec2",
-        privateIpDnsName = "IPv4(A)",
-        instanceType = "t2.micro",
-        statusCheck = "2/2 check passe",
-    ),
-    InstanceData(
-        instancesId = "k-fwe31431jtj34442dcc",
-        instancesName = "server-test",
-        publicIPv4Address = "52.83.423.522",
-        privateIPv4Address = "172.31.5.111",
-        instanceState = "Running",
-        publicIPv4DNS = "ec2-52-78-233-109 ap",
-        hostNameType = "ip-173-31-92-94.31.ec2",
-        privateIpDnsName = "IPv4(A)",
-        instanceType = "t2.micro",
-        statusCheck = "2/2 check passe",
-    ),
-    InstanceData(
-        instancesId = "i-ac3199341fk33140f3",
-        instancesName = "ec2-pocket-server",
-        publicIPv4Address = "52.83.423.511",
-        privateIPv4Address = "172.31.5.204",
-        instanceState = "Stop",
-        publicIPv4DNS = "ec2-52-78-233-109 ap",
-        hostNameType = "ip-173-31-92-94.31.ec2",
-        privateIpDnsName = "IPv4(A)",
-        instanceType = "t2.micro",
-        statusCheck = "2/2 check passe",
-    )
-)
-
-val testInstanceData = InstanceData(
-    instancesId = "i-0f204053ab80b5cc8",
-    instancesName = "ec2-test",
-    publicIPv4Address = "52.83.423.531",
-    privateIPv4Address = "172.31.5.206",
-    instanceState = "Running",
-    publicIPv4DNS = "ec2-52-78-233-109 ap",
-    hostNameType = "ip-173-31-92-94.31.ec2",
-    privateIpDnsName = "ip-172-31-92.42.ec2.internal",
-    instanceType = "t2.micro",
-    statusCheck = "2/2 check passe"
-)
+//val testInstanceDataList = mutableListOf(
+//    InstanceData(
+//        instancesId = "i-0f204053ab80b5cc8",
+//        instancesName = "ec2-test",
+//        publicIPv4Address = "52.83.423.531",
+//        privateIPv4Address = "172.31.5.206",
+//        instanceStatus = "Running",
+//        publicIPv4DNS = "ec2-52-78-233-109 ap",
+//        hostNameType = "ip-173-31-92-94.31.ec2",
+//        privateIpDnsName = "IPv4(A)",
+//        instanceType = "t2.micro",
+//        statusCheck = "2/2 check passe",
+//    ),
+//    InstanceData(
+//        instancesId = "k-fwe31431jtj34442dcc",
+//        instancesName = "server-test",
+//        publicIPv4Address = "52.83.423.522",
+//        privateIPv4Address = "172.31.5.111",
+//        instanceStatus = "Running",
+//        publicIPv4DNS = "ec2-52-78-233-109 ap",
+//        hostNameType = "ip-173-31-92-94.31.ec2",
+//        privateIpDnsName = "IPv4(A)",
+//        instanceType = "t2.micro",
+//        statusCheck = "2/2 check passe",
+//    ),
+//    InstanceData(
+//        instancesId = "i-ac3199341fk33140f3",
+//        instancesName = "ec2-pocket-server",
+//        publicIPv4Address = "52.83.423.511",
+//        privateIPv4Address = "172.31.5.204",
+//        instanceStatus = "Stop",
+//        publicIPv4DNS = "ec2-52-78-233-109 ap",
+//        hostNameType = "ip-173-31-92-94.31.ec2",
+//        privateIpDnsName = "IPv4(A)",
+//        instanceType = "t2.micro",
+//        statusCheck = "2/2 check passe",
+//    )
+//)
+//
+//val testInstanceData = InstanceData(
+//    instancesId = "i-0f204053ab80b5cc8",
+//    instancesName = "ec2-test",
+//    publicIPv4Address = "52.83.423.531",
+//    privateIPv4Address = "172.31.5.206",
+//    instanceStatus = "Running",
+//    publicIPv4DNS = "ec2-52-78-233-109 ap",
+//    hostNameType = "ip-173-31-92-94.31.ec2",
+//    privateIpDnsName = "ip-172-31-92.42.ec2.internal",
+//    instanceType = "t2.micro",
+//    statusCheck = "2/2 check passe"
+//)

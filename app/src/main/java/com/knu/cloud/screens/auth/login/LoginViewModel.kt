@@ -3,7 +3,7 @@ package com.knu.cloud.screens.auth.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.knu.cloud.R
-import com.knu.cloud.di.SessionManager
+import com.knu.cloud.network.SessionManager
 import com.knu.cloud.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +13,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+
+const val testEmail  ="test"
+const val testPassword = "1234"
 
 data class LoginUiState(
     val email  : String ="",
@@ -35,7 +38,10 @@ class LoginViewModel @Inject constructor(
             it.copy(isLoading = true)
         }
         viewModelScope.launch {
-            authRepository.login(uiState.value.email, uiState.value.password)
+            authRepository.login(
+//                uiState.value.email, uiState.value.password
+            testEmail, testPassword
+            )
                 .onSuccess { msg ->
                     _uiState.update {
                         it.copy(

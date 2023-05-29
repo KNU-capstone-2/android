@@ -1,4 +1,4 @@
-package com.knu.cloud.network
+package com.knu.cloud.network.apiService
 
 import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.auth.*

@@ -2,6 +2,7 @@ package com.knu.cloud.screens.home.instanceDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.knu.cloud.model.home.instance.InstanceControlResponse
 import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.home.instance.InstanceRepository
@@ -17,6 +18,7 @@ import javax.inject.Inject
 data class InstanceDetailUiState(
     val isLoading : Boolean = false,
     val instance : InstanceData? = null,
+    val message : String = "",
 )
 
 @HiltViewModel
@@ -53,9 +55,11 @@ class InstanceDetailViewModel @Inject constructor (
         viewModelScope.launch {
             instanceRepository.startInstance(instanceId)
                 .onSuccess {
-                    /*TODO*/
+                    instanceControlSuccessHandling(it,"Start")
                 }.onFailure {
-                    /*TODO*/
+                    _uiState.update { state ->
+                        state.copy(message = "network error")
+                    }
                 }
         }
     }
@@ -65,9 +69,11 @@ class InstanceDetailViewModel @Inject constructor (
         viewModelScope.launch {
             instanceRepository.reStartInstance(instanceId)
                 .onSuccess {
-                    /*TODO*/
+                    instanceControlSuccessHandling(it,"Reboot")
                 }.onFailure {
-                    /*TODO*/
+                    _uiState.update { state ->
+                        state.copy(message = "network error")
+                    }
                 }
         }
     }
@@ -77,10 +83,23 @@ class InstanceDetailViewModel @Inject constructor (
         viewModelScope.launch {
             instanceRepository.stopInstance(instanceId)
                 .onSuccess {
-                    /*TODO*/
+                    instanceControlSuccessHandling(it,"Stop")
                 }.onFailure {
-                    /*TODO*/
+                    _uiState.update { state ->
+                        state.copy(message = "network error")
+                    }
                 }
+        }
+    }
+
+    private fun instanceControlSuccessHandling(response : InstanceControlResponse?,action : String){
+        _uiState.update { state ->
+            if(response != null){
+                if (response.isSuccess) state.copy(message = "Instance $action Success!")
+                else state.copy(message = response.message)
+            }else{
+                state.copy(message = "server error")
+            }
         }
     }
 }

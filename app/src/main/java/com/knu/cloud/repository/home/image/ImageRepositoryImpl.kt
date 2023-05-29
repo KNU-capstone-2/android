@@ -4,6 +4,7 @@ import com.knu.cloud.data.home.image.ImageRemoteDataSource
 import com.knu.cloud.data.instanceCreate.InstanceCreateRemoteDataSource
 import com.knu.cloud.model.instanceCreate.ImageData
 import com.knu.cloud.model.instanceCreate.ImagesResponse
+import com.knu.cloud.network.authResponseToResult
 import com.knu.cloud.network.openstackResponseToResult
 import com.knu.cloud.network.responseToResult
 import javax.inject.Inject
@@ -17,10 +18,10 @@ class ImageRepositoryImpl @Inject constructor(
 ): ImageRepository {
 
     override suspend fun getImages(): Result<List<ImageData>?> {
-        return responseToResult(remoteDataSource.getImages())
+        return authResponseToResult(remoteDataSource.getImages())
     }
 
     override suspend fun deleteImage(imageId: String): Result<String?> {
-        return responseToResult(remoteDataSource.deleteImage(imageId))
+        return authResponseToResult(remoteDataSource.deleteImage(imageId))
     }
 }

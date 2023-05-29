@@ -1,6 +1,9 @@
 package com.knu.cloud.di
 
+import com.knu.cloud.network.AuthInterceptor
+import com.knu.cloud.network.SessionManager
 import com.knu.cloud.network.networkResultCallAdapter.NetworkResultCallAdapterFactory
+import com.knu.cloud.network.nullOrEmptyConverter.NullOrEmptyConverterFactory
 import com.knu.cloud.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -17,7 +20,7 @@ import javax.inject.Singleton
 object ConfigModule {
 
 //    private const val BASE_URL = "https://d8f3-39-116-133-230.ngrok-free.app"
-    private const val BASE_URL = Constants.OPENSTACK_BASE_URL
+    private const val BASE_URL = Constants.SPRING_BASE_URL
 //    private const val BASE_URL = "https://a923-211-51-176-234.ngrok-free.app"
     @Singleton
     @Provides
@@ -25,6 +28,7 @@ object ConfigModule {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
+            .addConverterFactory(NullOrEmptyConverterFactory)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(NetworkResultCallAdapterFactory.create())
             .build()
@@ -49,7 +53,7 @@ object ConfigModule {
 
     @Singleton
     @Provides
-    fun provideSessionManager() :SessionManager{
+    fun provideSessionManager() : SessionManager {
         return SessionManager()
     }
 }

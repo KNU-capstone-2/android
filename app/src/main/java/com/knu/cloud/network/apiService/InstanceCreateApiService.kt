@@ -1,4 +1,4 @@
-package com.knu.cloud.network
+package com.knu.cloud.network.apiService
 
 import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.OpenstackResponse
@@ -12,18 +12,18 @@ import retrofit2.http.POST
 interface InstanceCreateApiService {
 
     @GET("/flavors")
-    suspend fun getFlavorData(): NetworkResult<List<FlavorData>>
+    suspend fun getFlavorData(): NetworkResult<AuthResponse<List<FlavorData>>>
 
     @GET("/keypairs")
-    suspend fun getKeypairData(): NetworkResult<List<KeypairData>>
+    suspend fun getKeypairData(): NetworkResult<AuthResponse<List<KeypairData>>>
 
     @GET("/networks")
-    suspend fun getNetworkData(): NetworkResult<List<NetworkData>>
+    suspend fun getNetworkData(): NetworkResult<AuthResponse<List<NetworkData>>>
 
     @GET("/images")
-    suspend fun getImages(): NetworkResult<List<ImageData>>
+    suspend fun getImages(): NetworkResult<AuthResponse<List<ImageData>>>
 
-    @POST("/api/v1/create")
+    @POST("/instance")
     suspend fun instanceCreate(
         @Body createRequest: CreateRequest
     ) : NetworkResult<AuthResponse<InstanceData>>

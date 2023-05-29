@@ -5,8 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -17,18 +16,46 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
+import com.knu.cloud.components.MessageDialog
 import com.knu.cloud.components.FABContent
 import com.knu.cloud.components.NavDrawer
 import com.knu.cloud.components.ProjectAppBar
 import com.knu.cloud.navigation.*
+import com.knu.cloud.network.SessionManager
 import com.knu.cloud.screens.instanceCreate.InstanceCreateScreen
 import com.knu.cloud.screens.splash.ProjectSplashScreen
 import com.knu.cloud.ui.theme.CloudTheme
+import com.knu.cloud.utils.reformatScreenPath
 import timber.log.Timber
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ProjectApp(appState: ProjectAppState = rememberProjectAppState()) {
+fun ProjectApp(
+    appState: ProjectAppState = rememberProjectAppState(),
+    sessionManager: SessionManager = SessionManager()
+) {
+    val authState by sessionManager.authState.collectAsState()
+    var firstRendering by remember { mutableStateOf(true) }
+    if(appState.showLogOutDialog.value){
+        MessageDialog(
+            title = "로그아웃",
+            message = "정말 로그아웃을 하시겠습니까?",
+            onCancelClicked = {
+                appState.showLogOutDialog.value = false
+            },
+            onConfirmClicked = {
+                appState.showLogOutDialog.value = false
+                sessionManager.logout()
+            }
+        )
+    }
+    LaunchedEffect(authState.isLoggedIn,appState.showLogOutDialog.value){
+        Timber.d("authState.isLoggedId : ${authState.isLoggedIn}")
+        if(!firstRendering && !authState.isLoggedIn && !appState.showLogOutDialog.value){
+            appState.navActions.navigateToLogin(null)
+        }
+        firstRendering = false
+    }
     CloudTheme {
         Scaffold(
             scaffoldState = appState.scaffoldState,
@@ -36,12 +63,10 @@ fun ProjectApp(appState: ProjectAppState = rememberProjectAppState()) {
                 if (appState.enabledTopAppBar.value) {
                     ProjectAppBar(
                         title = "POCKET",
-                        path = "프로젝트 ${
-                            appState.currentRoute?.split("/")?.drop(1)
-                                ?.joinToString(" ") { route ->
-                                    "/ ${route.replaceFirstChar { it.uppercase() }}" 
-                                }
-                        }"
+                        path = reformatScreenPath(appState.currentRoute),
+                        onLogOutClicked = {
+                            appState.showLogOutDialog.value = true
+                        }
                     )
                 }
             },
@@ -80,11 +105,15 @@ fun ProjectApp(appState: ProjectAppState = rememberProjectAppState()) {
                         .padding(innerPaddingModifier)
                         .weight(0.8f)
                 ) {
+
                     composable(route = MainDestination.SPlASH_ROUTE) {
                         ProjectSplashScreen(navController = appState.navController)
                     }
                     authNavGraph(
-                        onLoginClicked = appState.navActions::navigateToHome,
+                        onLoginClicked = {
+                            appState.navActions.navigateToHome(null)
+                            sessionManager.login("123")
+                        },
                         onSignUpClicked = appState.navActions::navigateToSignUp,
                         onSignUpSubmitClicked = appState.navActions::navigateToLogin
                     )

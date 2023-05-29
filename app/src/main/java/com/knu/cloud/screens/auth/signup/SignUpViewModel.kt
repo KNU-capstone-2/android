@@ -15,6 +15,11 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+const val testEmail = "hihi"
+const val testUsername = "hihi"
+const val testPassword = "1234"
+
+
 data class SignUpState(
     val userNickName : String ="",
     val userEmail: String = "",
@@ -36,13 +41,15 @@ class SignUpViewModel @Inject constructor(
 
     fun signUp() {
         viewModelScope.launch {
-            authRepository.signUp("test", "user", "1234")
+            authRepository.signUp(
+                email = testEmail,
+                username = testUsername,
+                password = testPassword
+//                email = _uiState.value.userEmail,
+//                username = _uiState.value.userNickName,
+//                password = _uiState.value.userPassword
+            )
         }
-//        authRepository.signUp( "test","user","1234"
-//            email = userEmail.value,
-//            username = "test",
-//            password = userPassword.value
-//        )
     }
     fun setUserNickName(nickName: String) {
         _uiState.update {
