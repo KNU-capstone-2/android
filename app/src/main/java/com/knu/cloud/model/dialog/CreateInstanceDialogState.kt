@@ -1,5 +1,5 @@
 package com.knu.cloud.model.dialog
 
-data class CreateInstanceState(
+data class CreateInstanceDialogState(
     val showProgressDialog: Boolean
 )

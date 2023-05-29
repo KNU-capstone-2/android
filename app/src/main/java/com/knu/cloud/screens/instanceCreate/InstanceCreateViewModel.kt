@@ -6,7 +6,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.knu.cloud.model.dialog.CreateInstanceState
+import com.knu.cloud.model.dialog.CreateInstanceDialogState
 import com.knu.cloud.model.instanceCreate.*
 import com.knu.cloud.model.keypair.KeypairCreateRequest
 import com.knu.cloud.network.RetrofitFailureStateException
@@ -30,8 +30,8 @@ class InstanceCreateViewModel @Inject constructor(
     private val keypairRepository: KeypairRepository
 ): ViewModel() {
 
-    private val _isDialogOpen = mutableStateOf(false)
-    val isDialogOpen :State<Boolean> = _isDialogOpen
+//    private val _isDialogOpen = mutableStateOf(false)
+//    val isDialogOpen :State<Boolean> = _isDialogOpen
 
     private val _detailUiState = MutableStateFlow(InstanceCreateDetailUiState())
     val detailUiState : StateFlow<InstanceCreateDetailUiState> = _detailUiState.asStateFlow()
@@ -49,9 +49,8 @@ class InstanceCreateViewModel @Inject constructor(
     val keypairUiState :StateFlow<InstanceCreateKeypairUiState> = _keypairUiState.asStateFlow()
 
     /* 리소스 프로비저닝 Dialog box */
-    private val _openResourceDialog = MutableStateFlow<CreateInstanceState>(CreateInstanceState(showProgressDialog = false))
-    val openResourceDialog: StateFlow<CreateInstanceState>
-        get() = _openResourceDialog.asStateFlow()
+    private val _createInstanceDialogState = MutableStateFlow(CreateInstanceDialogState(showProgressDialog = false))
+    val createInstanceDialogState: StateFlow<CreateInstanceDialogState> = _createInstanceDialogState.asStateFlow()
 
     private val _showCreateKeypairDialog = mutableStateOf(false)
     val showCreateKeypiarDialog :State<Boolean> = _showCreateKeypairDialog
@@ -77,15 +76,6 @@ class InstanceCreateViewModel @Inject constructor(
         }
     }
 
-    fun openDialog() {
-        _isDialogOpen.value = true
-        Timber.tag("dialog").d("_isDialogOpen : ${_isDialogOpen.value}")
-//        viewModelScope.launch {
-//            _openResourceDialog.update { state ->
-//                state.copy(showProgressDialog = true)
-//            }
-//        }
-    }
     fun createInstance(
         context: Context
     ) {
@@ -98,43 +88,42 @@ class InstanceCreateViewModel @Inject constructor(
 //                keypairName = keypairUiState.value.uploadKeypair!!.name,
             )
             viewModelScope.launch {
-                // Do the background work here
-                delay(3000)
+                delay(1500)
                 instanceCreateRepository.createInstance(createRequest)
                     .onSuccess {
                         Timber.tag("instanceCreate").d("Success instanceData : $it")
+                        if(it != null){
+                            closeCreateInstanceDialog(context,"${it.instanceName} 생성 완료")
+                        }else{
+                            closeCreateInstanceDialog(context,"인스턴스 데이터를 받아오지 못했습니다")
+                        }
                     }.onFailure {
                         Timber.tag("instanceCreate").d("Failure : $it")
+                        closeCreateInstanceDialog(context,"인스턴스 생성 실패")
                     }
-                closeDialogWithToast(context,"리소스 프로지버닝 완료!")
             }
         }catch(e : Exception){
             showToast(context,"인스턴스 생성에 필요한 요소를 전부 선택하세요")
-        }
-    }
-    fun updateOpenResourceDialog(openResourceDialog: CreateInstanceState) {
-        Timber.tag("update").e("${openResourceDialog.showProgressDialog}")
-        viewModelScope.launch {
-            _openResourceDialog.update {
-                it.copy(showProgressDialog = openResourceDialog.showProgressDialog)
-            }
         }
     }
 
     private fun showToast( context: Context,text : String){
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
-
-    private fun closeDialogWithToast(
+    fun openCreateInstanceDialog() {
+        _createInstanceDialogState.update { state ->
+            state.copy(showProgressDialog = true)
+        }
+        Timber.d("showProgressDialog : ${_createInstanceDialogState.value.showProgressDialog}")
+    }
+    private fun closeCreateInstanceDialog(
         context: Context,
         text : String
     ) {
-        _isDialogOpen.value = false
-//        viewModelScope.launch {
-//            _openResourceDialog.update { state ->
-//                state.copy(showProgressDialog = false)
-//            }
-//        }
+        _createInstanceDialogState.update { state ->
+            state.copy(showProgressDialog = false)
+        }
+        Timber.d("showProgressDialog : ${_createInstanceDialogState.value.showProgressDialog}")
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 
@@ -292,6 +281,10 @@ class InstanceCreateViewModel @Inject constructor(
     fun updateSourceUiState(sourceUiState: InstanceCreateSourceUiState){
         _sourceUiState.update { sourceUiState }
     }
+
+//    fun updateCreateInstanceDialogUiState(state: CreateInstanceDialogState) {
+//        _createInstanceDialogUiState.update {it}
+//    }
 
     private fun getAllFlavorData(){
         viewModelScope.launch {

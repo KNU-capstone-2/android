@@ -16,7 +16,6 @@ import com.knu.cloud.components.LaunchButton
 import com.knu.cloud.navigation.InstanceCreateSections
 import com.knu.cloud.navigation.findStartDestination
 import com.knu.cloud.navigation.instanceCreateNavGraph
-import timber.log.Timber
 
 
 @Composable
@@ -32,7 +31,7 @@ fun InstanceCreateScreen(
     val navBackStackEntry by instanceCreateNavController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: InstanceCreateSections.Details.route
 
-    val isDialogOpen = instanceCreateViewModel.isDialogOpen.value
+    val createInstanceDialogState by instanceCreateViewModel.createInstanceDialogState.collectAsState()
 //    val openResourceDialog by instanceCreateViewModel.openResourceDialog.collectAsStateWithLifecycle()
 
 //    LaunchedEffect(key1 = openResourceDialog) {
@@ -44,8 +43,7 @@ fun InstanceCreateScreen(
 //        instanceCreateViewModel.startCoroutine(context)
 //        CreateLoadingDialog()
 //    }
-    Timber.tag("dialog").d("isDialogOpen : ${isDialogOpen}")
-    if(isDialogOpen){
+    if(createInstanceDialogState.showProgressDialog){
         CreateLoadingDialog()
         instanceCreateViewModel.createInstance(context)
     }
@@ -93,7 +91,7 @@ fun InstanceCreateScreen(
                 verticalAlignment = Alignment.Bottom
             ) {
                 LaunchButton {
-                    instanceCreateViewModel.openDialog()
+                    instanceCreateViewModel.openCreateInstanceDialog()
                 }
             }
         }
