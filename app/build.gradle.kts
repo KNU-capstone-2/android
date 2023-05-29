@@ -56,6 +56,7 @@ android {
     }
 }
 
+
 dependencies {
 
     implementation (Dependencies.CORE_KTX)
@@ -153,7 +154,7 @@ dependencies {
     kapt (Dependencies.HILT_EXTENSION_KAPT)
     // Hilt navigation
     implementation (Dependencies.HILT_COMPOSE_NAVIGATION)
-
+    implementation ("com.github.Spikeysanju:MotionToast:1.4")
 }
 
 tasks.register("prepareKotlinBuildScriptModel"){}

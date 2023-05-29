@@ -29,6 +29,7 @@ import com.knu.cloud.R
 import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
 import com.knu.cloud.components.text_input.addFocusCleaner
+import com.knu.cloud.utils.ToastSuccessMessage
 import timber.log.Timber
 
 @ExperimentalComposeUiApi
@@ -244,7 +245,10 @@ fun SignUp(
                 if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
                     viewModel.signUp()
                     Timber.tag("test").d("테스트 성공")
-                    Toast.makeText(context, "회원가입 완료", Toast.LENGTH_SHORT).show()
+                    ToastSuccessMessage(
+                        context = context,
+                        message = "회원가입 완료"
+                    )
                     onSignUpSubmitClick()
                 }
             },
