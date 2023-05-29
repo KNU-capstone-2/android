@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.knu.cloud.R
+import com.knu.cloud.components.CustomOutlinedButton
 import com.knu.cloud.components.data_grid.DataGridBar
 import com.knu.cloud.components.data_grid.DataGridElementList
 import com.knu.cloud.components.data_grid.DataGridHeader
@@ -159,27 +161,11 @@ fun Keypair(
 fun CreateKeyPairButton(
     onCreateClocked : () -> Unit
 ) {
-    OutlinedButton(
-        onClick = onCreateClocked,
-        shape = RoundedCornerShape(percent = 30), // 모서리를 둥글게 처리
-        modifier = Modifier
-            .padding(10.dp)
-            .height(38.dp)
-            .wrapContentWidth(),
-    ) {
-        Icon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = "create icon",
-            modifier = Modifier.size(20.dp),
-            tint = Color.Black
-        )
-        Text(
-            text = "Create Key Pair",
-            fontWeight = FontWeight.Bold,
-            fontSize = 15.sp,
-            modifier = Modifier.padding(horizontal = 16.dp) // 버튼 내부 여백
-        )
-    }
+    CustomOutlinedButton(
+        onBtnClicked = { onCreateClocked() },
+        title = "Create Key Pair",
+        icons = R.drawable.ic_baseline_add_24
+    )
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -280,21 +266,27 @@ fun CreateKeyPairDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.End
                     ) {
-                        Button(
+                        OutlinedButton(
                             onClick = {
                                 if (keyNameTxtField.value.isEmpty() || keyTypeTxtField.value.isEmpty()) {
                                     txtFieldError.value = "Field can not be empty"
                                     Timber.tag("KeyPairScreen").e("Field can not be empty")
-                                    return@Button
+                                    return@OutlinedButton
                                 }
                                 onCreateClicked(KeypairCreateRequest(name = keyNameTxtField.value,type = keyTypeTxtField.value))
                             },
-                            shape = RoundedCornerShape(percent = 20),
+                            shape = RoundedCornerShape(percent = 15),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.Outlined_button_color)),
                             modifier = Modifier
                                 .width(150.dp)
                                 .height(40.dp)
                         ) {
-                            Text(text = "Create Keypair")
+                            Text(
+                                text = "Create Keypair",
+                                color = colorResource(id = R.color.Outline_button_text_color),
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(vertical = 5.dp)
+                            )
                         }
                     }
                 }
