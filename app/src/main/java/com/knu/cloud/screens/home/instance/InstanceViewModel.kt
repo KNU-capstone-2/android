@@ -3,6 +3,7 @@ package com.knu.cloud.screens.home.instance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.knu.cloud.components.basicTable.TableRowData
+import com.knu.cloud.model.home.instance.InstanceControlResponse
 import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.home.instance.InstanceRepository
@@ -20,7 +21,8 @@ data class InstanceUiState(
     val instances : List<InstanceData> = emptyList(),
     val checkedInstanceIds : List<String> = emptyList(),
     val deleteComplete : Boolean = false,
-    val deleteResult : List<Pair<String,Boolean>> = emptyList()
+    val deleteResult : List<Pair<String,Boolean>> = emptyList(),
+    val message : String = "",
 )
 
 @HiltViewModel
@@ -96,9 +98,11 @@ class InstanceViewModel @Inject constructor (
         viewModelScope.launch {
             instanceRepository.startInstance(instanceId)
                 .onSuccess {
-                    /*TODO*/
+                    instanceControlSuccessHandling(it,"Start")
                 }.onFailure {
-                    /*TODO*/
+                    _uiState.update { state ->
+                        state.copy(message = "network error")
+                    }
                 }
         }
     }
@@ -108,9 +112,11 @@ class InstanceViewModel @Inject constructor (
         viewModelScope.launch {
             instanceRepository.reStartInstance(instanceId)
                 .onSuccess {
-                    /*TODO*/
+                    instanceControlSuccessHandling(it,"Reboot")
                 }.onFailure {
-                    /*TODO*/
+                    _uiState.update { state ->
+                        state.copy(message = "network error")
+                    }
                 }
         }
     }
@@ -120,13 +126,14 @@ class InstanceViewModel @Inject constructor (
         viewModelScope.launch {
             instanceRepository.stopInstance(instanceId)
                 .onSuccess {
-                    /*TODO*/
+                    instanceControlSuccessHandling(it,"Stop")
                 }.onFailure {
-                    /*TODO*/
+                    _uiState.update { state ->
+                        state.copy(message = "network error")
+                    }
                 }
         }
     }
-
     fun instanceCheck(instanceId : String) {
         if(instanceId !in _uiState.value.checkedInstanceIds){
             _uiState.update { it.copy(checkedInstanceIds = it.checkedInstanceIds + instanceId) }
@@ -161,6 +168,17 @@ class InstanceViewModel @Inject constructor (
             state.copy(checkedInstanceIds = emptyList())
         }
         Timber.tag("vm_test").d("initializeCheckInstanceIds : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
+    }
+    private fun instanceControlSuccessHandling(response : InstanceControlResponse?, action : String){
+        _uiState.update { state ->
+            if(response != null){
+                if (response.isSuccess) state.copy(message = "Instance $action Success!")
+                else state.copy(message = response.message)
+            }else{
+                state.copy(message = "server error")
+            }
+        }
+        getAllInstances()                                                          // 화면 새로 초기화
     }
 
 }

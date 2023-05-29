@@ -1,5 +1,6 @@
 package com.knu.cloud.screens.home.instance
 
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -9,12 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.knu.cloud.R
 import com.knu.cloud.components.CenterLottieLoadingIndicator
 import com.knu.cloud.components.DeleteConfirmDialog
 import com.knu.cloud.components.DeleteResultDialog
@@ -22,6 +21,7 @@ import com.knu.cloud.components.basicTable.*
 import com.knu.cloud.components.summary.InstanceSummary
 import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.utils.convertDateFormat
+import com.knu.cloud.utils.convertStatusColor
 import timber.log.Timber
 
 val INSTANCE_COLUMN_HEADERS = listOf(
@@ -50,6 +50,12 @@ fun InstanceScreen (
     }
     var isDeleteConfirmDialogOpen by remember { mutableStateOf(false) }
 
+    LaunchedEffect(uiState.message){
+        if(uiState.message.isNotEmpty()){
+            Toast.makeText(context, uiState.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     if (isDeleteConfirmDialogOpen) {
         DeleteConfirmDialog(
             data = "인스턴스",
@@ -61,7 +67,6 @@ fun InstanceScreen (
             }
         )
     }
-
     if (uiState.deleteComplete){
         DeleteResultDialog(
             data = "인스턴스",
@@ -132,13 +137,13 @@ fun InstanceScreen (
                             context = context,
                             instance = selectedInstance,
                             StartClicked = {
-                                // TODO: viewModel.startInstance(selectedInstance!!.instancesId)
+                                viewModel.startInstance(selectedInstance!!.instanceId)
                             },
                             ReStartClicked = {
-                                // TODO: viewModel.reStartInstance(selectedInstance!!.instancesId)
+                                viewModel.reStartInstance(selectedInstance!!.instanceId)
                             },
                             StopClicked = {
-                                // TODO: viewModel.stopInstance(selectedInstance!!.instancesId)
+                                viewModel.stopInstance(selectedInstance!!.instanceId)
                             },
                             onInstanceDetailClicked = {
                                 onInstanceDetailClicked(it)
@@ -183,15 +188,14 @@ fun InstanceTable(
         val instanceNameCell by mutableStateOf(TableCell(instanceData.instanceName))
         val instanceIdCell by mutableStateOf(TableCell(instanceData.instanceId))
         val instanceStateCell by mutableStateOf(
-            TableCell(instanceData.instanceStatus, colorResource(id = R.color.instance_state_running))
-        )
+            TableCell( text = instanceData.instanceStatus,
+                color = convertStatusColor(instanceData.instanceStatus)))
         val instanceTypeCell by mutableStateOf(TableCell(instanceData.instanceType))
-        val statusCheckCell by mutableStateOf(
-            TableCell(convertDateFormat(instanceData.createdDate),colorResource(id = R.color.instance_state_running))
-        )
+        val createDateCell by mutableStateOf(TableCell(convertDateFormat(instanceData.createdDate)))
         val cellItems by remember { mutableStateOf(
-            listOf(instanceNameCell,instanceIdCell,instanceStateCell,instanceTypeCell,statusCheckCell)
+            listOf(instanceNameCell,instanceIdCell,instanceStateCell,instanceTypeCell,createDateCell)
         ) }
+
         TableRowItem(
                 rowID = instanceData.instanceId,
                 columnTypes = columnTypes,
