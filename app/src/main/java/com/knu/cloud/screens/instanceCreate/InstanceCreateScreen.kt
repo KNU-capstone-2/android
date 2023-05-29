@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -21,6 +22,7 @@ import com.knu.cloud.navigation.instanceCreateNavGraph
 
 @Composable
 fun InstanceCreateScreen(
+    onCloseClicked : () -> Unit,
     instanceCreateViewModel : InstanceCreateViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -33,17 +35,14 @@ fun InstanceCreateScreen(
     val currentRoute = navBackStackEntry?.destination?.route ?: InstanceCreateSections.Details.route
 
     val createInstanceDialogState by instanceCreateViewModel.createInstanceDialogState.collectAsState()
-//    val openResourceDialog by instanceCreateViewModel.openResourceDialog.collectAsStateWithLifecycle()
+    val isDialogOpen by instanceCreateViewModel.isDialogOpen
 
-//    LaunchedEffect(key1 = openResourceDialog) {
-//        instanceCreateViewModel.updateOpenResourceDialog(openResourceDialog)
-//    }
+    LaunchedEffect(isDialogOpen){
+        if(!isDialogOpen){
+            onCloseClicked()
+        }
+    }
 
-//    if (openResourceDialog.showProgressDialog) {
-//        Timber.tag("openResource").e("${openResourceDialog.showProgressDialog}")
-//        instanceCreateViewModel.startCoroutine(context)
-//        CreateLoadingDialog()
-//    }
     if(createInstanceDialogState.showProgressDialog){
         CreateLoadingDialog()
         instanceCreateViewModel.createInstance(context)
@@ -87,7 +86,9 @@ fun InstanceCreateScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.1f),
+                    .weight(0.1f)
+                    .padding(bottom = 15.dp, end = 15.dp)
+                ,
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Bottom
             ) {

@@ -34,7 +34,7 @@ import timber.log.Timber
 @ExperimentalComposeUiApi
 @Composable
 fun SignUpScreen(
-    onSignUpSubmitClick : () -> Unit,
+    navigateToLogin : () -> Unit,
     viewModel: SignUpViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -55,7 +55,7 @@ fun SignUpScreen(
                 TopAppBar(
                     title = { Text("") },
                     navigationIcon = {
-                        IconButton(onClick = { onSignUpSubmitClick() }) {
+                        IconButton(onClick = { navigateToLogin() }) {
                             Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                         }
                     },
@@ -74,7 +74,7 @@ fun SignUpScreen(
                     modifier = Modifier.padding(start = 15.dp, bottom = 10.dp)
                 )
                 SignUp(
-                    onSignUpSubmitClick = onSignUpSubmitClick,
+                    navigateToLogin = navigateToLogin,
                     viewModel = viewModel,
                     context = context
                 )
@@ -87,7 +87,7 @@ fun SignUpScreen(
 @ExperimentalComposeUiApi
 @Composable
 fun SignUp(
-    onSignUpSubmitClick : () -> Unit,
+    navigateToLogin : () -> Unit,
     viewModel: SignUpViewModel,
     context: Context
 ) {
@@ -96,6 +96,19 @@ fun SignUp(
 
     var personalInfoCheck by rememberSaveable { mutableStateOf(false) }
     var expirationDateCheck by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.navigateToLogin){
+        if(uiState.navigateToLogin){
+            navigateToLogin()
+        }
+    }
+
+    LaunchedEffect(uiState.message){
+        if(uiState.message.isNotEmpty()){
+            Toast.makeText(context, uiState.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -243,8 +256,6 @@ fun SignUp(
             onClick ={
                     viewModel.signUp()
                     Timber.tag("test").d("테스트 성공")
-                    Toast.makeText(context, "회원가입 완료", Toast.LENGTH_SHORT).show()
-                    onSignUpSubmitClick()
                 if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
                 }
             },

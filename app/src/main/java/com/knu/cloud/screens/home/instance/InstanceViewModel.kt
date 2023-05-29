@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.knu.cloud.components.basicTable.TableRowData
 import com.knu.cloud.model.home.instance.InstanceControlResponse
 import com.knu.cloud.model.home.instance.InstanceData
+import com.knu.cloud.model.home.instance.testInstanceDataList
 import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.home.instance.InstanceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +34,7 @@ class InstanceViewModel @Inject constructor (
     private val _uiState = MutableStateFlow(InstanceUiState())
     val uiState :StateFlow<InstanceUiState> = _uiState.asStateFlow()
     init {
-//        _instances.value = testInstanceData
+//        _uiState.update { it.copy(instances = testInstanceDataList) }
         getAllInstances()
     }
 
@@ -84,7 +85,7 @@ class InstanceViewModel @Inject constructor (
                 state.copy(
                     instances = state.instances.filterNot { it.id in deleteSuccessList },                              // 삭제 성공한  리스트에 없는 instances
                     deleteResult = state.checkedIds.map { id ->
-                        Pair(id, id in deleteSuccessList)
+                        Pair(getDataFromId(id).instanceName, id in deleteSuccessList)
                     },
                     deleteComplete = true
                 )
@@ -179,6 +180,9 @@ class InstanceViewModel @Inject constructor (
             }
         }
         getAllInstances()                                                          // 화면 새로 초기화
+    }
+    private fun getDataFromId(id :String) : InstanceData{
+        return _uiState.value.instances.filter { it.id == id}[0]
     }
 
 }

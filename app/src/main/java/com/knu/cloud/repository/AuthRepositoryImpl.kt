@@ -27,7 +27,6 @@ class AuthRepositoryImpl @Inject constructor(
                         )
                     )
                 }
-                // TODO : 만약 백엔드에서 success이지만 status를 404로 준다면 여기서 처리해줘야함
             }
             is NetworkResult.Error -> Result.failure(
                 RetrofitFailureStateException(
@@ -40,7 +39,18 @@ class AuthRepositoryImpl @Inject constructor(
     }
     override suspend fun signUp(email : String, username :String , password: String ) : Result<String>{
         return when(val authResponse = remoteDataSource.signUp(SignUpRequest(email,username,password))){
-            is NetworkResult.Success -> Result.success("signup success")
+            is NetworkResult.Success ->{
+                if(authResponse.data.status == 200 || authResponse.data.status == 1000){
+                    Result.success(authResponse.data.message)
+                }else{
+                    Result.failure(
+                        RetrofitFailureStateException(
+                            code = authResponse.data.status,
+                            error = authResponse.data.message
+                        )
+                    )
+                }
+            }
             is NetworkResult.Error -> Result.failure(
                 RetrofitFailureStateException(
                     authResponse.message,

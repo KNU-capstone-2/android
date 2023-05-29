@@ -26,6 +26,7 @@ import com.knu.cloud.components.LineChartComponent
 import com.knu.cloud.components.summary.CopyIncludedText
 import com.knu.cloud.components.summary.StateWithText
 import com.knu.cloud.utils.convertDateFormat
+import com.knu.cloud.utils.convertStatusColor
 
 val data = listOf(
     Pair(1, 111.45),
@@ -196,7 +197,7 @@ fun InstanceDetailScreen (
                                 StateWithText(
                                     title = "인스턴스 상태",
                                     stateIcon = R.drawable.instance_running,
-                                    contentColor = R.color.instance_running_text,
+                                    contentColor = convertStatusColor(status = uiState.instance!!.instanceStatus),
                                     content = uiState.instance!!.instanceStatus
                                 )
                                 CopyIncludedText(

@@ -21,6 +21,7 @@ import com.knu.cloud.R
 import com.knu.cloud.components.CustomOutlinedButton
 import com.knu.cloud.components.InstanceActionButtons
 import com.knu.cloud.model.home.instance.InstanceData
+import com.knu.cloud.utils.convertStatusColor
 
 
 @Composable
@@ -62,21 +63,16 @@ fun InstanceSummary(
             )
             InstanceActionButtons(
                 StartClicked = {
-                    /*TODO*/
-                    /* StartClicked() */
-
+                    StartClicked()
                     Toast.makeText(context, "Start!", Toast.LENGTH_SHORT).show()
                 },
                 ReStartClicked = {
-                    /*TODO*/
-                    /* ReStartClicked() */
+                    ReStartClicked()
 
                     Toast.makeText(context, "ReStart!", Toast.LENGTH_SHORT).show()
                 },
                 StopClicked = {
-                    /*TODO*/
-                    /* StopClicked() */
-
+                    StopClicked()
                     Toast.makeText(context, "Stop!", Toast.LENGTH_SHORT).show()
                 }
             )
@@ -101,7 +97,7 @@ fun InstanceSummary(
             StateWithText(
                 title = stringResource(id = R.string.IS_state),
                 stateIcon = R.drawable.instance_running,
-                contentColor = R.color.instance_running_text,
+                contentColor = convertStatusColor(status = instance.instanceStatus),
                 content = instance.instanceStatus
             )
             CopyIncludedText(

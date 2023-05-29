@@ -3,6 +3,7 @@ package com.knu.cloud.screens.instanceCreate
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,8 +31,11 @@ class InstanceCreateViewModel @Inject constructor(
     private val keypairRepository: KeypairRepository
 ): ViewModel() {
 
-//    private val _isDialogOpen = mutableStateOf(false)
-//    val isDialogOpen :State<Boolean> = _isDialogOpen
+    /**
+     * InstanceCreateDialog 열린 상태
+     * */
+    private val _isDialogOpen = mutableStateOf(true)
+    val isDialogOpen :State<Boolean> = _isDialogOpen
 
     private val _detailUiState = MutableStateFlow(InstanceCreateDetailUiState())
     val detailUiState : StateFlow<InstanceCreateDetailUiState> = _detailUiState.asStateFlow()
@@ -81,7 +85,7 @@ class InstanceCreateViewModel @Inject constructor(
     ) {
         try{
             val createRequest = CreateRequest(
-//                serverName = detailUiState.value.instanceName,
+                serverName = detailUiState.value.instanceName,
 //                imageName = sourceUiState.value.uploadSource!!.name,
 //                flavorName = flavorUiState.value.uploadFlavor!!.name,
 //                networkName = networkUiState.value.uploadNetwork!!.network,
@@ -94,8 +98,9 @@ class InstanceCreateViewModel @Inject constructor(
                         Timber.tag("instanceCreate").d("Success instanceData : $it")
                         if(it != null){
                             closeCreateInstanceDialog(context,"${it.instanceName} 생성 완료")
+                            _isDialogOpen.value = false
                         }else{
-                            closeCreateInstanceDialog(context,"인스턴스 데이터를 받아오지 못했습니다")
+                            closeCreateInstanceDialog(context,"동일한 이름의 인스턴스가 있습니다")
                         }
                     }.onFailure {
                         Timber.tag("instanceCreate").d("Failure : $it")

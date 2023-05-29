@@ -72,7 +72,7 @@ fun NavGraphBuilder.homeNavGraph(
 fun NavGraphBuilder.authNavGraph(
     onLoginClicked: (NavBackStackEntry) -> Unit,
     onSignUpClicked :(NavBackStackEntry) -> Unit,
-    onSignUpSubmitClicked : (NavBackStackEntry) -> Unit
+    navigateToLogin : (NavBackStackEntry) -> Unit
 ) {
     navigation(
         route = MainDestination.AUTH_ROUTE,
@@ -85,7 +85,7 @@ fun NavGraphBuilder.authNavGraph(
             )
         }
         composable(route = MainDestination.SIGNUP_ROUTE){from ->
-            SignUpScreen(onSignUpSubmitClick = { onSignUpSubmitClicked(from)})
+            SignUpScreen(navigateToLogin = { navigateToLogin(from)})
         }
     }
 }

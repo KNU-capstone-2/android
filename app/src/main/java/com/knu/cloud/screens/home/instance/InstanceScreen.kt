@@ -290,7 +290,7 @@ fun InstancesBar(
     }
 }
 
-@Preview(showBackground = true, device = Devices.TABLET)
+@Preview(showBackground = true)
 @Composable
 fun InstanceScreenPrev() {
     InstanceScreen(

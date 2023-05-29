@@ -3,6 +3,7 @@ package com.knu.cloud.screens.auth.signup
 import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.AuthRepository
 import com.knu.cloud.repository.AuthRepositoryImpl
 import com.knu.cloud.screens.auth.login.LoginUiState
@@ -21,6 +22,7 @@ const val testPassword = "1234"
 
 
 data class SignUpState(
+    val navigateToLogin : Boolean = false,
     val userNickName : String ="",
     val userEmail: String = "",
     val userEmailError: Boolean = false,
@@ -28,7 +30,8 @@ data class SignUpState(
     val userPassword: String = "",
     val userPasswordError: Boolean = false,
     val userPasswordErrorState: String = "",
-    val userPasswordCheck: String = ""
+    val userPasswordCheck: String = "",
+    val message : String = ""
 )
 
 @HiltViewModel
@@ -48,7 +51,21 @@ class SignUpViewModel @Inject constructor(
 //                email = _uiState.value.userEmail,
 //                username = _uiState.value.userNickName,
 //                password = _uiState.value.userPassword
-            )
+            ).onSuccess {
+                Timber.d(it)
+                _uiState.update { state ->
+                    state.copy(
+                        navigateToLogin = true,
+                        message = "회원가입 성공"
+                    )
+                }
+            }.onFailure {
+                it as RetrofitFailureStateException
+                Timber.d(it)
+                _uiState.update { state ->
+                    state.copy(message = it.message.toString())
+                }
+            }
         }
     }
     fun setUserNickName(nickName: String) {

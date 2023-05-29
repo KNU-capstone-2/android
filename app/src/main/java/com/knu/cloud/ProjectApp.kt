@@ -28,7 +28,6 @@ import com.knu.cloud.screens.splash.ProjectSplashScreen
 import com.knu.cloud.ui.theme.CloudTheme
 import com.knu.cloud.utils.reformatScreenPath
 import timber.log.Timber
-import javax.inject.Inject
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -117,7 +116,7 @@ fun ProjectApp (
 //                            sessionManager.login("123")
                         },
                         onSignUpClicked = appState.navActions::navigateToSignUp,
-                        onSignUpSubmitClicked = appState.navActions::navigateToLogin
+                        navigateToLogin = appState.navActions::navigateToLogin
                     )
                     homeNavGraph(
                         navController = appState.navController,
@@ -136,7 +135,11 @@ fun ProjectApp (
                                 .padding(10.dp)
                                 .clip(RoundedCornerShape(30.dp))
                         ) {
-                            InstanceCreateScreen()
+                            InstanceCreateScreen(
+                                onCloseClicked = {
+                                    appState.navActions.navigateToRoute(ComputeSections.Instance.route)
+                                }
+                            )
                         }
                     }
                 }
