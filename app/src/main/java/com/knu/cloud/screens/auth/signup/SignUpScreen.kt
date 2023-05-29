@@ -38,42 +38,47 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-
-    Surface(
-        modifier = Modifier
-            .fillMaxSize(),
-        color = Color.White
+    Box(
+        Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        Column(
+        Surface(
             modifier = Modifier
-                .fillMaxSize()
+                .width(500.dp)
+                .fillMaxHeight(),
+            color = Color.White
         ) {
-            TopAppBar(
-                title = { Text("") },
-                navigationIcon = {
-                    IconButton(onClick = { onSignUpSubmitClick() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                backgroundColor = Color.Transparent,
-                elevation = 0.dp
-            )
-            Text(
-                text = stringResource(R.string.SignUp_title),
-                style = MaterialTheme.typography.h5,
-                modifier = Modifier.padding(start = 15.dp, bottom = 3.dp)
-            )
-            Text(
-                text = stringResource(R.string.SignUp_subTitle),
-                style = MaterialTheme.typography.caption,
-                color = Color.Gray,
-                modifier = Modifier.padding(start = 15.dp, bottom = 10.dp)
-            )
-            SignUp(
-                onSignUpSubmitClick = onSignUpSubmitClick,
-                viewModel = viewModel,
-                context = context
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                TopAppBar(
+                    title = { Text("") },
+                    navigationIcon = {
+                        IconButton(onClick = { onSignUpSubmitClick() }) {
+                            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        }
+                    },
+                    backgroundColor = Color.Transparent,
+                    elevation = 0.dp
+                )
+                Text(
+                    text = stringResource(R.string.SignUp_title),
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.padding(start = 15.dp, bottom = 3.dp)
+                )
+                Text(
+                    text = stringResource(R.string.SignUp_subTitle),
+                    style = MaterialTheme.typography.caption,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(start = 15.dp, bottom = 10.dp)
+                )
+                SignUp(
+                    onSignUpSubmitClick = onSignUpSubmitClick,
+                    viewModel = viewModel,
+                    context = context
+                )
+            }
         }
     }
 }
