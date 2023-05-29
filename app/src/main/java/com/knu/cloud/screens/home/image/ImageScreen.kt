@@ -171,7 +171,7 @@ fun ImageTable(
     var isHeaderChecked by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(checkedImageIds) {
-        Timber.d("checkedInstanceIds $checkedImageIds")
+        Timber.d("checkedImageIds $checkedImageIds")
         if (checkedImageIds.isEmpty()) {
             /* to initialize table checkBoxes*/
             isAllSelected = false

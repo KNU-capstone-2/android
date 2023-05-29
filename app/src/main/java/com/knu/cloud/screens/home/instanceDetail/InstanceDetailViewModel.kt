@@ -29,13 +29,13 @@ class InstanceDetailViewModel @Inject constructor (
     private val _uiState = MutableStateFlow(InstanceDetailUiState())
     val uiState : StateFlow<InstanceDetailUiState> = _uiState.asStateFlow()
 
-    fun getInstance(instanceId : String){
-        Timber.tag("${this.javaClass.name}_getInstance").d("getInstance($instanceId)")
+    fun getInstance(id : String){
+        Timber.tag("${this.javaClass.name}_getInstance").d("getInstance($id)")
         _uiState.update {
             it.copy(isLoading = true)
         }
         viewModelScope.launch{
-            instanceRepository.getInstance(instanceId)
+            instanceRepository.getInstance(id)
                 .onSuccess { instanceData ->
                         Timber.tag("${this.javaClass.name}_getInstance").d("onSuccess instanceData : $instanceData")
                         _uiState.update { it.copy(instance = instanceData, isLoading = false) }
@@ -50,10 +50,10 @@ class InstanceDetailViewModel @Inject constructor (
         }
     }
 
-    fun startInstance(instanceId : String) {
+    fun startInstance(id : String) {
         Timber.tag("startInstance").d("START")
         viewModelScope.launch {
-            instanceRepository.startInstance(instanceId)
+            instanceRepository.startInstance(id)
                 .onSuccess {
                     instanceControlSuccessHandling(it,"Start")
                 }.onFailure {
@@ -64,10 +64,10 @@ class InstanceDetailViewModel @Inject constructor (
         }
     }
 
-    fun reStartInstance(instanceId : String) {
+    fun reStartInstance(id : String) {
         Timber.tag("reStartInstance").d("RE_START")
         viewModelScope.launch {
-            instanceRepository.reStartInstance(instanceId)
+            instanceRepository.reStartInstance(id)
                 .onSuccess {
                     instanceControlSuccessHandling(it,"Reboot")
                 }.onFailure {
@@ -78,10 +78,10 @@ class InstanceDetailViewModel @Inject constructor (
         }
     }
 
-    fun stopInstance(instanceId : String) {
+    fun stopInstance(id : String) {
         Timber.tag("stopInstance").d("STOP")
         viewModelScope.launch {
-            instanceRepository.stopInstance(instanceId)
+            instanceRepository.stopInstance(id)
                 .onSuccess {
                     instanceControlSuccessHandling(it,"Stop")
                 }.onFailure {

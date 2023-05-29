@@ -9,6 +9,8 @@ data class InstancesResponse(
 )
 @Parcelize
 data class InstanceData(
+    val id : String,
+    val creatorName : String,
     val instanceId: String,
     val instanceName: String,
     val instanceStatus: String,

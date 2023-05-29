@@ -19,7 +19,7 @@ import javax.inject.Inject
 data class InstanceUiState(
     val isLoading : Boolean = false,
     val instances : List<InstanceData> = emptyList(),
-    val checkedInstanceIds : List<String> = emptyList(),
+    val checkedIds : List<String> = emptyList(),
     val deleteComplete : Boolean = false,
     val deleteResult : List<Pair<String,Boolean>> = emptyList(),
     val message : String = "",
@@ -65,15 +65,15 @@ class InstanceViewModel @Inject constructor (
      * uiState는 마지막에 한 번만 업데이트함
      * */
     fun deleteCheckedInstances(){
-        Timber.tag("${this.javaClass.name}_deleteCheckedInstances()").d(" : checkedInstanceIds ${uiState.value.checkedInstanceIds} 삭제될 예정")
+        Timber.tag("${this.javaClass.name}_deleteCheckedInstances()").d(" : checkedids ${uiState.value.checkedIds} 삭제될 예정")
 //        val filteredData = _instances.value.filterNot { it.instancesId in _checkedInstanceIdList.value }                   // 삭제 과정 시뮬레이션
 
         viewModelScope.launch {
             val deleteSuccessList : MutableList<String> = mutableListOf()
-            _uiState.value.checkedInstanceIds.forEach{ instanceId ->
-                instanceRepository.deleteInstance(instanceId)
+            _uiState.value.checkedIds.forEach{ id ->
+                instanceRepository.deleteInstance(id)
                     .onSuccess {
-                        deleteSuccessList.add(instanceId)
+                        deleteSuccessList.add(id)
                     }.onFailure {
                         it as RetrofitFailureStateException
                         Timber.tag("${this.javaClass.name}_getAllInstances")
@@ -82,8 +82,8 @@ class InstanceViewModel @Inject constructor (
             }
             _uiState.update { state ->
                 state.copy(
-                    instances = state.instances.filterNot { it.instanceId in deleteSuccessList },                              // 삭제 성공한  리스트에 없는 instances
-                    deleteResult = state.checkedInstanceIds.map { id ->
+                    instances = state.instances.filterNot { it.id in deleteSuccessList },                              // 삭제 성공한  리스트에 없는 instances
+                    deleteResult = state.checkedIds.map { id ->
                         Pair(id, id in deleteSuccessList)
                     },
                     deleteComplete = true
@@ -93,10 +93,10 @@ class InstanceViewModel @Inject constructor (
         }
     }
 
-    fun startInstance(instanceId : String) {
+    fun startInstance(id : String) {
         Timber.tag("startInstance").d("START")
         viewModelScope.launch {
-            instanceRepository.startInstance(instanceId)
+            instanceRepository.startInstance(id)
                 .onSuccess {
                     instanceControlSuccessHandling(it,"Start")
                 }.onFailure {
@@ -107,10 +107,10 @@ class InstanceViewModel @Inject constructor (
         }
     }
 
-    fun reStartInstance(instanceId : String) {
+    fun reStartInstance(id : String) {
         Timber.tag("reStartInstance").d("RE_START")
         viewModelScope.launch {
-            instanceRepository.reStartInstance(instanceId)
+            instanceRepository.reStartInstance(id)
                 .onSuccess {
                     instanceControlSuccessHandling(it,"Reboot")
                 }.onFailure {
@@ -121,10 +121,10 @@ class InstanceViewModel @Inject constructor (
         }
     }
 
-    fun stopInstance(instanceId : String) {
+    fun stopInstance(id : String) {
         Timber.tag("stopInstance").d("STOP")
         viewModelScope.launch {
-            instanceRepository.stopInstance(instanceId)
+            instanceRepository.stopInstance(id)
                 .onSuccess {
                     instanceControlSuccessHandling(it,"Stop")
                 }.onFailure {
@@ -134,40 +134,40 @@ class InstanceViewModel @Inject constructor (
                 }
         }
     }
-    fun instanceCheck(instanceId : String) {
-        if(instanceId !in _uiState.value.checkedInstanceIds){
-            _uiState.update { it.copy(checkedInstanceIds = it.checkedInstanceIds + instanceId) }
+    fun instanceCheck(id : String) {
+        if(id !in _uiState.value.checkedIds){
+            _uiState.update { it.copy(checkedIds = it.checkedIds + id) }
         }
-        Timber.tag("vm_test").d("instanceCheck : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
+        Timber.tag("vm_test").d("instanceCheck : checkedids ${uiState.value.checkedIds}")
     }
     fun instanceUncheck(instanceId: String) {
         _uiState.update { state ->
             state.copy(
-                checkedInstanceIds = state.checkedInstanceIds.filterNot { it == instanceId }
+                checkedIds = state.checkedIds.filterNot { it == instanceId }
             )
         }
-        Timber.tag("vm_test").d("instanceUncheck : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
+        Timber.tag("vm_test").d("instanceUncheck : checkedInstanceIds ${uiState.value.checkedIds}")
     }
 
     fun allInstanceCheck(allChecked: Boolean) {
         if(allChecked) {
             _uiState.update { state ->
-                state.copy( checkedInstanceIds = state.instances.map { it.instanceId })
+                state.copy( checkedIds = state.instances.map { it.instanceId })
             }
         }else initializeCheckInstanceIds()
-        Timber.tag("vm_test").d("allInstanceCheck : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
+        Timber.tag("vm_test").d("allInstanceCheck : checkedInstanceIds ${uiState.value.checkedIds}")
     }
 
     fun closeDeleteResultDialog(){
         _uiState.update {
-            it.copy( deleteComplete = false, checkedInstanceIds = emptyList())
+            it.copy( deleteComplete = false, checkedIds = emptyList())
         }
     }
     private fun initializeCheckInstanceIds(){
         _uiState.update { state ->
-            state.copy(checkedInstanceIds = emptyList())
+            state.copy(checkedIds = emptyList())
         }
-        Timber.tag("vm_test").d("initializeCheckInstanceIds : checkedInstanceIds ${uiState.value.checkedInstanceIds}")
+        Timber.tag("vm_test").d("initializeCheckInstanceIds : checkedInstanceIds ${uiState.value.checkedIds}")
     }
     private fun instanceControlSuccessHandling(response : InstanceControlResponse?, action : String){
         _uiState.update { state ->
@@ -193,54 +193,3 @@ var testTableRowData = mutableListOf(
         isRowSelected = false
     )
 )
-//val testInstanceDataList = mutableListOf(
-//    InstanceData(
-//        instancesId = "i-0f204053ab80b5cc8",
-//        instancesName = "ec2-test",
-//        publicIPv4Address = "52.83.423.531",
-//        privateIPv4Address = "172.31.5.206",
-//        instanceStatus = "Running",
-//        publicIPv4DNS = "ec2-52-78-233-109 ap",
-//        hostNameType = "ip-173-31-92-94.31.ec2",
-//        privateIpDnsName = "IPv4(A)",
-//        instanceType = "t2.micro",
-//        statusCheck = "2/2 check passe",
-//    ),
-//    InstanceData(
-//        instancesId = "k-fwe31431jtj34442dcc",
-//        instancesName = "server-test",
-//        publicIPv4Address = "52.83.423.522",
-//        privateIPv4Address = "172.31.5.111",
-//        instanceStatus = "Running",
-//        publicIPv4DNS = "ec2-52-78-233-109 ap",
-//        hostNameType = "ip-173-31-92-94.31.ec2",
-//        privateIpDnsName = "IPv4(A)",
-//        instanceType = "t2.micro",
-//        statusCheck = "2/2 check passe",
-//    ),
-//    InstanceData(
-//        instancesId = "i-ac3199341fk33140f3",
-//        instancesName = "ec2-pocket-server",
-//        publicIPv4Address = "52.83.423.511",
-//        privateIPv4Address = "172.31.5.204",
-//        instanceStatus = "Stop",
-//        publicIPv4DNS = "ec2-52-78-233-109 ap",
-//        hostNameType = "ip-173-31-92-94.31.ec2",
-//        privateIpDnsName = "IPv4(A)",
-//        instanceType = "t2.micro",
-//        statusCheck = "2/2 check passe",
-//    )
-//)
-//
-//val testInstanceData = InstanceData(
-//    instancesId = "i-0f204053ab80b5cc8",
-//    instancesName = "ec2-test",
-//    publicIPv4Address = "52.83.423.531",
-//    privateIPv4Address = "172.31.5.206",
-//    instanceStatus = "Running",
-//    publicIPv4DNS = "ec2-52-78-233-109 ap",
-//    hostNameType = "ip-173-31-92-94.31.ec2",
-//    privateIpDnsName = "ip-172-31-92.42.ec2.internal",
-//    instanceType = "t2.micro",
-//    statusCheck = "2/2 check passe"
-//)

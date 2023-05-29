@@ -16,25 +16,25 @@ class InstanceRemoteDataSource @Inject constructor (
         Timber.tag("network").d("InstanceRemoteDataSource getAllInstances() 호출")
         return instanceApiService.getAllInstances()
     }
-    suspend fun getInstance(instanceId: String) : NetworkResult<AuthResponse<InstanceData>> {
-        Timber.tag("network").d("InstanceRemoteDataSource getInstance($instanceId) 호출")
-        return instanceApiService.getInstance(instanceId)
+    suspend fun getInstance(id: String) : NetworkResult<AuthResponse<InstanceData>> {
+        Timber.tag("network").d("InstanceRemoteDataSource getInstance($id) 호출")
+        return instanceApiService.getInstance(id)
     }
 
-    suspend fun deleteInstance(instanceId: String): NetworkResult<AuthResponse<String>> {
-        Timber.tag("network").d("InstanceRemoteDataSource deleteInstance($instanceId) 호출")
-        return instanceApiService.deleteInstance(instanceId)
+    suspend fun deleteInstance(id: String): NetworkResult<AuthResponse<String>> {
+        Timber.tag("network").d("InstanceRemoteDataSource deleteInstance($id) 호출")
+        return instanceApiService.deleteInstance(id)
     }
-    suspend fun startInstance(instanceId: String): NetworkResult<AuthResponse<InstanceControlResponse>> {
-        Timber.tag("network").d("InstanceRemoteDataSource startInstance($instanceId) 호출")
-        return instanceApiService.startInstance(instanceId)
+    suspend fun startInstance(id: String): NetworkResult<AuthResponse<InstanceControlResponse>> {
+        Timber.tag("network").d("InstanceRemoteDataSource startInstance($id) 호출")
+        return instanceApiService.startInstance(id)
     }
-    suspend fun reStartInstance(instanceId: String): NetworkResult<AuthResponse<InstanceControlResponse>> {
-        Timber.tag("network").d("InstanceRemoteDataSource reStartInstance($instanceId) 호출")
-        return instanceApiService.reStartInstance(instanceId)
+    suspend fun reStartInstance(id: String): NetworkResult<AuthResponse<InstanceControlResponse>> {
+        Timber.tag("network").d("InstanceRemoteDataSource reStartInstance($id) 호출")
+        return instanceApiService.reStartInstance(id)
     }
-    suspend fun stopInstance(instanceId: String): NetworkResult<AuthResponse<InstanceControlResponse>> {
-        Timber.tag("network").d("InstanceRemoteDataSource stopInstance($instanceId) 호출")
-        return instanceApiService.stopInstance(instanceId)
+    suspend fun stopInstance(id: String): NetworkResult<AuthResponse<InstanceControlResponse>> {
+        Timber.tag("network").d("InstanceRemoteDataSource stopInstance($id) 호출")
+        return instanceApiService.stopInstance(id)
     }
 }

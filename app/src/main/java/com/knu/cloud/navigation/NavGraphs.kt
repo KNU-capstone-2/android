@@ -40,15 +40,15 @@ fun NavGraphBuilder.homeNavGraph(
         }
 
         composable(
-            route = "${MainDestination.INSTANCE_DETAIL_ROUTE}/{instanceId}",
+            route = "${MainDestination.INSTANCE_DETAIL_ROUTE}/{id}",
             arguments = listOf(
-                navArgument("instanceId"){
+                navArgument("id"){
                     type = NavType.StringType
                 }
             )
         ){ navBackStackEntry ->
-            val instanceId = navBackStackEntry.arguments?.getString("instanceId")!!
-            InstanceDetailScreen(instanceId = instanceId)
+            val id = navBackStackEntry.arguments?.getString("id")!!
+            InstanceDetailScreen(id = id)
         }
 
         composable(ComputeSections.Image.route){ from ->

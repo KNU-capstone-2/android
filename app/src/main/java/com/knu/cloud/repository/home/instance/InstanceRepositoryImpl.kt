@@ -24,17 +24,17 @@ class InstanceRepositoryImpl @Inject constructor(
     override suspend fun getAllInstances(): Result<List<InstanceData>?> =
         authResponseToResult(remoteDataSource.getAllInstances())
 
-    override suspend fun getInstance(instanceId: String): Result<InstanceData?> =
-        authResponseToResult(remoteDataSource.getInstance(instanceId))
+    override suspend fun getInstance(id: String): Result<InstanceData?> =
+        authResponseToResult(remoteDataSource.getInstance(id))
 
-    override suspend fun deleteInstance(instanceId: String): Result<String?> =
-    authResponseToResult(remoteDataSource.deleteInstance(instanceId))
-    override suspend fun startInstance(instanceId: String): Result<InstanceControlResponse?> =
-        authResponseToResult(remoteDataSource.startInstance(instanceId))
+    override suspend fun deleteInstance(id: String): Result<String?> =
+    authResponseToResult(remoteDataSource.deleteInstance(id))
+    override suspend fun startInstance(id: String): Result<InstanceControlResponse?> =
+        authResponseToResult(remoteDataSource.startInstance(id))
 
-    override suspend fun reStartInstance(instanceId: String): Result<InstanceControlResponse?> =
-        authResponseToResult(remoteDataSource.reStartInstance(instanceId))
+    override suspend fun reStartInstance(id: String): Result<InstanceControlResponse?> =
+        authResponseToResult(remoteDataSource.reStartInstance(id))
 
-    override suspend fun stopInstance(instanceId: String): Result<InstanceControlResponse?> =
-        authResponseToResult(remoteDataSource.stopInstance(instanceId))
+    override suspend fun stopInstance(id: String): Result<InstanceControlResponse?> =
+        authResponseToResult(remoteDataSource.stopInstance(id))
 }

@@ -9,12 +9,12 @@ interface InstanceRepository {
 
     suspend fun getAllInstances() : Result<List<InstanceData>?>
 
-    suspend fun getInstance(instanceId : String) : Result<InstanceData?>
+    suspend fun getInstance(id : String) : Result<InstanceData?>
 
-    suspend fun deleteInstance(instanceId: String) : Result<String?>
+    suspend fun deleteInstance(id: String) : Result<String?>
 
-    suspend fun startInstance(instanceId: String) : Result<InstanceControlResponse?>
-    suspend fun reStartInstance(instanceId: String) : Result<InstanceControlResponse?>
-    suspend fun stopInstance(instanceId: String) : Result<InstanceControlResponse?>
+    suspend fun startInstance(id: String) : Result<InstanceControlResponse?>
+    suspend fun reStartInstance(id: String) : Result<InstanceControlResponse?>
+    suspend fun stopInstance(id: String) : Result<InstanceControlResponse?>
 
 }

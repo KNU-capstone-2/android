@@ -109,7 +109,7 @@ fun InstanceSummary(
                 content = instance.hostNameType
             )
 
-            Button(onClick = { onInstanceDetailClicked(instance.instanceId) }) {
+            Button(onClick = { onInstanceDetailClicked(instance.id) }) {
                 Text(text = "Instance Detail")
             }
         }

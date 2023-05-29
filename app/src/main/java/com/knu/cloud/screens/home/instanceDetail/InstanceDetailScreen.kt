@@ -43,13 +43,13 @@ val data = listOf(
 
 @Composable
 fun InstanceDetailScreen (
-    instanceId : String,
+    id : String,
     viewModel : InstanceDetailViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit){
-        viewModel.getInstance(instanceId)
+        viewModel.getInstance(id)
     }
     LaunchedEffect(uiState.message){
         if(uiState.message.isNotEmpty()){
@@ -113,15 +113,15 @@ fun InstanceDetailScreen (
                     ) {
                         InstanceActionButtons(
                             StartClicked = {
-                                viewModel.startInstance(instanceId)
+                                viewModel.startInstance(id)
                                 Toast.makeText(context, "Start!", Toast.LENGTH_SHORT).show()
                             },
                             ReStartClicked = {
-                                 viewModel.reStartInstance(instanceId)
+                                 viewModel.reStartInstance(id)
                                 Toast.makeText(context, "ReStart!", Toast.LENGTH_SHORT).show()
                             },
                             StopClicked = {
-                                viewModel.stopInstance(instanceId)
+                                viewModel.stopInstance(id)
                                 Toast.makeText(context, "Stop!", Toast.LENGTH_SHORT).show()
                             }
                         )
