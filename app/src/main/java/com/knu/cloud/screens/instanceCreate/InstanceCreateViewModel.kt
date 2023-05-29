@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-
 @HiltViewModel
 class InstanceCreateViewModel @Inject constructor(
     private val instanceCreateRepository: InstanceCreateRepository,
@@ -87,17 +86,16 @@ class InstanceCreateViewModel @Inject constructor(
 //            }
 //        }
     }
-
     fun createInstance(
         context: Context
     ) {
         try{
             val createRequest = CreateRequest(
-                serverName = detailUiState.value.instanceName,
-                imageName = sourceUiState.value.uploadSource!!.name,
-                flavorName = flavorUiState.value.uploadFlavor!!.name,
-                networkName = networkUiState.value.uploadNetwork!!.network,
-                keypairName = keypairUiState.value.uploadKeypair!!.name,
+//                serverName = detailUiState.value.instanceName,
+//                imageName = sourceUiState.value.uploadSource!!.name,
+//                flavorName = flavorUiState.value.uploadFlavor!!.name,
+//                networkName = networkUiState.value.uploadNetwork!!.network,
+//                keypairName = keypairUiState.value.uploadKeypair!!.name,
             )
             viewModelScope.launch {
                 // Do the background work here
