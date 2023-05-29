@@ -14,6 +14,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+const val testEmail  ="test"
+const val testPassword = "1234"
+
 data class LoginUiState(
     val email  : String ="",
     val password: String = "",
@@ -35,7 +38,10 @@ class LoginViewModel @Inject constructor(
             it.copy(isLoading = true)
         }
         viewModelScope.launch {
-            authRepository.login(uiState.value.email, uiState.value.password)
+            authRepository.login(
+//                uiState.value.email, uiState.value.password
+            testEmail, testPassword
+            )
                 .onSuccess { msg ->
                     _uiState.update {
                         it.copy(

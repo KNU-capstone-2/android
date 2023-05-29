@@ -39,18 +39,32 @@ class AuthInterceptor @Inject constructor(
                     sessionManager.authState.value.sessionId
                 }
             }
-            authRequestBuilder.addHeader("Authorization", "Bearer $sessionId")
+            Timber.d("request sessionId : $sessionId")
+            authRequestBuilder.addHeader("Cookie", "$sessionId")
         }
         val authRequest = authRequestBuilder.build()
 
         val authResponse = chain.proceed(authRequest)
-        val newSessionId = authResponse.header("Authorization")
-        if(newSessionId != null){
-            if(authState.isLoggedIn) sessionManager.setSessionId(newSessionId)
-            else sessionManager.login(newSessionId)
-        }else sessionManager.setSessionId("")
+        val newSessionId = parseSessionId(authResponse.header("set-cookie")?: "")
         Timber.d("newSessionId : $newSessionId")
+        if(newSessionId != null){
+            if(authState.isLoggedIn) {
+                Timber.d("setSessionID")
+//                sessionManager.setSessionId(newSessionId)
+            }else {
+                Timber.d("login")
+                sessionManager.login(newSessionId)
+            }
+        }
+//        else sessionManager.setSessionId("")
         // token이 invalid 하면  이미 response 객체에 오류가 붙어서 올거임-> NetworkCallAdapter가 그 뒤에 처리할거임
         return authResponse
     }
+}
+
+fun parseSessionId(input: String): String? {
+    return input.split(";")[0]
+//    val pattern = Regex("JSESSIONID=([a-zA-Z0-9]+);")
+//    val matchResult = pattern.find(input)
+//    return matchResult?.groupValues?.get(1)
 }

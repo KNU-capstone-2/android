@@ -20,7 +20,7 @@ import javax.inject.Singleton
 object ConfigModule {
 
 //    private const val BASE_URL = "https://d8f3-39-116-133-230.ngrok-free.app"
-    private const val BASE_URL = Constants.OPENSTACK_BASE_URL
+    private const val BASE_URL = Constants.SPRING_BASE_URL
 //    private const val BASE_URL = "https://a923-211-51-176-234.ngrok-free.app"
     @Singleton
     @Provides
