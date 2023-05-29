@@ -1,5 +1,6 @@
 package com.knu.cloud.screens.auth.login
 
+import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,6 +36,8 @@ import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
 import com.knu.cloud.components.text_input.addFocusCleaner
 import timber.log.Timber
+import www.sanju.motiontoast.MotionToast
+import www.sanju.motiontoast.MotionToastStyle
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @ExperimentalComposeUiApi
