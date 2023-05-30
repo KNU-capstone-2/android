@@ -3,9 +3,7 @@ package com.knu.cloud.components.basicTable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.knu.cloud.ui.theme.TableBackground
+import com.knu.cloud.ui.theme.TableCheckBox
 
 
 sealed class TableColumnType{
@@ -55,7 +55,10 @@ fun CheckBoxCell(
     Checkbox(
         modifier = modifier,
         checked = checked,
-        onCheckedChange = onCheckedChange
+        onCheckedChange = onCheckedChange,
+        colors = CheckboxDefaults.colors(
+            checkedColor = TableCheckBox
+        )
     )
 }
 @Composable
@@ -88,12 +91,11 @@ fun ColorBoxCell(
         modifier = modifier,
         contentAlignment = Alignment.CenterStart
     ){
-        val boxColor = if(cell.color == Color.Black) Color.LightGray
+        val boxColor = if(cell.color == Color.Black) TableBackground
             else cell.color
         Box(modifier = modifier
             .clip(shape = RoundedCornerShape(10.dp))
-            .background(boxColor)
-            .padding(5.dp)
+            .background(boxColor)            .padding(5.dp)
         ){
             Text(
                 text = cell.text,
@@ -114,7 +116,7 @@ fun RowScope.TableCellLayout(
     content: @Composable () -> Unit
 ) {
     Surface (modifier = modifier
-        .then(if(weight !=null) Modifier.weight(weight) else Modifier)
+        .then(if (weight != null) Modifier.weight(weight) else Modifier)
         .fillMaxHeight()
         , color = Color.Transparent
     ){

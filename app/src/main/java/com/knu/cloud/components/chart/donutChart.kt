@@ -189,7 +189,7 @@ internal fun DonutChart(
                 )
                 if (index == 1) {
                     drawContext.canvas.nativeCanvas.drawText(
-                        "${proportions[index].roundToInt()}%",
+                        "${(proportions[index]+proportions[0]).roundToInt()}%",
                         (canvasSize / 2) + textFontSize / 4,
                         (canvasSize / 2) + textFontSize / 4,
                         textPaint

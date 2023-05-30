@@ -46,8 +46,8 @@ class NavActions(private val navController: NavController) {
         )
     }
 
-    fun navigateToInstanceDetail(instanceId : String){
-        navController.navigate("${MainDestination.INSTANCE_DETAIL_ROUTE}/$instanceId")
+    fun navigateToInstanceDetail(id : String){
+        navController.navigate("${MainDestination.INSTANCE_DETAIL_ROUTE}/$id")
     }
 }
 

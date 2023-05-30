@@ -12,31 +12,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.knu.cloud.components.ProjectAppBar
 
-@Composable
-fun SettingScreen(
-
-) {
-    Scaffold(
-        topBar = {
-            ProjectAppBar(
-                title = "POCKET",
-                path = "프로젝트 / Setting",
-                onLogOutClicked = {},
-                onBackArrowClicked = {}
-            )
-        }
-    ) {
-        Surface(
-            modifier = Modifier
-                .padding(it)
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "TEST")
-            }
-        }
-    }
-}
+//@Composable
+//fun SettingScreen(
+//
+//) {
+//    Scaffold(
+//        topBar = {
+//            ProjectAppBar(
+//                title = "POCKET",
+//                path = "프로젝트 / Setting",
+//                onLogOutClicked = {},
+//                onBackArrowClicked = {}
+//            )
+//        }
+//    ) {
+//        Surface(
+//            modifier = Modifier
+//                .padding(it)
+//        ) {
+//            Column(
+//                modifier = Modifier.fillMaxSize(),
+//                verticalArrangement = Arrangement.Center,
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Text(text = "TEST")
+//            }
+//        }
+//    }
+//}

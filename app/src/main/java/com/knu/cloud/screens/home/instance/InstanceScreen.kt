@@ -37,16 +37,17 @@ import com.knu.cloud.utils.convertStatusColor
 import timber.log.Timber
 
 val INSTANCE_COLUMN_HEADERS = listOf(
-    "Instance Name", "Instance ID","Instance State", "Instance Type", "Created Date"
+    "Creator","Instance Name", "Instance ID","Instance State", "Instance Type", "Created Date"
 )
 val INSTANCE_COLUMN_TYPES  = listOf(
+    TableColumnType.Text,
     TableColumnType.Text,
     TableColumnType.Text,
     TableColumnType.ColorBox,
     TableColumnType.ColorBox,
     TableColumnType.ColorBox
 )
-val INSTANCE_COLUMN_WEIGHTS  = listOf(.4f,.7f,.2f,.2f,.4f)
+val INSTANCE_COLUMN_WEIGHTS  = listOf(.3f,.4f,.65f,.3f,.3f,.4f)
 
 @Composable
 fun InstanceScreen (
@@ -85,6 +86,7 @@ fun InstanceScreen (
             deleteResult = uiState.deleteResult,
             onCloseBtnClicked = {
                 viewModel.closeDeleteResultDialog()
+                viewModel.getAllInstances()
             }
         )
     }
@@ -97,7 +99,7 @@ fun InstanceScreen (
                     .fillMaxWidth()
                     .height(50.dp),
                 totalCnt = uiState.instances.size,
-                checkedCnt = uiState.checkedInstanceIds.size,
+                checkedCnt = uiState.checkedIds.size,
                 onLaunchBtnClicked = onInstanceCreateClicked,
                 onDeleteBtnClicked = {
                     isDeleteConfirmDialogOpen = true
@@ -115,22 +117,22 @@ fun InstanceScreen (
                     InstanceTable(
                         modifier = Modifier,
                         dataList = uiState.instances,
-                        checkedInstanceIds = uiState.checkedInstanceIds,
+                        checkedids = uiState.checkedIds,
                         onAllChecked = {
                             viewModel.allInstanceCheck(it)
                         },
-                        onRowChecked = { checked, instanceId ->
+                        onRowChecked = { checked, id ->
                             Timber.tag("vm_test").d("onRowChecked")
                             if (checked) {
                                 Timber.tag("vm_test").d("instanceCheck call")
-                                viewModel.instanceCheck(instanceId)
+                                viewModel.instanceCheck(id)
                             } else {
-                                viewModel.instanceUncheck(instanceId)
+                                viewModel.instanceUncheck(id)
                             }
                         },
-                        onRowSelected = { instanceId ->
+                        onRowSelected = { id ->
                             val selectedData =
-                                uiState.instances.find { it.instanceId == instanceId }
+                                uiState.instances.find { it.id == id }
                             selectedInstance =
                                 if (selectedInstance == selectedData) null else selectedData
                         }
@@ -149,13 +151,13 @@ fun InstanceScreen (
                             context = context,
                             instance = selectedInstance,
                             StartClicked = {
-                                viewModel.startInstance(selectedInstance!!.instanceId)
+                                viewModel.startInstance(selectedInstance!!.instanceName)
                             },
                             ReStartClicked = {
-                                viewModel.reStartInstance(selectedInstance!!.instanceId)
+                                viewModel.reStartInstance(selectedInstance!!.instanceName)
                             },
                             StopClicked = {
-                                viewModel.stopInstance(selectedInstance!!.instanceId)
+                                viewModel.stopInstance(selectedInstance!!.instanceName)
                             },
                             onInstanceDetailClicked = {
                                 onInstanceDetailClicked(it)
@@ -172,7 +174,7 @@ fun InstanceScreen (
 fun InstanceTable(
     modifier: Modifier = Modifier,
     dataList :List<InstanceData>,
-    checkedInstanceIds :List<String>,
+    checkedids :List<String>,
     onAllChecked : (Boolean) -> Unit,
     onRowChecked : (Boolean, String) -> Unit,
     onRowSelected : (String) -> Unit
@@ -183,10 +185,10 @@ fun InstanceTable(
     var isHeaderChecked by rememberSaveable { mutableStateOf(false) }
 
 
-    LaunchedEffect(checkedInstanceIds) {
+    LaunchedEffect(checkedids) {
         Timber.tag("uiState")
-            .d("${this.javaClass.name} : uiState.checkedInstanceIds $checkedInstanceIds")
-        if (checkedInstanceIds.isEmpty()) {
+            .d("${this.javaClass.name} : uiState.checkedids $checkedids")
+        if (checkedids.isEmpty()) {
             /* to initialize table checkBoxes*/
             isAllSelected = false
             isHeaderChecked = true
@@ -197,6 +199,7 @@ fun InstanceTable(
 //    val rowItems = remember { mutableStateListOf<TableRowItem>() }
     var rowItems by remember { mutableStateOf(emptyList<TableRowItem>())}
     rowItems = dataList.map { instanceData ->
+        val instanceCreatorCell by mutableStateOf(TableCell(instanceData.creatorName))
         val instanceNameCell by mutableStateOf(TableCell(instanceData.instanceName))
         val instanceIdCell by mutableStateOf(TableCell(instanceData.instanceId))
         val instanceStateCell by mutableStateOf(
@@ -205,13 +208,13 @@ fun InstanceTable(
         val instanceTypeCell by mutableStateOf(TableCell(instanceData.instanceType))
         val createDateCell by mutableStateOf(TableCell(convertDateFormat(instanceData.createdDate)))
         val cellItems by remember { mutableStateOf(
-            listOf(instanceNameCell,instanceIdCell,instanceStateCell,instanceTypeCell,createDateCell)
+            listOf(instanceCreatorCell,instanceNameCell,instanceIdCell,instanceStateCell,instanceTypeCell,createDateCell)
         ) }
 
         TableRowItem(
-                rowID = instanceData.instanceId,
+                rowID = instanceData.id,
                 columnTypes = columnTypes,
-                isChecked = instanceData.instanceId in checkedInstanceIds,
+                isChecked = instanceData.id in checkedids,
                 isSelected = false,
                 cells = cellItems.toList()
         )
@@ -288,7 +291,7 @@ fun InstancesBar(
     }
 }
 
-@Preview(showBackground = true, device = Devices.TABLET)
+@Preview(showBackground = true)
 @Composable
 fun InstanceScreenPrev() {
     InstanceScreen(

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 fun StateWithText(
     title: String,
     stateIcon: Int,
-    contentColor: Int,
+    contentColor: Color,
     content: String
 ) {
     Text(
@@ -32,17 +32,17 @@ fun StateWithText(
         modifier = Modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
-            painter = painterResource(id = stateIcon),
-            contentDescription = "icon",
-            modifier = Modifier.size(35.dp),
-        )
-        Spacer(modifier = Modifier.width(5.dp))
+//        Image(
+//            painter = painterResource(id = stateIcon),
+//            contentDescription = "icon",
+//            modifier = Modifier.size(35.dp),
+//        )
+//        Spacer(modifier = Modifier.width(5.dp))
         Text(
             text = content,
             fontWeight = FontWeight.Bold,
             fontSize = 25.sp,
-            color = colorResource(id = contentColor)
+            color = contentColor
         )
     }
     Spacer(modifier = Modifier.height(10.dp)) // 위 아래 간격

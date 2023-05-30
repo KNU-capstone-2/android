@@ -14,7 +14,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.knu.cloud.R
 import com.knu.cloud.components.CenterLottieLoadingIndicator
+import com.knu.cloud.components.CustomOutlinedButton
 import com.knu.cloud.components.DeleteConfirmDialog
 import com.knu.cloud.components.DeleteResultDialog
 import com.knu.cloud.components.basicTable.*
@@ -143,18 +145,20 @@ fun ImageBar(
                 )
             }
         }
-        OutlinedButton(
-            modifier = Modifier.weight(0.1f),
-            onClick = onLaunchBtnClicked
-        ) {
-            Text(text = "Create Image")
-        }
-        OutlinedButton(
-            modifier = Modifier.weight(0.1f),
-            onClick =  onDeleteBtnClicked
-        ) {
-            Text(text = "Delete Images")
-        }
+        CustomOutlinedButton(
+            modifier = Modifier.weight(0.06f),
+            onBtnClicked = { onLaunchBtnClicked() },
+            title = "Create Image",
+            icons = R.drawable.launch_24
+        )
+        Spacer(modifier = Modifier.width(5.dp))
+        CustomOutlinedButton(
+            modifier = Modifier.weight(0.06f),
+            onBtnClicked = { onDeleteBtnClicked() },
+            title = "Delete Images",
+            icons = R.drawable.ic_baseline_delete_forever_24
+        )
+        Spacer(modifier = Modifier.width(5.dp))
     }
 }
 
@@ -171,7 +175,7 @@ fun ImageTable(
     var isHeaderChecked by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(checkedImageIds) {
-        Timber.d("checkedInstanceIds $checkedImageIds")
+        Timber.d("checkedImageIds $checkedImageIds")
         if (checkedImageIds.isEmpty()) {
             /* to initialize table checkBoxes*/
             isAllSelected = false

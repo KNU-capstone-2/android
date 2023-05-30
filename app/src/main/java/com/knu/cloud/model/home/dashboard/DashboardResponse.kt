@@ -14,7 +14,7 @@ data class DashboardClass(
     val networkCount: Int,
 )
 
-data class DashboardResponse(
-    @SerializedName("info")
-    val dashboardDataClass: DashboardClass
-)
+//data class DashboardResponse(
+//    @SerializedName("info")
+//    val dashboardDataClass: DashboardClass
+//)

@@ -48,6 +48,7 @@ class AuthInterceptor @Inject constructor(
         val newSessionId = parseSessionId(authResponse.header("set-cookie")?: "")
         Timber.d("newSessionId : $newSessionId")
         if(newSessionId != null){
+            Timber.d("isLoggedIn : ${authState.isLoggedIn}")
             if(authState.isLoggedIn) {
                 Timber.d("setSessionID")
 //                sessionManager.setSessionId(newSessionId)

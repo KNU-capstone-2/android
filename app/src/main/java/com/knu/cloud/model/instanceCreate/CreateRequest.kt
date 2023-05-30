@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName
 
 data class CreateRequest(
     @SerializedName("serverName")
-    val serverName: String = "test1",
+    val serverName: String = "testJack",
     @SerializedName("imageName")
-    val imageName: String = "cirros-0.5.2-x86_64-disk",
+    val imageName: String = "cirros-0.6.1-x86_64-disk",
     @SerializedName("flavorName")
     val flavorName: String = "m1.micro",
     @SerializedName("networkName")
     val networkName: String = "private",
     @SerializedName("keypairName")
-    val keypairName: String = "test",
+    val keypairName: String = "test123",
 )

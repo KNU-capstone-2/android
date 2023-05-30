@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.knu.cloud.ui.theme.TableBackground
 import timber.log.Timber
 
 @Composable
@@ -29,7 +30,7 @@ fun TableHeader(
         modifier = modifier
             .fillMaxWidth()
             .height(75.dp)
-            .background(Color.LightGray)
+            .background(TableBackground)
         ,
     ) {
 

@@ -20,19 +20,21 @@ import com.knu.cloud.components.MessageDialog
 import com.knu.cloud.components.FABContent
 import com.knu.cloud.components.NavDrawer
 import com.knu.cloud.components.ProjectAppBar
+import com.knu.cloud.di.ConfigModule.provideSessionManager
 import com.knu.cloud.navigation.*
 import com.knu.cloud.network.SessionManager
 import com.knu.cloud.screens.instanceCreate.InstanceCreateScreen
 import com.knu.cloud.screens.splash.ProjectSplashScreen
 import com.knu.cloud.ui.theme.CloudTheme
 import com.knu.cloud.utils.reformatScreenPath
+import kotlinx.coroutines.delay
 import timber.log.Timber
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ProjectApp(
+fun ProjectApp (
     appState: ProjectAppState = rememberProjectAppState(),
-    sessionManager: SessionManager = SessionManager()
+    sessionManager: SessionManager = provideSessionManager()
 ) {
     val authState by sessionManager.authState.collectAsState()
     var firstRendering by remember { mutableStateOf(true) }
@@ -49,13 +51,22 @@ fun ProjectApp(
             }
         )
     }
-    LaunchedEffect(authState.isLoggedIn,appState.showLogOutDialog.value){
+    LaunchedEffect(authState.isLoggedIn,appState.showLogOutDialog.value,firstRendering){
         Timber.d("authState.isLoggedId : ${authState.isLoggedIn}")
+        delay(1000L)
         if(!firstRendering && !authState.isLoggedIn && !appState.showLogOutDialog.value){
             appState.navActions.navigateToLogin(null)
         }
         firstRendering = false
     }
+    /*TODO : userName sessionManager에서 받아왔는데 Project앱에서 연동이 안됨 싱글톤인데 왜이러지. */
+//    LaunchedEffect(authState.userName){
+//        Timber.d("userName : ${authState.userName}")
+//        if(authState.userName.isNotEmpty()){
+//            appState.userName.value = authState.userName
+//        }
+//    }
+
     CloudTheme {
         Scaffold(
             scaffoldState = appState.scaffoldState,
@@ -64,6 +75,7 @@ fun ProjectApp(
                     ProjectAppBar(
                         title = "POCKET",
                         path = reformatScreenPath(appState.currentRoute),
+                        userName = "JaeWoong",
                         onLogOutClicked = {
                             appState.showLogOutDialog.value = true
                         }
@@ -112,10 +124,10 @@ fun ProjectApp(
                     authNavGraph(
                         onLoginClicked = {
                             appState.navActions.navigateToHome(null)
-                            sessionManager.login("123")
+//                            sessionManager.login("123")
                         },
                         onSignUpClicked = appState.navActions::navigateToSignUp,
-                        onSignUpSubmitClicked = appState.navActions::navigateToLogin
+                        navigateToLogin = appState.navActions::navigateToLogin
                     )
                     homeNavGraph(
                         navController = appState.navController,
@@ -134,7 +146,11 @@ fun ProjectApp(
                                 .padding(10.dp)
                                 .clip(RoundedCornerShape(30.dp))
                         ) {
-                            InstanceCreateScreen()
+                            InstanceCreateScreen(
+                                onCloseClicked = {
+                                    appState.navActions.navigateToRoute(ComputeSections.Instance.route)
+                                }
+                            )
                         }
                     }
                 }

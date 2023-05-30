@@ -1,7 +1,6 @@
 package com.knu.cloud.screens.auth.signup
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,13 +28,16 @@ import com.knu.cloud.R
 import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
 import com.knu.cloud.components.text_input.addFocusCleaner
-import com.knu.cloud.utils.ToastSuccessMessage
+import com.knu.cloud.ui.theme.TableCheckBox
+import com.knu.cloud.utils.ToastStatus
+import com.knu.cloud.utils.showMotionToastMessage
+import com.knu.cloud.utils.toastSuccessMessage
 import timber.log.Timber
 
 @ExperimentalComposeUiApi
 @Composable
 fun SignUpScreen(
-    onSignUpSubmitClick : () -> Unit,
+    navigateToLogin : () -> Unit,
     viewModel: SignUpViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -56,7 +58,7 @@ fun SignUpScreen(
                 TopAppBar(
                     title = { Text("") },
                     navigationIcon = {
-                        IconButton(onClick = { onSignUpSubmitClick() }) {
+                        IconButton(onClick = { navigateToLogin() }) {
                             Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                         }
                     },
@@ -75,7 +77,7 @@ fun SignUpScreen(
                     modifier = Modifier.padding(start = 15.dp, bottom = 10.dp)
                 )
                 SignUp(
-                    onSignUpSubmitClick = onSignUpSubmitClick,
+                    navigateToLogin = navigateToLogin,
                     viewModel = viewModel,
                     context = context
                 )
@@ -88,7 +90,7 @@ fun SignUpScreen(
 @ExperimentalComposeUiApi
 @Composable
 fun SignUp(
-    onSignUpSubmitClick : () -> Unit,
+    navigateToLogin : () -> Unit,
     viewModel: SignUpViewModel,
     context: Context
 ) {
@@ -97,6 +99,21 @@ fun SignUp(
 
     var personalInfoCheck by rememberSaveable { mutableStateOf(false) }
     var expirationDateCheck by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.navigateToLogin){
+        if(uiState.navigateToLogin){
+            navigateToLogin()
+        }
+    }
+
+    LaunchedEffect(uiState.message){
+        if(uiState.message.isNotEmpty()){
+            showMotionToastMessage(context,uiState.toastStatus,uiState.message)
+            viewModel.initializeMessage()
+//            Toast.makeText(context, uiState.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -108,7 +125,7 @@ fun SignUp(
     ) {
         ProjectTextInput(
             type = TextInputType.FIELD,
-            label = "닉네임",
+            label = "아이디",
             keyboardController = keyboardController,
         ) { nickName ->
             viewModel.setUserNickName(nickName)
@@ -116,7 +133,7 @@ fun SignUp(
         Spacer(modifier = Modifier.size(8.dp))
         ProjectTextInput(
             type = TextInputType.FIELD,
-            label = stringResource(R.string.SignUp_email),
+            label = "이메일",
             keyboardController = keyboardController,
         ) { email ->
             viewModel.setUserEmail(email)
@@ -210,14 +227,21 @@ fun SignUp(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = personalInfoCheck,
-                onCheckedChange = { personalInfoCheck = it }
+                onCheckedChange = { personalInfoCheck = it },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = TableCheckBox
+                )
+
             )
             Text(stringResource(R.string.SignUp_personalInfoCheck))
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = expirationDateCheck,
-                onCheckedChange = { expirationDateCheck = it }
+                onCheckedChange = { expirationDateCheck = it },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = TableCheckBox
+                )
             )
             Text(stringResource(R.string.SignUp_expirationDateCheck))
         }
@@ -245,11 +269,6 @@ fun SignUp(
                 if (viewModel.passAllConditions() && personalInfoCheck && expirationDateCheck) {
                     viewModel.signUp()
                     Timber.tag("test").d("테스트 성공")
-                    ToastSuccessMessage(
-                        context = context,
-                        message = "회원가입 완료"
-                    )
-                    onSignUpSubmitClick()
                 }
             },
             modifier = Modifier

@@ -31,18 +31,18 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             dashboardRepository.getDashboardData()
                 .onSuccess {
-                    Timber.tag("TEST").e("$it")
-                    val total = it?.dashboardDataClass ?:testDashboardClass
+                    Timber.tag("TEST").d("$it")
+                    val total = it ?:testDashboardClass
                     computeDataSet = mutableListOf(
                         DashboardData("인스턴스", total.instanceCount,10-total.instanceCount),
-                        DashboardData("VCPUs",total.vcpuCount, 10-total.vcpuCount),
-                        DashboardData("RAM", total.ramCount, 2900-total.ramCount)
+                        DashboardData("VCPUs",total.vcpuCount, 20-total.vcpuCount),
+                        DashboardData("RAM", total.ramCount, 51200-total.ramCount)
                     )
 
                     volumeDataSet = mutableListOf(
                         DashboardData("볼륨", total.volumeCount, 10-total.volumeCount),
                         DashboardData("볼륨 스냅샷", total.snapshotCount, 10-total.snapshotCount),
-                        DashboardData("볼륨 스토리지", total.volumeStorageGB, 30-total.volumeStorageGB)
+                        DashboardData("볼륨 스토리지", total.volumeStorageGB, 1000-total.volumeStorageGB)
                     )
 
                     networkDataSet = mutableListOf(
@@ -51,7 +51,24 @@ class DashboardViewModel @Inject constructor(
                         DashboardData("네트워크", total.networkCount, 10-total.networkCount),
                     )
                 }.onFailure {
-                    /*TODO*/
+//                    val total = testDashboardClass
+//                    computeDataSet = mutableListOf(
+//                        DashboardData("인스턴스", total.instanceCount,10-total.instanceCount),
+//                        DashboardData("VCPUs",total.vcpuCount, 10-total.vcpuCount),
+//                        DashboardData("RAM", total.ramCount, 2900-total.ramCount)
+//                    )
+//
+//                    volumeDataSet = mutableListOf(
+//                        DashboardData("볼륨", total.volumeCount, 10-total.volumeCount),
+//                        DashboardData("볼륨 스냅샷", total.snapshotCount, 10-total.snapshotCount),
+//                        DashboardData("볼륨 스토리지", total.volumeStorageGB, 30-total.volumeStorageGB)
+//                    )
+//
+//                    networkDataSet = mutableListOf(
+//                        DashboardData("Floating IP", total.floatingIpCount, 50-total.floatingIpCount),
+//                        DashboardData("보안 그룹", total.securityGroupCount, 10-total.securityGroupCount),
+//                        DashboardData("네트워크", total.networkCount, 10-total.networkCount),
+//                    )
                 }
             /*
             dashboardRepository.getDashboardUsageData()

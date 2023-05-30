@@ -21,6 +21,7 @@ import com.knu.cloud.R
 import com.knu.cloud.components.CustomOutlinedButton
 import com.knu.cloud.components.InstanceActionButtons
 import com.knu.cloud.model.home.instance.InstanceData
+import com.knu.cloud.utils.convertStatusColor
 
 
 @Composable
@@ -62,22 +63,16 @@ fun InstanceSummary(
             )
             InstanceActionButtons(
                 StartClicked = {
-                    /*TODO*/
-                    /* StartClicked() */
-
-                    Toast.makeText(context, "Start!", Toast.LENGTH_SHORT).show()
+                    StartClicked()
+//                    Toast.makeText(context, "Start!", Toast.LENGTH_SHORT).show()
                 },
                 ReStartClicked = {
-                    /*TODO*/
-                    /* ReStartClicked() */
-
-                    Toast.makeText(context, "ReStart!", Toast.LENGTH_SHORT).show()
+                    ReStartClicked()
+//                    Toast.makeText(context, "ReStart!", Toast.LENGTH_SHORT).show()
                 },
                 StopClicked = {
-                    /*TODO*/
-                    /* StopClicked() */
-
-                    Toast.makeText(context, "Stop!", Toast.LENGTH_SHORT).show()
+                    StopClicked()
+//                    Toast.makeText(context, "Stop!", Toast.LENGTH_SHORT).show()
                 }
             )
             Divider()
@@ -101,7 +96,8 @@ fun InstanceSummary(
             StateWithText(
                 title = stringResource(id = R.string.IS_state),
                 stateIcon = R.drawable.instance_running,
-                contentColor = R.color.instance_running_text,
+//                contentColor = convertStatusColor(status = instance.instanceStatus),
+                contentColor = Color.Black,
                 content = instance.instanceStatus
             )
             CopyIncludedText(
@@ -110,7 +106,7 @@ fun InstanceSummary(
                 content = instance.hostNameType
             )
             CustomOutlinedButton(
-                onBtnClicked = { onInstanceDetailClicked(instance.instanceId) },
+                onBtnClicked = { onInstanceDetailClicked(instance.id) },
                 title = "Instance Detail",
                 icons = R.drawable.ic_baseline_manage_search_24
             )

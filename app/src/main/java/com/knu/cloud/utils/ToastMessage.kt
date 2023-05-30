@@ -2,33 +2,47 @@ package com.knu.cloud.utils
 
 import android.app.Activity
 import android.content.Context
-import androidx.compose.runtime.Composable
 import androidx.core.content.res.ResourcesCompat
 import www.sanju.motiontoast.MotionToast
 import www.sanju.motiontoast.MotionToastStyle
 
-fun ToastSuccessMessage(
+enum class ToastStatus{
+    SUCCESS,DELETE,ERROR,INFO
+}
+
+fun showMotionToastMessage(context: Context,status: ToastStatus,message: String){
+    when(status){
+        ToastStatus.SUCCESS -> toastSuccessMessage(context,message)
+        ToastStatus.DELETE -> toastDeleteMessage(context,message)
+        ToastStatus.ERROR -> toastErrorMessage(context,message)
+        ToastStatus.INFO -> toastInfoMessage(context,message)
+    }
+}
+
+
+
+fun toastSuccessMessage(
     context: Context,
     message: String,
 ) {
-    MotionToast.darkToast(
+    MotionToast.createColorToast(
         context as Activity,
-        "메세지",
+        "Success",
         message,
         MotionToastStyle.SUCCESS,
         MotionToast.GRAVITY_BOTTOM,
         MotionToast.SHORT_DURATION,
-        ResourcesCompat.getFont(context as Activity, www.sanju.motiontoast.R.font.helvetica_regular)
+        ResourcesCompat.getFont(context, www.sanju.motiontoast.R.font.helvetica_regular)
     )
 }
 
-fun ToastDeleteMessage(
+fun toastDeleteMessage(
     context: Context,
     message: String,
 ) {
-    MotionToast.darkToast(
+    MotionToast.createColorToast(
         context as Activity,
-        "메세지",
+        "Delete",
         message,
         MotionToastStyle.DELETE,
         MotionToast.GRAVITY_BOTTOM,
@@ -37,13 +51,13 @@ fun ToastDeleteMessage(
     )
 }
 
-fun ToastErrorMessage(
+fun toastErrorMessage(
     context: Context,
     message: String,
 ) {
-    MotionToast.darkToast(
+    MotionToast.createColorToast(
         context as Activity,
-        "메세지",
+        "Error",
         message,
         MotionToastStyle.ERROR,
         MotionToast.GRAVITY_BOTTOM,
@@ -52,13 +66,13 @@ fun ToastErrorMessage(
     )
 }
 
-fun ToastInfoMessage(
+fun toastInfoMessage(
     context: Context,
     message: String,
 ) {
-    MotionToast.darkToast(
+    MotionToast.createColorToast(
         context as Activity,
-        "메세지",
+        "Info",
         message,
         MotionToastStyle.INFO,
         MotionToast.GRAVITY_BOTTOM,

@@ -6,7 +6,9 @@ import com.knu.cloud.model.home.instance.InstanceControlResponse
 import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.home.instance.InstanceRepository
+import com.knu.cloud.utils.ToastStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +21,7 @@ data class InstanceDetailUiState(
     val isLoading : Boolean = false,
     val instance : InstanceData? = null,
     val message : String = "",
+    val toastStatus: ToastStatus = ToastStatus.INFO
 )
 
 @HiltViewModel
@@ -29,13 +32,13 @@ class InstanceDetailViewModel @Inject constructor (
     private val _uiState = MutableStateFlow(InstanceDetailUiState())
     val uiState : StateFlow<InstanceDetailUiState> = _uiState.asStateFlow()
 
-    fun getInstance(instanceId : String){
-        Timber.tag("${this.javaClass.name}_getInstance").d("getInstance($instanceId)")
+    fun getInstance(id : String){
+        Timber.tag("${this.javaClass.name}_getInstance").d("getInstance($id)")
         _uiState.update {
             it.copy(isLoading = true)
         }
         viewModelScope.launch{
-            instanceRepository.getInstance(instanceId)
+            instanceRepository.getInstance(id)
                 .onSuccess { instanceData ->
                         Timber.tag("${this.javaClass.name}_getInstance").d("onSuccess instanceData : $instanceData")
                         _uiState.update { it.copy(instance = instanceData, isLoading = false) }
@@ -50,10 +53,10 @@ class InstanceDetailViewModel @Inject constructor (
         }
     }
 
-    fun startInstance(instanceId : String) {
+    fun startInstance(id : String) {
         Timber.tag("startInstance").d("START")
         viewModelScope.launch {
-            instanceRepository.startInstance(instanceId)
+            instanceRepository.startInstance(id)
                 .onSuccess {
                     instanceControlSuccessHandling(it,"Start")
                 }.onFailure {
@@ -64,10 +67,10 @@ class InstanceDetailViewModel @Inject constructor (
         }
     }
 
-    fun reStartInstance(instanceId : String) {
+    fun reStartInstance(id : String) {
         Timber.tag("reStartInstance").d("RE_START")
         viewModelScope.launch {
-            instanceRepository.reStartInstance(instanceId)
+            instanceRepository.reStartInstance(id)
                 .onSuccess {
                     instanceControlSuccessHandling(it,"Reboot")
                 }.onFailure {
@@ -78,10 +81,10 @@ class InstanceDetailViewModel @Inject constructor (
         }
     }
 
-    fun stopInstance(instanceId : String) {
+    fun stopInstance(id : String) {
         Timber.tag("stopInstance").d("STOP")
         viewModelScope.launch {
-            instanceRepository.stopInstance(instanceId)
+            instanceRepository.stopInstance(id)
                 .onSuccess {
                     instanceControlSuccessHandling(it,"Stop")
                 }.onFailure {
@@ -92,11 +95,19 @@ class InstanceDetailViewModel @Inject constructor (
         }
     }
 
+    fun initializeMessage(){
+        _uiState.update {
+            it.copy(message = "")
+        }
+    }
     private fun instanceControlSuccessHandling(response : InstanceControlResponse?,action : String){
         _uiState.update { state ->
             if(response != null){
-                if (response.isSuccess) state.copy(message = "Instance $action Success!")
-                else state.copy(message = response.message)
+                if (response.isSuccess || response.message == "success")
+                    state.copy(message = "Instance $action Success!", toastStatus = ToastStatus.SUCCESS)
+                else {
+                    state.copy(message = response.message, toastStatus = ToastStatus.ERROR)
+                }
             }else{
                 state.copy(message = "server error")
             }

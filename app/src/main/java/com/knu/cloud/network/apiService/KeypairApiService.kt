@@ -16,17 +16,17 @@ interface KeypairApiService {
     @GET("/keypairs")
     suspend fun getKeypairs(): NetworkResult<AuthResponse<List<KeypairData>>>
 
-    @GET("/keypairs/{id}")
+    @GET("/keypair/{id}")
     suspend fun getKeypair(
         @Path("id") keypairName : String
     ) : NetworkResult<AuthResponse<KeypairData>>
 
-    @POST("/keypairs")
+    @POST("/keypair")
     suspend fun createKeypair(
         @Body keypairCreateRequest: KeypairCreateRequest
     ) : NetworkResult<AuthResponse<KeypairCreateResponse>>
 
-    @DELETE("/keypairs/{id}")
+    @DELETE("/keypair/{id}")
     suspend fun deleteKeypair(
         @Path("id") keypairName: String
     ): NetworkResult<AuthResponse<String>>

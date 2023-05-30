@@ -40,15 +40,15 @@ fun NavGraphBuilder.homeNavGraph(
         }
 
         composable(
-            route = "${MainDestination.INSTANCE_DETAIL_ROUTE}/{instanceId}",
+            route = "${MainDestination.INSTANCE_DETAIL_ROUTE}/{id}",
             arguments = listOf(
-                navArgument("instanceId"){
+                navArgument("id"){
                     type = NavType.StringType
                 }
             )
         ){ navBackStackEntry ->
-            val instanceId = navBackStackEntry.arguments?.getString("instanceId")!!
-            InstanceDetailScreen(instanceId = instanceId)
+            val id = navBackStackEntry.arguments?.getString("id")!!
+            InstanceDetailScreen(id = id)
         }
 
         composable(ComputeSections.Image.route){ from ->
@@ -72,7 +72,7 @@ fun NavGraphBuilder.homeNavGraph(
 fun NavGraphBuilder.authNavGraph(
     onLoginClicked: (NavBackStackEntry) -> Unit,
     onSignUpClicked :(NavBackStackEntry) -> Unit,
-    onSignUpSubmitClicked : (NavBackStackEntry) -> Unit
+    navigateToLogin : (NavBackStackEntry) -> Unit
 ) {
     navigation(
         route = MainDestination.AUTH_ROUTE,
@@ -85,7 +85,7 @@ fun NavGraphBuilder.authNavGraph(
             )
         }
         composable(route = MainDestination.SIGNUP_ROUTE){from ->
-            SignUpScreen(onSignUpSubmitClick = { onSignUpSubmitClicked(from)})
+            SignUpScreen(navigateToLogin = { navigateToLogin(from)})
         }
     }
 }
