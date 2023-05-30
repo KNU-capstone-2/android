@@ -19,14 +19,16 @@ The interface is configured on a tablet basis and the network condition must be 
 - Coroutine
 - Secrets Gradle plugin
 - Junit4
-- Flow
+- Flvw
 - DataStore
 - MotionToast : https://github.com/Spikeysanju/MotionToast
 
+# Architecture
 
-# View
 
+# Preview
+## Create Instance
 ![ezgif com-video-to-gif (2)](https://github.com/KNU-capstone-2/android/assets/75293768/35740fb9-8e02-4e38-a8ff-354b96b16c91)
-
+## Instance Control / Keypair Delete
 
 ![ezgif com-video-to-gif (3)](https://github.com/KNU-capstone-2/android/assets/75293768/39078f5f-839d-4050-b00f-10c6844478ec)
