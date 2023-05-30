@@ -27,6 +27,7 @@ import com.knu.cloud.screens.instanceCreate.InstanceCreateScreen
 import com.knu.cloud.screens.splash.ProjectSplashScreen
 import com.knu.cloud.ui.theme.CloudTheme
 import com.knu.cloud.utils.reformatScreenPath
+import kotlinx.coroutines.delay
 import timber.log.Timber
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -52,11 +53,20 @@ fun ProjectApp (
     }
     LaunchedEffect(authState.isLoggedIn,appState.showLogOutDialog.value,firstRendering){
         Timber.d("authState.isLoggedId : ${authState.isLoggedIn}")
+        delay(1000L)
         if(!firstRendering && !authState.isLoggedIn && !appState.showLogOutDialog.value){
             appState.navActions.navigateToLogin(null)
         }
         firstRendering = false
     }
+    /*TODO : userName sessionManager에서 받아왔는데 Project앱에서 연동이 안됨 싱글톤인데 왜이러지. */
+//    LaunchedEffect(authState.userName){
+//        Timber.d("userName : ${authState.userName}")
+//        if(authState.userName.isNotEmpty()){
+//            appState.userName.value = authState.userName
+//        }
+//    }
+
     CloudTheme {
         Scaffold(
             scaffoldState = appState.scaffoldState,
@@ -65,6 +75,7 @@ fun ProjectApp (
                     ProjectAppBar(
                         title = "POCKET",
                         path = reformatScreenPath(appState.currentRoute),
+                        userName = "JaeWoong",
                         onLogOutClicked = {
                             appState.showLogOutDialog.value = true
                         }

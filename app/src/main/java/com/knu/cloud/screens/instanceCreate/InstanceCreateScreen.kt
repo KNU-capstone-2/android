@@ -1,5 +1,7 @@
 package com.knu.cloud.screens.instanceCreate
 
+import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -18,6 +20,7 @@ import com.knu.cloud.components.CustomOutlinedButton
 import com.knu.cloud.navigation.InstanceCreateSections
 import com.knu.cloud.navigation.findStartDestination
 import com.knu.cloud.navigation.instanceCreateNavGraph
+import com.knu.cloud.utils.showMotionToastMessage
 
 
 @Composable
@@ -26,6 +29,7 @@ fun InstanceCreateScreen(
     instanceCreateViewModel : InstanceCreateViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+//    val activity = LocalContext.current as Activity
 
 //    val instanceCreateViewModel = remember {
 //        InstanceCreateViewModel()
@@ -42,6 +46,15 @@ fun InstanceCreateScreen(
             onCloseClicked()
         }
     }
+
+    LaunchedEffect(createInstanceDialogState.message){
+        if(createInstanceDialogState.message.isNotEmpty()){
+            Toast.makeText(context,createInstanceDialogState.message,Toast.LENGTH_SHORT).show()
+//            showMotionToastMessage(context,createInstanceDialogState.toastStatus,createInstanceDialogState.message)
+        }
+        instanceCreateViewModel.initializeMessage()
+    }
+
 
     if(createInstanceDialogState.showProgressDialog){
         CreateLoadingDialog()

@@ -129,7 +129,7 @@ fun DeleteResultDialog(
                                     )
                                 }else{
                                     Text(
-                                        text = "$data ${it.first} 삭제 결과 : 실패",
+                                        text = "$data ${it.first} 삭제 결과 : 실패 (권한이 없습니다)",
                                         style = MaterialTheme.typography.h6
                                     )
                                 }

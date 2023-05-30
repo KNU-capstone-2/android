@@ -41,7 +41,7 @@ class InstanceViewModel @Inject constructor (
     /**
      * Instance를 전부 가져옴
      */
-    private fun getAllInstances(){
+    fun getAllInstances(){
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             instanceRepository.getAllInstances()
@@ -153,7 +153,7 @@ class InstanceViewModel @Inject constructor (
     fun allInstanceCheck(allChecked: Boolean) {
         if(allChecked) {
             _uiState.update { state ->
-                state.copy( checkedIds = state.instances.map { it.instanceId })
+                state.copy( checkedIds = state.instances.map { it.id })
             }
         }else initializeCheckInstanceIds()
         Timber.tag("vm_test").d("allInstanceCheck : checkedInstanceIds ${uiState.value.checkedIds}")

@@ -7,6 +7,7 @@ import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.AuthRepository
 import com.knu.cloud.repository.AuthRepositoryImpl
 import com.knu.cloud.screens.auth.login.LoginUiState
+import com.knu.cloud.utils.ToastStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +32,8 @@ data class SignUpState(
     val userPasswordError: Boolean = false,
     val userPasswordErrorState: String = "",
     val userPasswordCheck: String = "",
-    val message : String = ""
+    val message : String = "",
+    val toastStatus : ToastStatus = ToastStatus.INFO
 )
 
 @HiltViewModel
@@ -45,25 +47,29 @@ class SignUpViewModel @Inject constructor(
     fun signUp() {
         viewModelScope.launch {
             authRepository.signUp(
-                email = testEmail,
-                username = testUsername,
-                password = testPassword
-//                email = _uiState.value.userEmail,
-//                username = _uiState.value.userNickName,
-//                password = _uiState.value.userPassword
+//                email = testEmail,
+//                username = testUsername,
+//                password = testPassword
+                email = _uiState.value.userEmail,
+                username = _uiState.value.userNickName,
+                password = _uiState.value.userPassword
             ).onSuccess {
                 Timber.d(it)
                 _uiState.update { state ->
                     state.copy(
                         navigateToLogin = true,
-                        message = "회원가입 성공"
+                        message = "회원가입 성공",
+                        toastStatus = ToastStatus.SUCCESS
                     )
                 }
             }.onFailure {
                 it as RetrofitFailureStateException
                 Timber.d(it)
                 _uiState.update { state ->
-                    state.copy(message = it.message.toString())
+                    state.copy(
+                        message = it.message.toString(),
+                        toastStatus = ToastStatus.ERROR
+                    )
                 }
             }
         }
@@ -94,6 +100,12 @@ class SignUpViewModel @Inject constructor(
             it.copy(userPasswordCheck = pwCheck)
         }
         Timber.tag("SignUp_userPasswordCheck").d(_uiState.value.userPasswordCheck)
+    }
+
+    fun initializeMessage(){
+        _uiState.update {
+            it.copy(message = "")
+        }
     }
 
     private fun isEmailEmpty(): Boolean {
@@ -151,12 +163,42 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun passAllConditions(): Boolean {
-        if (isEmailEmpty()) return false
-        if (isEmailPattern()) return false
-        if (isPasswordEmpty()) return false
-        if (isPasswordLength()) return false
-        if (isPasswordValidation()) return false
-        if (isPasswordSame()) return false
+        if (isEmailEmpty())  {
+            _uiState.update { state ->
+                state.copy(message = "이메일을 입력하세요", toastStatus = ToastStatus.ERROR)
+            }
+            return false
+        }
+        if (isEmailPattern()){
+            _uiState.update { state ->
+                state.copy(message = "이메일 형식으로 입력하세요", toastStatus = ToastStatus.ERROR)
+            }
+            return false
+        }
+        if (isPasswordEmpty()){
+            _uiState.update { state ->
+                state.copy(message = "비밀번호를 입력하세요", toastStatus = ToastStatus.ERROR)
+            }
+            return false
+        }
+        if (isPasswordLength()){
+            _uiState.update { state ->
+                state.copy(message = "패스워드 길이를 확인하세요", toastStatus = ToastStatus.ERROR)
+            }
+            return false
+        }
+        if (isPasswordValidation()) {
+            _uiState.update { state ->
+                state.copy(message = "패스워드를 형식을 확인하세요", toastStatus = ToastStatus.ERROR)
+            }
+            return false
+        }
+        if (isPasswordSame()) {
+            _uiState.update { state ->
+                state.copy(message = "패스워드를 동일하게 입력하세요", toastStatus = ToastStatus.ERROR)
+            }
+            return false
+        }
         return true
     }
 }

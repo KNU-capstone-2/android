@@ -28,6 +28,7 @@ import com.knu.cloud.R
 fun ProjectAppBar(
     title: String,
     path: String,
+    userName : String,
     onLogOutClicked : () -> Unit,
     onBackArrowClicked:() -> Unit = {}
 ) {
@@ -88,7 +89,7 @@ fun ProjectAppBar(
                     contentDescription = "person",
                 )
                 Spacer(modifier = Modifier.width(5.dp))
-                Text(text = "admin")
+                Text(text = userName)
                 IconButton(
                     onClick = {
                         menuExpanded = !menuExpanded

@@ -20,17 +20,19 @@ fun rememberProjectAppState(
     navActions : NavActions = remember(navController) {
         NavActions(navController)
     },
+    userName : MutableState<String> = rememberSaveable{ mutableStateOf("" )},
     showMessageDialog :  MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
     enabledTopAppBar: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
     enabledNavDrawer: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
-) = remember(navController,scaffoldState, navActions,showMessageDialog,enabledTopAppBar,enabledNavDrawer){
-    ProjectAppState(navController,scaffoldState,navActions,showMessageDialog,enabledTopAppBar,enabledNavDrawer)
+) = remember(navController,scaffoldState, navActions,userName,showMessageDialog,enabledTopAppBar,enabledNavDrawer){
+    ProjectAppState(navController,scaffoldState,navActions,userName,showMessageDialog,enabledTopAppBar,enabledNavDrawer)
 }
 
 class ProjectAppState(
     val navController: NavHostController,
     val scaffoldState: ScaffoldState,
     val navActions: NavActions,
+    val userName : MutableState<String>,
     val showLogOutDialog: MutableState<Boolean>,
     val enabledTopAppBar : MutableState<Boolean>,
     val enabledNavDrawer : MutableState<Boolean>

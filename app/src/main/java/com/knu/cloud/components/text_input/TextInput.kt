@@ -48,8 +48,8 @@ fun ProjectTextInput(
     focusRequester: FocusRequester = FocusRequester(),
     isError: State<Boolean> = remember { mutableStateOf(false) },
     errorMsg: State<String> = remember { mutableStateOf("") },
+    onDoneClicked : (String) -> Unit = {},
     onValueChangeListener: (String) -> Unit = {},
-    onDoneClicked : (String) -> Unit = {}
 ) {
 
     when (type) {
@@ -202,7 +202,7 @@ sealed class InputType(
     val visualTransformation: VisualTransformation
 ) {
     object Email: InputType(
-        label = "이메일",
+        label = "아이디",
         icon = Icons.Default.Person,
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Next

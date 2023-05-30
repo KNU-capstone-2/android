@@ -64,16 +64,15 @@ fun InstanceSummary(
             InstanceActionButtons(
                 StartClicked = {
                     StartClicked()
-                    Toast.makeText(context, "Start!", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(context, "Start!", Toast.LENGTH_SHORT).show()
                 },
                 ReStartClicked = {
                     ReStartClicked()
-
-                    Toast.makeText(context, "ReStart!", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(context, "ReStart!", Toast.LENGTH_SHORT).show()
                 },
                 StopClicked = {
                     StopClicked()
-                    Toast.makeText(context, "Stop!", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(context, "Stop!", Toast.LENGTH_SHORT).show()
                 }
             )
             Divider()
@@ -97,7 +96,8 @@ fun InstanceSummary(
             StateWithText(
                 title = stringResource(id = R.string.IS_state),
                 stateIcon = R.drawable.instance_running,
-                contentColor = convertStatusColor(status = instance.instanceStatus),
+//                contentColor = convertStatusColor(status = instance.instanceStatus),
+                contentColor = Color.Black,
                 content = instance.instanceStatus
             )
             CopyIncludedText(

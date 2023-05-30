@@ -2,9 +2,14 @@ package com.knu.cloud.screens.home.instanceDetail
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,12 +26,16 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.knu.cloud.R
 import com.knu.cloud.components.CenterCircularProgressIndicator
+import com.knu.cloud.components.CenterLottieLoadingIndicator
 import com.knu.cloud.components.InstanceActionButtons
 import com.knu.cloud.components.LineChartComponent
 import com.knu.cloud.components.summary.CopyIncludedText
 import com.knu.cloud.components.summary.StateWithText
+import com.knu.cloud.utils.ToastStatus
 import com.knu.cloud.utils.convertDateFormat
 import com.knu.cloud.utils.convertStatusColor
+import com.knu.cloud.utils.showMotionToastMessage
+import kotlinx.coroutines.delay
 
 val data = listOf(
     Pair(1, 111.45),
@@ -54,12 +63,19 @@ fun InstanceDetailScreen (
     }
     LaunchedEffect(uiState.message){
         if(uiState.message.isNotEmpty()){
-            Toast.makeText(context, uiState.message, Toast.LENGTH_SHORT).show()
+            showMotionToastMessage(context,uiState.toastStatus,uiState.message)
+//            Toast.makeText(context, uiState.message, Toast.LENGTH_SHORT).show()
         }
+        viewModel.initializeMessage()
+        viewModel.getInstance(id)
+//        if(uiState.message.contains("Reboot")){
+//            delay(4000L)
+//            viewModel.getInstance(id)
+//        }
     }
 
     if(uiState.isLoading){
-        CenterCircularProgressIndicator()
+        CenterLottieLoadingIndicator()
     } else{
         if(uiState.instance == null){
             Box(
@@ -103,10 +119,23 @@ fun InstanceDetailScreen (
                                 color = colorResource(id = R.color.skyBlue)
                             )
                         }
-                        Text(
-                            text = "6분 전에 업데이트됨",
-                            fontSize = 20.sp
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start
+                        ){
+                            Text(
+                                text = "0분 전에 업데이트됨",
+                                fontSize = 20.sp
+                            )
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "Refresh",
+                                modifier = Modifier
+                                    .clickable {
+                                        viewModel.getInstance(id)
+                                }
+                            )
+                        }
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -114,16 +143,16 @@ fun InstanceDetailScreen (
                     ) {
                         InstanceActionButtons(
                             StartClicked = {
-                                viewModel.startInstance(id)
-                                Toast.makeText(context, "Start!", Toast.LENGTH_SHORT).show()
+                                viewModel.startInstance(uiState.instance!!.instanceName)
+//                                Toast.makeText(context, "Start!", Toast.LENGTH_SHORT).show()
                             },
                             ReStartClicked = {
-                                 viewModel.reStartInstance(id)
-                                Toast.makeText(context, "ReStart!", Toast.LENGTH_SHORT).show()
+                                 viewModel.reStartInstance(uiState.instance!!.instanceName)
+//                                Toast.makeText(context, "ReStart!", Toast.LENGTH_SHORT).show()
                             },
                             StopClicked = {
-                                viewModel.stopInstance(id)
-                                Toast.makeText(context, "Stop!", Toast.LENGTH_SHORT).show()
+                                viewModel.stopInstance(uiState.instance!!.instanceName)
+//                                Toast.makeText(context, "Stop!", Toast.LENGTH_SHORT).show()
                             }
                         )
                     }

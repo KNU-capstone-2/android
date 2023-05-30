@@ -8,6 +8,7 @@ import timber.log.Timber
 
 data class AuthState(
     val sessionId: String = "",
+    val userName : String = "",
     val isLoggedIn : Boolean = false,
     val message : String = "",
 )
@@ -41,5 +42,12 @@ class SessionManager {
             state.copy(message = message)
         }
         Timber.d("message :${_authState.value.message}")
+    }
+
+    fun setUserName(userName: String){
+        _authState.update { state ->
+            state.copy(userName = userName)
+        }
+        Timber.d("userName :${_authState.value.userName}")
     }
 }

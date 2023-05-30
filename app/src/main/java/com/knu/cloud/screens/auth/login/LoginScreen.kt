@@ -35,6 +35,8 @@ import com.knu.cloud.components.LoginLogo
 import com.knu.cloud.components.text_input.ProjectTextInput
 import com.knu.cloud.components.text_input.TextInputType
 import com.knu.cloud.components.text_input.addFocusCleaner
+import com.knu.cloud.ui.theme.TableCheckBox
+import com.knu.cloud.utils.showMotionToastMessage
 import timber.log.Timber
 import www.sanju.motiontoast.MotionToast
 import www.sanju.motiontoast.MotionToastStyle
@@ -64,12 +66,11 @@ fun LoginScreen(
             var loginStateCheck by rememberSaveable { mutableStateOf(false) }
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-            uiState.userMessage?.let { message ->
-                val toastMsg = stringResource(message)
-                LaunchedEffect(message, toastMsg) {
-                    Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT).show()
-                    Timber.tag("login").d("launchedEffect message : $message")
+            LaunchedEffect(uiState.message) {
+                if(uiState.message.isNotEmpty()){
+                    showMotionToastMessage(context,uiState.toastStatus,uiState.message)
                 }
+                viewModel.initializeMessage()
             }
             LaunchedEffect(uiState.navigateToHome) {
                 if (uiState.navigateToHome) {
@@ -106,7 +107,10 @@ fun LoginScreen(
                     ) {
                         Checkbox(
                             checked = loginStateCheck,
-                            onCheckedChange = { loginStateCheck = it }
+                            onCheckedChange = { loginStateCheck = it },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = TableCheckBox
+                            )
                         )
                         Text(
                             text = stringResource(R.string.SignIn_loginState),
@@ -120,10 +124,10 @@ fun LoginScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.End
                         ) {
-                            if (!uiState.navigateToHome && uiState.userMessage != null) {
+                            if (!uiState.navigateToHome&& uiState.message.isNotEmpty()) {
                                 Icon(imageVector = Icons.Default.Warning, contentDescription = "", tint = colorResource(id = R.color.Waring))
                                 Text(
-                                    text = stringResource(id = uiState.userMessage!!),
+                                    text = uiState.message,
                                     style = MaterialTheme.typography.caption,
                                     color = colorResource(id = R.color.Waring)
                                 )
@@ -217,18 +221,20 @@ fun UserForm(
         ProjectTextInput(
             type = TextInputType.Email,
             keyboardController = keyboardController,
-            focusRequester = passwordFocusRequester
-        ) { email ->
-            viewModel.updateUserEmail(email)
-        }
-
+            focusRequester = passwordFocusRequester,
+            onValueChangeListener = {email ->
+                viewModel.updateUserEmail(email)
+            }
+        )
         ProjectTextInput(
             type = TextInputType.PASSWORD,
             keyboardController = keyboardController,
-            focusRequester = passwordFocusRequester
-        ) { password ->
-            viewModel.updateUserPassword(password)
-        }
+            focusRequester = passwordFocusRequester,
+            onValueChangeListener = {password ->
+                viewModel.updateUserPassword(password)
+            }
+        )
+
     }
 }
 

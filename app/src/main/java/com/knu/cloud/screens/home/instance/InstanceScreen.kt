@@ -47,7 +47,7 @@ val INSTANCE_COLUMN_TYPES  = listOf(
     TableColumnType.ColorBox,
     TableColumnType.ColorBox
 )
-val INSTANCE_COLUMN_WEIGHTS  = listOf(.3f,.4f,.7f,.2f,.2f,.4f)
+val INSTANCE_COLUMN_WEIGHTS  = listOf(.3f,.4f,.65f,.3f,.3f,.4f)
 
 @Composable
 fun InstanceScreen (
@@ -86,6 +86,7 @@ fun InstanceScreen (
             deleteResult = uiState.deleteResult,
             onCloseBtnClicked = {
                 viewModel.closeDeleteResultDialog()
+                viewModel.getAllInstances()
             }
         )
     }
@@ -150,13 +151,13 @@ fun InstanceScreen (
                             context = context,
                             instance = selectedInstance,
                             StartClicked = {
-                                viewModel.startInstance(selectedInstance!!.id)
+                                viewModel.startInstance(selectedInstance!!.instanceName)
                             },
                             ReStartClicked = {
-                                viewModel.reStartInstance(selectedInstance!!.id)
+                                viewModel.reStartInstance(selectedInstance!!.instanceName)
                             },
                             StopClicked = {
-                                viewModel.stopInstance(selectedInstance!!.id)
+                                viewModel.stopInstance(selectedInstance!!.instanceName)
                             },
                             onInstanceDetailClicked = {
                                 onInstanceDetailClicked(it)

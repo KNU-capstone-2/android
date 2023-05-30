@@ -11,8 +11,17 @@ class RetrofitFailureStateException(error: String ?, val code: Int = 999) : Exce
 fun <T:Any> authResponseToResult(networkResult: NetworkResult<AuthResponse<T>>) :Result<T?>{
     Timber.tag("network").d("AuthResponse ${networkResult.toString()}")
     return when(networkResult){
-        is NetworkResult.Success  -> {
-            Result.success(networkResult.data.data)
+        is NetworkResult.Success -> {
+            if(networkResult.data.status == 200 || networkResult.data.status == 1000){
+                Result.success(networkResult.data.data)
+            }else{
+                Result.failure(
+                    RetrofitFailureStateException(
+                        code = networkResult.data.status,
+                        error = networkResult.data.message
+                    )
+                )
+            }
         }
         is NetworkResult.Error -> Result.failure(
             RetrofitFailureStateException(
@@ -20,7 +29,14 @@ fun <T:Any> authResponseToResult(networkResult: NetworkResult<AuthResponse<T>>) 
                 networkResult.code
             )
         )
-        is NetworkResult.Exception -> Result.failure(networkResult.e)
+        is NetworkResult.Exception -> {
+            Timber.tag("network").d("authResponse Exception e : ${networkResult.e}")
+            Result.failure(
+                RetrofitFailureStateException(
+                    networkResult.e.message
+                )
+            )
+        }
 
     }
 }

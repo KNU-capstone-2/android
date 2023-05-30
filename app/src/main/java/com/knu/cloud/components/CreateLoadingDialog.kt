@@ -6,18 +6,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.knu.cloud.R
+import com.knu.cloud.utils.ToastStatus
+import com.knu.cloud.utils.showMotionToastMessage
 
 @Composable
 fun CreateLoadingDialog(
-
 ) {
     Dialog(
         onDismissRequest = {}

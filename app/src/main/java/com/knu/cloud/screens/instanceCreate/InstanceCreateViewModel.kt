@@ -1,5 +1,6 @@
 package com.knu.cloud.screens.instanceCreate
 
+import android.app.Activity
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.runtime.State
@@ -14,6 +15,8 @@ import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.home.dashboard.DashboardRepository
 import com.knu.cloud.repository.home.keypair.KeypairRepository
 import com.knu.cloud.repository.instanceCreate.InstanceCreateRepository
+import com.knu.cloud.utils.ToastStatus
+import com.knu.cloud.utils.showMotionToastMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,7 +56,7 @@ class InstanceCreateViewModel @Inject constructor(
     val keypairUiState :StateFlow<InstanceCreateKeypairUiState> = _keypairUiState.asStateFlow()
 
     /* 리소스 프로비저닝 Dialog box */
-    private val _createInstanceDialogState = MutableStateFlow(CreateInstanceDialogState(showProgressDialog = false))
+    private val _createInstanceDialogState = MutableStateFlow(CreateInstanceDialogState())
     val createInstanceDialogState: StateFlow<CreateInstanceDialogState> = _createInstanceDialogState.asStateFlow()
 
     private val _showCreateKeypairDialog = mutableStateOf(false)
@@ -79,17 +82,17 @@ class InstanceCreateViewModel @Inject constructor(
             _showCreateKeypairDialog.value = false
         }
     }
-
     fun createInstance(
-        context: Context
+        context: Context,
+//        activity :Activity
     ) {
         try{
             val createRequest = CreateRequest(
                 serverName = detailUiState.value.instanceName,
-//                imageName = sourceUiState.value.uploadSource!!.name,
-//                flavorName = flavorUiState.value.uploadFlavor!!.name,
-//                networkName = networkUiState.value.uploadNetwork!!.network,
-//                keypairName = keypairUiState.value.uploadKeypair!!.name,
+                imageName = sourceUiState.value.uploadSource!!.name,
+                flavorName = flavorUiState.value.uploadFlavor!!.name,
+                networkName = networkUiState.value.uploadNetwork!!.network,
+                keypairName = keypairUiState.value.uploadKeypair!!.name,
             )
             viewModelScope.launch {
                 delay(1500)
@@ -97,18 +100,45 @@ class InstanceCreateViewModel @Inject constructor(
                     .onSuccess {
                         Timber.tag("instanceCreate").d("Success instanceData : $it")
                         if(it != null){
-                            closeCreateInstanceDialog(context,"${it.instanceName} 생성 완료")
+                            _createInstanceDialogState.update { state ->
+                                state.copy(
+                                    showProgressDialog = false,
+                                    message = "${it.instanceName} 생성 완료",
+                                    toastStatus = ToastStatus.SUCCESS
+                                )
+                            }
                             _isDialogOpen.value = false
                         }else{
-                            closeCreateInstanceDialog(context,"동일한 이름의 인스턴스가 있습니다")
+                            _createInstanceDialogState.update { state ->
+                                state.copy(
+                                    showProgressDialog = false,
+                                    message = "동일한 이름의 인스턴스가 있습니다",
+                                    toastStatus = ToastStatus.ERROR
+                                )
+                            }
+//                            closeCreateInstanceDialog(context,ToastStatus.ERROR,"동일한 이름의 인스턴스가 있습니다")
                         }
                     }.onFailure {
                         Timber.tag("instanceCreate").d("Failure : $it")
-                        closeCreateInstanceDialog(context,"인스턴스 생성 실패")
+                        _createInstanceDialogState.update { state ->
+                            state.copy(
+                                showProgressDialog = false,
+                                message = "인스턴스 생성 실패",
+                                toastStatus = ToastStatus.ERROR
+                            )
+                        }
+//                        closeCreateInstanceDialog(context,ToastStatus.ERROR,"인스턴스 생성 실패")
                     }
             }
         }catch(e : Exception){
-            showToast(context,"인스턴스 생성에 필요한 요소를 전부 선택하세요")
+            _createInstanceDialogState.update { state ->
+                state.copy(
+                    showProgressDialog = false,
+                    message = "인스턴스 생성에 필요한 요소를 전부 선택하세요",
+                    toastStatus = ToastStatus.ERROR
+                )
+            }
+//            closeCreateInstanceDialog(context,ToastStatus.INFO,"인스턴스 생성에 필요한 요소를 전부 선택하세요")
         }
     }
 
@@ -122,14 +152,17 @@ class InstanceCreateViewModel @Inject constructor(
         Timber.d("showProgressDialog : ${_createInstanceDialogState.value.showProgressDialog}")
     }
     private fun closeCreateInstanceDialog(
-        context: Context,
+//        context: Context,
+        activity: Activity,
+        status : ToastStatus,
         text : String
     ) {
         _createInstanceDialogState.update { state ->
             state.copy(showProgressDialog = false)
         }
+        showMotionToastMessage(activity,status,text)
         Timber.d("showProgressDialog : ${_createInstanceDialogState.value.showProgressDialog}")
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+//        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 
     fun showCreateKeypairDialog(){
@@ -287,6 +320,12 @@ class InstanceCreateViewModel @Inject constructor(
         _sourceUiState.update { sourceUiState }
     }
 
+    fun initializeMessage(){
+        _createInstanceDialogState.update {
+            it.copy(message = "")
+        }
+    }
+
 //    fun updateCreateInstanceDialogUiState(state: CreateInstanceDialogState) {
 //        _createInstanceDialogUiState.update {it}
 //    }
@@ -367,7 +406,7 @@ class InstanceCreateViewModel @Inject constructor(
             var instanceCount = 0
             dashboardRepository.getDashboardData()
                 .onSuccess { it ->
-                    instanceCount = it?.dashboardDataClass?.instanceCount ?: 0
+                    instanceCount = it  ?.instanceCount ?: 0
                 }.onFailure {
                     Timber.e(it.message)
                 }

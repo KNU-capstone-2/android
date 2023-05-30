@@ -1,10 +1,10 @@
 package com.knu.cloud.mockWebServer
 
-import com.knu.cloud.di.AuthInterceptor
 import com.knu.cloud.network.SessionManager
 import com.knu.cloud.model.NetworkResult
 import com.knu.cloud.model.auth.LoginRequest
 import com.knu.cloud.model.onSuccess
+import com.knu.cloud.network.AuthInterceptor
 import com.knu.cloud.network.apiService.AuthApiService
 import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.network.networkResultCallAdapter.NetworkResultCallAdapterFactory
@@ -67,7 +67,7 @@ class AuthApiServiceTest {
             val request = server.takeRequest()
 
             // sessionManager에 sessionId 들어왔는지 확인하기
-            assertEquals("token1234",sessionManager.sessionId.value)
+            assertEquals("token1234",sessionManager.authState.value.sessionId)
 
             // networkResultCallAdapter를 통해 NetworkResult로 잘 변환되었는지 확인하기
             response.onSuccess {authResponse ->

@@ -14,7 +14,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.knu.cloud.R
 import com.knu.cloud.components.CenterLottieLoadingIndicator
+import com.knu.cloud.components.CustomOutlinedButton
 import com.knu.cloud.components.DeleteConfirmDialog
 import com.knu.cloud.components.DeleteResultDialog
 import com.knu.cloud.components.basicTable.*
@@ -154,18 +156,20 @@ fun KeypairBar(
                 )
             }
         }
-        OutlinedButton(
-            modifier = Modifier.weight(0.1f),
-            onClick = onCreateBtnClicked
-        ) {
-            Text(text = "Create Key Pair")
-        }
-        OutlinedButton(
-            modifier = Modifier.weight(0.1f),
-            onClick =  onDeleteBtnClicked
-        ) {
-            Text(text = "Delete Key Pairs")
-        }
+        CustomOutlinedButton(
+            modifier = Modifier.weight(0.06f),
+            onBtnClicked = onCreateBtnClicked,
+            title = "Create Keypair",
+            icons = R.drawable.launch_24
+        )
+        Spacer(modifier = Modifier.width(5.dp))
+        CustomOutlinedButton(
+            modifier = Modifier.weight(0.06f),
+            onBtnClicked = onDeleteBtnClicked,
+            title = "Delete Keypairs",
+            icons = R.drawable.ic_baseline_delete_forever_24
+        )
+        Spacer(modifier = Modifier.width(5.dp))
     }
 }
 

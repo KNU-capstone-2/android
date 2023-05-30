@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.knu.cloud.R
+import com.knu.cloud.ui.theme.TableCheckBox
 
 @Composable
 fun LoginLogo() {
@@ -45,7 +46,7 @@ fun FABContent(onTap: () -> Unit) {
     FloatingActionButton(
         onClick = { onTap() },
         shape = RoundedCornerShape(50.dp),
-        backgroundColor = Color(0xFF92CBDF)
+        backgroundColor  = TableCheckBox
     ) {
         Icon(
             imageVector = Icons.Default.Add,

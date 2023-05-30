@@ -6,7 +6,9 @@ import com.knu.cloud.model.home.instance.InstanceControlResponse
 import com.knu.cloud.model.home.instance.InstanceData
 import com.knu.cloud.network.RetrofitFailureStateException
 import com.knu.cloud.repository.home.instance.InstanceRepository
+import com.knu.cloud.utils.ToastStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +21,7 @@ data class InstanceDetailUiState(
     val isLoading : Boolean = false,
     val instance : InstanceData? = null,
     val message : String = "",
+    val toastStatus: ToastStatus = ToastStatus.INFO
 )
 
 @HiltViewModel
@@ -92,11 +95,19 @@ class InstanceDetailViewModel @Inject constructor (
         }
     }
 
+    fun initializeMessage(){
+        _uiState.update {
+            it.copy(message = "")
+        }
+    }
     private fun instanceControlSuccessHandling(response : InstanceControlResponse?,action : String){
         _uiState.update { state ->
             if(response != null){
-                if (response.isSuccess) state.copy(message = "Instance $action Success!")
-                else state.copy(message = response.message)
+                if (response.isSuccess || response.message == "success")
+                    state.copy(message = "Instance $action Success!", toastStatus = ToastStatus.SUCCESS)
+                else {
+                    state.copy(message = response.message, toastStatus = ToastStatus.ERROR)
+                }
             }else{
                 state.copy(message = "server error")
             }
